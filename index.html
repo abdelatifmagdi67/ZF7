@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>دلتا - مجتمع السكريبتات وتحريك الصور الشخصية</title>
+<title>دلتا - مجتمع السكريبتات ونظام تسجيل الحسابات الآمن</title>
 <style>
 :root{--bg:#0b1220;--card:#111c33;--card2:#16233d;--text:#e8eefc;--muted:#9fb0cc;--line:#1f2d4a;--acc:#4cc9f0;--acc2:#b388ff;--ok:#3ddc97;--bad:#ff6b6b;--warn:#f59e0b;--r:14px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -30,24 +30,25 @@ textarea {
 .btn-nav button { flex: 1; padding: 10px; background: var(--card2); border: 1px solid var(--line); color: var(--text); border-radius: 8px; cursor: pointer; font-weight: bold; white-space:nowrap; }
 .btn-nav button.active { background: var(--acc); color: #071019; border-color: var(--acc); }
 
-/* الأبـاتار الدائري والخطوط والأضواء */
+/* الأبـاتار المتطابق */
 .user-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; object-position: center; border: 1px solid var(--acc); background: var(--card2); flex-shrink: 0; }
 .user-badge-box { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 8px; font-size: 13px; font-weight: bold; background: var(--card2); border: 1px solid var(--line); }
 
-/* محرر وتعديل الصورة (تيك توك ستايل) */
+/* محرر الصور */
 .avatar-editor-box { display: flex; flex-direction: column; align-items: center; gap: 10px; background: var(--card2); padding: 15px; border-radius: 12px; border: 1px solid var(--line); margin-bottom: 15px; }
-.crop-container { width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--acc); overflow: hidden; position: relative; background: #000; cursor: grab; box-shadow: 0 0 20px rgba(76, 201, 240, 0.4); }
+.crop-container { width: 130px; height: 130px; border-radius: 50%; border: 3px solid var(--acc); overflow: hidden; position: relative; background: #000; cursor: grab; box-shadow: 0 0 20px rgba(76, 201, 240, 0.4); }
 .crop-container:active { cursor: grabbing; }
 #cropCanvas { position: absolute; top: 0; left: 0; touch-action: none; }
+.zoom-slider { width: 80%; margin-top: 5px; accent-color: var(--acc); }
 
-/* إضاءات الخطوط حسب الرتبة والأدمن */
+/* إضاءات الأداء والأدمن */
 .glow-admin { font-family: 'Courier New', monospace; letter-spacing: 1px; color: #3ddc97 !important; border: 2px solid #3ddc97; background: rgba(61, 220, 151, 0.1); box-shadow: 0 0 15px #3ddc97; text-shadow: 0 0 8px #3ddc97; }
 .glow-diamond { font-family: monospace; color: #4cc9f0 !important; border: 1.5px solid #4cc9f0; box-shadow: 0 0 10px rgba(76, 201, 240, 0.6); }
 .glow-gold { font-family: monospace; color: #f59e0b !important; border: 1px solid #f59e0b; }
 .glow-silver { font-family: monospace; color: #b388ff !important; border: 1px solid var(--line); }
 .glow-bronze { font-family: monospace; color: var(--muted); }
 
-/* شاشات الدخول */
+/* شاشات الدخول النظيفة */
 #authScreen { max-width: 400px; margin: 50px auto; background: var(--card); padding: 20px; border-radius: var(--r); border: 1px solid var(--line); text-align: center; }
 #authScreen input { margin-bottom: 10px; }
 #authScreen .toggle-btn { background: none; border: none; color: var(--acc); cursor: pointer; font-size: 13px; margin-top: 10px; text-decoration: underline; }
@@ -99,22 +100,33 @@ textarea {
 </head>
 <body>
 
-<!-- شاشة تسجيل الدخول -->
+<!-- شاشة تسجيل الدخول النظيفة -->
 <div id="authScreen" class="hidden">
     <h2>مجتمع دلتا</h2>
     <div id="errorMsg" class="error-msg"></div>
     
     <div id="loginForm">
-        <input type="text" id="loginUser" placeholder="اسم المستخدم (اكتب admin للأدمن)">
-        <input type="password" id="loginPass" placeholder="كلمة المرور">
-        <button class="btn primary" style="width:100%" onclick="doLogin()">تسجيل الدخول</button>
+        <label>اسم المستخدم</label>
+        <input type="text" id="loginUser" placeholder="اكتب اسم المستخدم هنا...">
+        <label style="margin-top:8px;">كلمة المرور</label>
+        <input type="password" id="loginPass" placeholder="••••••••">
+        <button class="btn primary" style="width:100%; margin-top:10px;" onclick="doLogin()">تسجيل الدخول</button>
+        
+        <!-- الحسابات المحفوظة للتبديل السريع -->
+        <div id="savedAccountsSection" style="margin-top:15px; text-align:right; display:none;">
+            <label style="font-size:11px; color:var(--acc);">حساباتك المحفوظة على الجهاز (دخول سريع):</label>
+            <div id="savedAccountsList" style="display:flex; flex-direction:column; gap:5px; margin-top:5px;"></div>
+        </div>
+
         <button class="toggle-btn" onclick="toggleAuth('register')">معندكش حساب؟ سجل من هنا</button>
     </div>
 
     <div id="registerForm" class="hidden">
-        <input type="text" id="regUser" placeholder="اسم المستخدم">
-        <input type="password" id="regPass" placeholder="كلمة المرور (6 حروف على الأقل)">
-        <button class="btn primary" style="width:100%" onclick="doRegister()">إنشاء حساب</button>
+        <label>اختر اسم المستخدم</label>
+        <input type="text" id="regUser" placeholder="اسم المستخدم الجديد...">
+        <label style="margin-top:8px;">كلمة المرور (6 حروف على الأقل)</label>
+        <input type="password" id="regPass" placeholder="••••••••">
+        <button class="btn primary" style="width:100%; margin-top:10px;" onclick="doRegister()">إنشاء حساب</button>
         <button class="toggle-btn" onclick="toggleAuth('login')">عندك حساب؟ سجل دخول</button>
     </div>
 </div>
@@ -137,7 +149,7 @@ textarea {
 
           <a href="https://discord.gg/YOUR_DISCORD_LINK" target="_blank" class="btn sm" style="background:#5865F2; color:#fff; text-decoration:none; display:inline-flex; align-items:center; gap:5px; margin-bottom:0;">ديسكورد</a>
           <div id="userHeaderDisplay" style="display:inline-block;"></div>
-          <button class="btn sm" onclick="doLogout()" style="background:transparent;color:var(--bad);border:1px solid var(--bad); margin-bottom:0;">خروج</button>
+          <button class="btn sm" onclick="confirmLogout()" style="background:transparent;color:var(--bad);border:1px solid var(--bad); margin-bottom:0;">خروج</button>
       </div>
   </div>
 
@@ -152,16 +164,27 @@ textarea {
   <!-- إضافة سكريبت وتعديل البروفايل -->
   <div id="tabAdd">
       <div class="card">
-        <h3>⚙️ إعدادات البروفايل وتحريك الصورة (TikTok Style)</h3>
+        <h3>⚙️ إعدادات البروفايل وتبديل الحسابات</h3>
         
+        <div style="background:var(--card2); padding:12px; border-radius:8px; margin-bottom:15px; border:1px solid var(--line);">
+            <label style="color:var(--acc); margin-bottom:8px;">🔄 إدارة الحسابات:</label>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn sm primary" onclick="confirmLogout()">تسجيل خروج وتبديل حساب</button>
+                <button class="btn sm" style="background:var(--card); color:var(--text); border:1px solid var(--line);" onclick="showAddAccountPrompt()">➕ إضافة حساب آخر</button>
+            </div>
+        </div>
+
         <div class="avatar-editor-box">
             <input type="file" id="profileAvatarInput" accept="image/*,image/gif" style="display:none;" onchange="loadAvatarForCrop(event)">
             
-            <div style="font-size:13px; color:var(--acc); font-weight:bold;">اسحب الصورة بإصبعك أو الماوس لتحريكها داخل الدايرة بالشكل اللي يعجبك:</div>
+            <div style="font-size:13px; color:var(--acc); font-weight:bold; text-align:center;">اسحب الصورة للتحريك، واستخدم شريط الزووم للتكبير والتصغير:</div>
             
             <div class="crop-container" id="cropArea">
                 <canvas id="cropCanvas" width="200" height="200"></canvas>
             </div>
+
+            <label style="margin:0; font-size:11px; color:var(--muted);">تكبير / تصغير الصورة:</label>
+            <input type="range" id="zoomSlider" class="zoom-slider" min="0.2" max="3" step="0.05" value="1" oninput="changeZoom(this.value)">
 
             <button class="btn sm" style="background:var(--card); color:var(--acc); border:1px solid var(--line);" onclick="document.getElementById('profileAvatarInput').click()">📁 اختر صورة جديدة</button>
             <button class="btn primary" onclick="saveCroppedAvatar()">💾 حفظ وتأكيد الصورة في البروفايل</button>
@@ -339,7 +362,6 @@ textarea {
   const DELTA_KEY = "DeltaHubSecureKey2026";
   const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239fb0cc'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>";
 
-  // متغيرات محرر وصور البروفايل التفاعلية
   let cropImg = new Image();
   let imgX = 0, imgY = 0, imgScale = 1;
   let isDragging = false, startX = 0, startY = 0;
@@ -362,6 +384,52 @@ textarea {
       if(!key) return alert("اكتب المفتاح الأول!");
       await setDoc(doc(db, "settings", "ai_config"), { apiKey: key });
       alert("✅ تم الحفظ!");
+  };
+
+  window.confirmLogout = () => {
+      if (confirm("هل أنت متأكد أنك تريد تسجيل الخروج؟")) {
+          signOut(auth);
+      }
+  };
+
+  window.showAddAccountPrompt = () => {
+      if (confirm("هل تريد تسجيل الخروج مؤقتاً لإضافة حساب آخر أو التبديل؟")) {
+          signOut(auth);
+      }
+  };
+
+  function saveAccountLocally(username, password) {
+      let accounts = JSON.parse(localStorage.getItem('delta_accounts') || '{}');
+      accounts[username] = password;
+      localStorage.setItem('delta_accounts', JSON.stringify(accounts));
+  }
+
+  function loadSavedAccounts() {
+      let accounts = JSON.parse(localStorage.getItem('delta_accounts') || '{}');
+      let listDiv = document.getElementById('savedAccountsList');
+      let section = document.getElementById('savedAccountsSection');
+      let usernames = Object.keys(accounts);
+
+      if (usernames.length > 0) {
+          section.style.display = 'block';
+          listDiv.innerHTML = usernames.map(u => `
+              <div style="display:flex; justify-content:space-between; align-items:center; background:var(--card); padding:8px 12px; border-radius:6px; border:1px solid var(--line);">
+                  <span style="font-size:13px; color:var(--text);">👤 ${u}</span>
+                  <button class="btn sm primary" onclick="quickLogin('${u}', '${accounts[u]}')">دخول سريع</button>
+              </div>
+          `).join('');
+      } else {
+          section.style.display = 'none';
+      }
+  }
+
+  window.quickLogin = async (username, password) => {
+      try {
+          const email = username.toLowerCase() === 'admin' ? "admin@delta.com" : username.toLowerCase() + "@delta.com";
+          await signInWithEmailAndPassword(auth, email, password);
+      } catch(e) {
+          alert("❌ فشل الدخول السريع، يرجى كتابة البيانات يدوياً.");
+      }
   };
 
   window.getUserDisplayHTML = (username) => {
@@ -400,10 +468,10 @@ textarea {
       }
   };
 
-  // إعدادات محرر وقص وتحريك الصورة التفاعلي
   function initCropCanvas(imgSrc) {
       cropImg.onload = () => {
           imgScale = Math.max(canvas.width / cropImg.width, canvas.height / cropImg.height);
+          document.getElementById('zoomSlider').value = imgScale;
           imgX = (canvas.width - cropImg.width * imgScale) / 2;
           imgY = (canvas.height - cropImg.height * imgScale) / 2;
           drawCrop();
@@ -415,6 +483,11 @@ textarea {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(cropImg, imgX, imgY, cropImg.width * imgScale, cropImg.height * imgScale);
   }
+
+  window.changeZoom = (val) => {
+      imgScale = parseFloat(val);
+      drawCrop();
+  };
 
   const cropArea = document.getElementById('cropArea');
   cropArea.addEventListener('mousedown', (e) => { isDragging = true; startX = e.clientX - imgX; startY = e.clientY - imgY; });
@@ -433,7 +506,6 @@ textarea {
       reader.readAsDataURL(file);
   };
 
-  // زر الحفظ والتأكيد الفعلي في البروفايل وقاعدة البيانات
   window.saveCroppedAvatar = async () => {
       if (!cropImg.src) return alert("اختر صورة الأول!");
       const dataUrl = canvas.toDataURL('image/png', 0.95);
@@ -443,7 +515,7 @@ textarea {
           await updateDoc(doc(db, "users", currentUserDocId), { avatar: dataUrl });
           renderHeaderUser();
           renderLists();
-          alert("✅ تم حفظ وتأكيد صورتك الشخصية بنجاح وستظهر فوراً في كل مكان!");
+          alert("✅ تم حفظ وتأكيد صورتك الشخصية بنجاح وتحديثها في كل مكان بالموقع!");
       }
   };
 
@@ -465,6 +537,7 @@ textarea {
   window.toggleAuth = (type) => {
       document.getElementById('loginForm').classList.toggle('hidden', type !== 'login');
       document.getElementById('registerForm').classList.toggle('hidden', type !== 'register');
+      if (type === 'login') loadSavedAccounts();
   };
 
   window.handleImageUpload = (event) => {
@@ -498,20 +571,26 @@ textarea {
       try {
           const q = query(collection(db, "users"), where("username", "==", username));
           if (!(await getDocs(q)).empty) return alert("⚠️ الاسم متاخد!");
-          const cred = await createUserWithEmailAndPassword(auth, username.toLowerCase() + "@delta.com", password);
+          const email = username.toLowerCase() === 'admin' ? "admin@delta.com" : username.toLowerCase() + "@delta.com";
+          const cred = await createUserWithEmailAndPassword(auth, email, password);
           await addDoc(collection(db, "users"), { uid: cred.user.uid, username: username, warnings: 0, frame: username === 'admin' ? 'admin' : 'bronze', avatar: '' });
+          saveAccountLocally(username, password);
           alert("تم التسجيل بنجاح!"); toggleAuth('login');
       } catch(e) { alert("خطأ: " + e.message); }
   };
 
   window.doLogin = async () => {
-      const username = document.getElementById('loginUser').value.trim();
+      let username = document.getElementById('loginUser').value.trim();
       const password = document.getElementById('loginPass').value;
-      try { await signInWithEmailAndPassword(auth, username.toLowerCase() + "@delta.com", password); }
-      catch(e) { alert("❌ خطأ في البيانات!"); }
+      if(!username || !password) return alert("اكتب اسم المستخدم وكلمة المرور!");
+      try {
+          const email = username.toLowerCase() === 'admin' ? "admin@delta.com" : username.toLowerCase() + "@delta.com";
+          await signInWithEmailAndPassword(auth, email, password);
+          saveAccountLocally(username, password);
+      } catch(e) {
+          alert("❌ خطأ في اسم المستخدم أو كلمة المرور!");
+      }
   };
-
-  window.doLogout = () => signOut(auth);
 
   onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -544,6 +623,7 @@ textarea {
           currentUser = null; currentUsername = ""; currentUserDocId = "";
           document.getElementById('authScreen').classList.remove('hidden');
           document.querySelector('.wrap').style.display = 'none';
+          loadSavedAccounts();
       }
   });
 
