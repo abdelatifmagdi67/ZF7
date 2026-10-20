@@ -474,13 +474,13 @@ textarea {
       `).join('') : '<p style="color:var(--muted); font-size:12px;">لا توجد حسابات أخرى مسجلة.</p>';
   }
 
-  // دالة الحذف المباشر والآمن للسكريبتات
-  window.deleteScriptDirect = async (scriptId) => {
-      if(confirm("🗑️ هل أنت متأكد من حذف هذا السكريبت نهائياً؟")) {
+  // دالة الحذف السريع والمباشر للسكريبت
+  window.deleteScript = async (scriptId) => {
+      if (confirm("🗑️ هل أنت متأكد من حذف هذا السكريبت نهائياً؟")) {
           try {
               await deleteDoc(doc(db, "scripts", scriptId));
               alert("✅ تم حذف السكريبت بنجاح!");
-          } catch(e) {
+          } catch (e) {
               alert("❌ حدث خطأ أثناء الحذف: " + e.message);
           }
       }
@@ -640,7 +640,7 @@ textarea {
               </div>
               <div>
                   ${isMine || isSuperAdmin ? `<button class="btn sm primary" onclick="openEditModal('${s.id}')">✏️ تعديل</button>` : ''}
-                  ${isMine || isSuperAdmin ? `<button class="btn sm" style="background:var(--bad);color:white;" onclick="deleteScriptDirect('${s.id}')">🗑️ حذف</button>` : ''}
+                  ${isMine || isSuperAdmin ? `<button class="btn sm" style="background:var(--bad);color:white;" onclick="deleteScript('${s.id}')">🗑️ حذف</button>` : ''}
               </div>
             </div>
             <div class="author">بواسطة: ${getUserDisplayHTML(s.author)}</div>
@@ -803,6 +803,7 @@ textarea {
   window.startChat = (target) => {
       activeChatUser = target;
       document.getElementById('chatWithTitle').textContent = 'المحادثة مع: ' + target;
+      document.getElementById('activeChatBox').classList.add('hidden'); // Fix toggle
       document.getElementById('activeChatBox').classList.remove('hidden');
       loadMessages();
   };
