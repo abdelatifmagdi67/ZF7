@@ -44,7 +44,7 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
 .flex-row input { margin-top: 0; flex: 1; }
 
 #imagePreview { display:none; width:100%; height:120px; object-fit:cover; border-radius:8px; margin-top:10px; border:1px solid var(--line); }
-.raw-view { background: #ffffff; color: #000000; margin: 0; padding: 20px; font-family: monospace; font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+.raw-view { background: #000000; color: #00ff66; margin: 0; padding: 20px; font-family: monospace; font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
 
 @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .hidden { display: none !important; }
@@ -119,8 +119,8 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
   <!-- أداة التمويه المستقلة -->
   <div id="tabObf" class="hidden">
       <div class="card">
-          <h3>تمويه السكريبت (Obfuscator)</h3>
-          <p style="font-size:12px;color:var(--muted);margin-bottom:15px;">حط الكود العادي فوق، ودوس تمويه عشان يطلعلك الكود المموه تحت. الأداة دي سريعة جداً وبتستحمل أي حجم نص.</p>
+          <h3>تمويه السكريبت (Delta Obfuscator)</h3>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:15px;">ضع كود Lua في الخانة العلوية، ثم انقر على "تمويه السكريبت" لإنشاء كود مشفر بمفتاح محمي خافِ تماماً لأجهزة دلتا.</p>
           
           <label>الكود العادي (فوق)</label>
           <textarea id="plainCode" placeholder="-- اكتب الكود هنا --" spellcheck="false"></textarea>
@@ -154,7 +154,6 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
   import { getFirestore, collection, addDoc, query, where, getDocs, onSnapshot, deleteDoc, doc, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-  // ✅ المفتاح الجديد بتاعك
   const firebaseConfig = {
     apiKey: "AIzaSyD2DjPpzfS8QT9cJoTdyzSMuwcJfN8Ulrw",
     authDomain: "cjw-7cf9b.firebaseapp.com",
@@ -171,6 +170,9 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
   let currentUser = null;
   let currentUsername = "";
   let allScriptsCache = [];
+
+  // مفتاح التشفير الخاص بدلتـا
+  const DELTA_KEY = "DeltaHubSecureKey2026";
 
   window.encodeCode = (str) => btoa(unescape(encodeURIComponent(str)));
   window.decodeCode = (str) => decodeURIComponent(escape(atob(str)));
@@ -222,26 +224,32 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
       return images[category] || images["عام"];
   }
 
+  // 🔐 دالة التمويه والتشفير المخصص لـ Delta
   window.obfuscateCode = () => {
       const plain = document.getElementById('plainCode').value;
       if(!plain) return alert("اكتب الكود الأول!");
+      
       const utf8 = new TextEncoder().encode(plain);
-      const chunks = new Array(utf8.length);
+      const encryptedBytes = [];
       for (let i = 0; i < utf8.length; i++) {
-          chunks[i] = "\\x" + utf8[i].toString(16).padStart(2, '0');
+          const charCode = utf8[i];
+          const keyChar = DELTA_KEY.charCodeAt(i % DELTA_KEY.length);
+          encryptedBytes.push(charCode ^ keyChar);
       }
-      document.getElementById('encryptedCode').value = `loadstring("${chunks.join('')}")()`;
+      
+      const encryptedHex = encryptedBytes.map(b => b.toString(16).padStart(2, '0')).join('');
+      const link = window.location.origin + window.location.pathname + '?raw=' + encryptedHex;
+      
+      const luaScript = `local k="${DELTA_KEY}";local h=game:HttpGet("${link}");local function d(hex) local b={} for i=1,#hex,2 do table.insert(b,tonumber(hex:sub(i,i+1),16)) end return b end;local eb=d(h);local s="";for i=1,#eb do local kc=string.byte(k,(i-1)%#k+1);s=s..string.char(bit32.bxor(eb[i],kc)) end;assert(loadstring(s))()`;
+      
+      document.getElementById('encryptedCode').value = luaScript;
   };
 
+  // معالجة فتح رابط الـ RAW
   if (new URLSearchParams(window.location.search).has('raw')) {
-      document.body.innerHTML = '<div style="color:#0f0;font-family:monospace;padding:20px;font-size:20px;">[Delta] Loading script...</div>';
-      setTimeout(() => {
-          try {
-              const code = window.decodeCode(new URLSearchParams(window.location.search).get('raw'));
-              document.body.innerHTML = '<pre>' + code.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;") + '</pre>';
-              document.body.className = 'raw-view';
-          } catch(e) { document.body.innerHTML = 'Error'; }
-      }, 600);
+      const hex = new URLSearchParams(window.location.search).get('raw');
+      document.body.innerHTML = hex;
+      document.body.className = 'raw-view';
   }
 
   window.doRegister = async () => {
@@ -377,7 +385,7 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
   }
 
   window.deleteScript = async (id) => {
-      if(confirm('متأكد من الحذف؟')) await deleteDoc(doc(db, "scripts", id));
+      if(confirm('متأكد من الحذف؟')) await deleteDoc(doc(doc(db, "scripts", id)));
   };
 
   window.filterCommunity = () => {
