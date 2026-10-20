@@ -474,7 +474,18 @@ textarea {
       `).join('') : '<p style="color:var(--muted); font-size:12px;">لا توجد حسابات أخرى مسجلة.</p>';
   }
 
-  // ميزة تعديل السكريبتات للأدمن الأعلى وصاحب السكريبت
+  // دالة الحذف المباشر والآمن للسكريبتات
+  window.deleteScriptDirect = async (scriptId) => {
+      if(confirm("🗑️ هل أنت متأكد من حذف هذا السكريبت نهائياً؟")) {
+          try {
+              await deleteDoc(doc(db, "scripts", scriptId));
+              alert("✅ تم حذف السكريبت بنجاح!");
+          } catch(e) {
+              alert("❌ حدث خطأ أثناء الحذف: " + e.message);
+          }
+      }
+  };
+
   window.openEditModal = (id) => {
       const script = allScriptsCache.find(s => s.id === id);
       if(!script) return;
@@ -598,9 +609,9 @@ textarea {
       if(!currentUser) return;
       const myList = document.getElementById('myList');
       const commList = document.getElementById('communityList');
-      const myScripts = allScriptsCache.filter(s => s.uid === currentUser.uid);
+      const myScripts = allScriptsCache.filter(s => s.uid === currentUser.uid || s.author === currentUsername);
       const myFriendsNames = allFriendsCache.map(f => f.friend);
-      let commScripts = allScriptsCache.filter(s => s.uid !== currentUser.uid);
+      let commScripts = allScriptsCache.filter(s => s.uid !== currentUser.uid && s.author !== currentUsername);
 
       if (isOnlyFollowingFeed) commScripts = commScripts.filter(s => myFriendsNames.includes(s.author));
 
@@ -629,7 +640,7 @@ textarea {
               </div>
               <div>
                   ${isMine || isSuperAdmin ? `<button class="btn sm primary" onclick="openEditModal('${s.id}')">✏️ تعديل</button>` : ''}
-                  ${isMine || isSuperAdmin ? `<button class="btn sm" style="background:var(--bad);color:white;" onclick="deleteDoc(doc(db,'scripts','${s.id}'))">🗑️ حذف</button>` : ''}
+                  ${isMine || isSuperAdmin ? `<button class="btn sm" style="background:var(--bad);color:white;" onclick="deleteScriptDirect('${s.id}')">🗑️ حذف</button>` : ''}
               </div>
             </div>
             <div class="author">بواسطة: ${getUserDisplayHTML(s.author)}</div>
@@ -844,7 +855,6 @@ textarea {
       });
   }
 
-  // معاينة وضبط قص الصورة بالدايرة بشكل دقيق 100%
   function initCropCanvas(imgSrc) {
       cropImg.onload = () => {
           imgScale = Math.max(canvas.width / cropImg.width, canvas.height / cropImg.height);
@@ -864,7 +874,6 @@ textarea {
   window.changeZoom = (val) => { 
       const oldScale = imgScale;
       imgScale = parseFloat(val);
-      // التكبير والتصغير من مركز الدائرة بالظبط
       imgX = canvas.width / 2 - (canvas.width / 2 - imgX) * (imgScale / oldScale);
       imgY = canvas.height / 2 - (canvas.height / 2 - imgY) * (imgScale / oldScale);
       drawCrop(); 
