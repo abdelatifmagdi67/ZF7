@@ -78,10 +78,13 @@ textarea {
 .hidden { display: none !important; }
 </style>
 <script>
+  // فحص رابط الـ Raw الفوري وعرض كود السكريبت الصافي فقط
   const urlParams = new URLSearchParams(window.location.search);
   const rawId = urlParams.get('raw');
   if (rawId) {
-      document.documentElement.innerHTML = "<head><meta charset='utf-8'><title>Raw Script</title></head><body style='background:#06101e; color:#3ddc97; font-family:monospace; padding:20px; word-break:break-all; white-space:pre-wrap;'><pre id='rawBox'>جاري جلب السكريبت...</pre></body>";
+      document.addEventListener("DOMContentLoaded", () => {
+          document.body.innerHTML = "<pre id='rawOutput' style='color:#3ddc97; font-family:monospace; font-size:15px; padding:20px; margin:0; word-break:break-all; white-space:pre-wrap;'>جاري تحميل كود السكريبت...</pre>";
+      });
   }
 </script>
 </head>
@@ -156,7 +159,7 @@ textarea {
 
   <div id="tabAdd">
       <div class="card">
-        <h3>🚀 نشر سكريبت جديد وتوليد رابط الـ Raw الفوري</h3>
+        <h3>🚀 نشر سكريبت جديد وتوليد رابط الـ Raw</h3>
         <label>اسم السكريبت<input type="text" id="scriptName" placeholder="مثلاً: سكريبت شرح طيران"></label>
         <label>التصنيف التعليمي
           <select id="scriptCategory">
@@ -237,12 +240,12 @@ textarea {
   </div>
 </div>
 
-<!-- Modal بروفايل ديسكورد مع دعم الصور المتحركة (GIF) للبانر والصورة الشخصية -->
+<!-- Modal بروفايل ديسكورد (دعم كامل: صور عادية وثابتة أو متحركة GIF للبانر والصورة الشخصية) -->
 <div id="profileModal" class="modal-overlay hidden">
     <div class="modal-content" style="padding:0; overflow:hidden;">
         <div id="bannerContainer" style="width:100%; height:110px; background:#1f2d4a; background-size:cover; background-position:center; position:relative;">
-            <button class="btn sm primary" style="position:absolute; bottom:8px; left:8px; font-size:10px;" onclick="document.getElementById('bannerInput').click()">🖼️ تغيير البانر (صورة / GIF)</button>
-            <input type="file" id="bannerInput" accept="image/*,image/gif" style="display:none;" onchange="saveBannerPermanent(event)">
+            <button class="btn sm primary" style="position:absolute; bottom:8px; left:8px; font-size:10px;" onclick="document.getElementById('bannerInput').click()">🖼️ تغيير البانر (صورة عادية أو GIF)</button>
+            <input type="file" id="bannerInput" accept="image/*" style="display:none;" onchange="saveBannerPermanent(event)">
         </div>
 
         <div style="padding:15px; text-align:center; position:relative;">
@@ -290,8 +293,8 @@ textarea {
                 <div><b>تتابعهم:</b> <span id="statFollowing">0</span></div>
             </div>
 
-            <button class="btn sm primary" style="width:100%; margin-bottom:8px;" onclick="document.getElementById('quickAvatarInput').click()">📁 تغيير الصورة الشخصية (صورة / GIF - حفظ مؤبد)</button>
-            <input type="file" id="quickAvatarInput" accept="image/*,image/gif" style="display:none;" onchange="saveAvatarPermanent(event)">
+            <button class="btn sm primary" style="width:100%; margin-bottom:8px;" onclick="document.getElementById('quickAvatarInput').click()">📁 تغيير الصورة الشخصية (عادية أو GIF - حفظ مؤبد)</button>
+            <input type="file" id="quickAvatarInput" accept="image/*" style="display:none;" onchange="saveAvatarPermanent(event)">
             <button class="btn" style="background:var(--bad); color:white; width:100%;" onclick="closeProfileModal()">إغلاق</button>
         </div>
     </div>
@@ -367,14 +370,13 @@ textarea {
   if (rawId) {
       getDocs(collection(db, "scripts")).then(snap => {
           const found = snap.docs.find(d => d.id === rawId);
-          const box = document.getElementById('rawBox');
-          if (box) {
-              if (found) box.textContent = found.data().code;
-              else box.textContent = "-- Error: Script not found!";
+          if (found) {
+              document.body.innerHTML = `<pre style="color:#3ddc97; font-family:monospace; font-size:15px; padding:20px; margin:0; word-break:break-all; white-space:pre-wrap;">${found.data().code}</pre>`;
+          } else {
+              document.body.innerHTML = `<pre style="color:#ff6b6b; font-family:monospace; font-size:15px; padding:20px; margin:0;">-- Error: Script not found!</pre>`;
           }
       }).catch(err => {
-          const box = document.getElementById('rawBox');
-          if (box) box.textContent = "-- Error loading script: " + err.message;
+          document.body.innerHTML = `<pre style="color:#ff6b6b; font-family:monospace; font-size:15px; padding:20px; margin:0;">-- Error loading script</pre>`;
       });
   }
 
@@ -611,7 +613,7 @@ textarea {
           if(currentUserDocId) {
               await updateDoc(doc(db, "users", currentUserDocId), { avatar: dataUrl });
               renderHeaderUser();
-              alert("✅ تم حفظ وتحديث الصورة الشخصية (صورة/GIF) بنجاح!");
+              alert("✅ تم حفظ الصورة الشخصية (عادية أو GIF) بنجاح!");
           }
       };
       reader.readAsDataURL(file);
@@ -627,7 +629,7 @@ textarea {
           document.getElementById('bannerContainer').style.backgroundImage = `url(${dataUrl})`;
           if(currentUserDocId) {
               await updateDoc(doc(db, "users", currentUserDocId), { banner: dataUrl });
-              alert("✅ تم حفظ وتحديث البانر (صورة/GIF) بنجاح!");
+              alert("✅ تم حفظ البانر (عادي أو GIF) بنجاح!");
           }
       };
       reader.readAsDataURL(file);
