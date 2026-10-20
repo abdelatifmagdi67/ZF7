@@ -77,14 +77,6 @@ textarea {
 .accounts-modal { position: absolute; top: 55px; right: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px; width: 250px; z-index: 1000; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
 .hidden { display: none !important; }
 </style>
-<script>
-  // فحص الـ Raw فوراً في رأس الصفحة قبل تحميل أي شيء لضمان فتح الصفحة البيضاء/الخام بسرعة الصاروخ
-  const urlParams = new URLSearchParams(window.location.search);
-  const rawId = urlParams.get('raw');
-  if (rawId) {
-      document.documentElement.innerHTML = "<head><meta charset='utf-8'><title>Raw Script</title></head><body style='background:#06101e; color:#3ddc97; font-family:monospace; padding:20px; word-break:break-all; white-space:pre-wrap;'><pre id='rawBox'>جاري جلب السكريبت...</pre></body>";
-  }
-</script>
 </head>
 <body id="appBody" style="background-color: var(--bg);">
 
@@ -157,7 +149,7 @@ textarea {
 
   <div id="tabAdd">
       <div class="card">
-        <h3>🚀 نشر سكريبت جديد (نصي تعليمي)</h3>
+        <h3>🚀 نشر سكريبت جديد وتوليد رابط الـ Raw الفوري</h3>
         <label>اسم السكريبت<input type="text" id="scriptName" placeholder="مثلاً: سكريبت شرح طيران"></label>
         <label>التصنيف التعليمي
           <select id="scriptCategory">
@@ -167,8 +159,8 @@ textarea {
               <option value="ماب السرقة">ماب السرقة</option>
           </select>
         </label>
-        <label style="margin-top:15px;">كود السكريبت أو شرحه (Lua)<textarea id="scriptCode" placeholder="-- اكتب كود السكريبت أو شرحه هنا" spellcheck="false"></textarea></label>
-        <button class="btn primary" onclick="saveScriptWithAI()" style="width:100%; margin-top:10px;">🚀 نشر السكريبت</button>
+        <label style="margin-top:15px;">كود السكريبت (Lua)<textarea id="scriptCode" placeholder="-- اكتب كود السكريبت هنا" spellcheck="false"></textarea></label>
+        <button class="btn primary" onclick="saveScriptWithAI()" style="width:100%; margin-top:10px;">🚀 نشر وتوليد الـ Raw الفوري</button>
       </div>
   </div>
 
@@ -363,7 +355,7 @@ textarea {
   const DELTA_KEY = "DeltaHubSecureKey2026";
   const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239fb0cc'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>";
 
-  // كود جلب السكريبت لصفحة الـ Raw مباشرة بشكل فوري
+  // معالجة رابط الـ Raw الفوري وعرض كود السكريبت الصافي فقط في الصفحة
   const urlParams = new URLSearchParams(window.location.search);
   const rawId = urlParams.get('raw');
   if (rawId) {
@@ -487,7 +479,7 @@ textarea {
   };
 
   onAuthStateChanged(auth, async (user) => {
-      if (rawId) return; // تخطي واجهة الدخول إذا كنا في صفحة الـ Raw
+      if (rawId) return;
 
       if (user) {
           currentUser = user;
@@ -613,7 +605,7 @@ textarea {
           if(currentUserDocId) {
               await updateDoc(doc(db, "users", currentUserDocId), { avatar: dataUrl });
               renderHeaderUser();
-              alert("✅ تم حفظ وتحديث الصورة الشخصية (حفظ مؤبد) بنجاح!");
+              alert("✅ تم حفظ وتحديث الصورة الشخصية بنجاح!");
           }
       };
       reader.readAsDataURL(file);
@@ -629,7 +621,7 @@ textarea {
           document.getElementById('bannerContainer').style.backgroundImage = `url(${dataUrl})`;
           if(currentUserDocId) {
               await updateDoc(doc(db, "users", currentUserDocId), { banner: dataUrl });
-              alert("✅ تم حفظ وتحديث البانر (حفظ مؤبد) بنجاحق!");
+              alert("✅ تم حفظ وتحديث البانر بنجاح!");
           }
       };
       reader.readAsDataURL(file);
@@ -830,7 +822,7 @@ textarea {
       if(!name || !code) return alert("املأ الخانات!");
       try {
           await addDoc(collection(db, "scripts"), { name, category: cat, code, author: currentUsername, uid: currentUser.uid, createdAt: serverTimestamp() });
-          alert("✅ تم نشر السكريبت بنجاح!"); switchTab('my');
+          alert("✅ تم نشر السكريبت وتوليد رابط الـ Raw الخاص به بنجاح!"); switchTab('my');
       } catch(e) { alert("خطأ: " + e.message); }
   };
 
@@ -849,6 +841,7 @@ textarea {
   }
 
   function generateCard(s, isMine) {
+      // توليد رابط الـ Raw الفوري وجعل الـ loadstring يحمله أوتوماتيكياً
       const rawUrl = `${window.location.origin}${window.location.pathname}?raw=${s.id}`;
       const lua = `loadstring(game:HttpGet("${rawUrl}"))()`;
       const scriptLikes = allLikesCache.filter(l => l.scriptId === s.id);
@@ -872,12 +865,17 @@ textarea {
                 <img src="${authorInfo.avatar}" class="feed-avatar ${authorInfo.frameClass}">
                 <span>بواسطة: 👤 ${s.author} ${authorInfo.isVerified ? '<span class="verified-badge">✔</span>' : ''}</span>
             </div>
-            <div style="margin-top:6px;">
+            <div style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap;">
                 <button class="btn sm" style="background:${hasLiked ? 'var(--bad)' : 'var(--card)'}; color:#fff;" onclick="toggleLike('${s.id}')">❤️ ${scriptLikes.length}</button>
-                <a href="${rawUrl}" target="_blank" class="btn sm" style="background:var(--card2); color:var(--acc); border:1px solid var(--line); text-decoration:none;">📄 صفحة Raw الخام</a>
+                <a href="${rawUrl}" target="_blank" class="btn sm" style="background:var(--card2); color:var(--acc); border:1px solid var(--line); text-decoration:none;">📄 رابط الـ Raw المباشر</a>
             </div>
-            <textarea readonly style="min-height:50px; margin-top:6px; font-size:11px; color:var(--ok);">${lua}</textarea>
-            <button class="btn copy-btn" style="width:100%; margin-top:4px;" onclick="copyText(\`${lua}\`, this)">📋 نسخ السكريبت (للعبة)</button>
+            <label style="color:var(--muted); font-size:11px; margin-top:8px;">رابط الـ Raw:</label>
+            <input type="text" readonly value="${rawUrl}" style="font-size:11px; padding:6px; margin-top:0;" onclick="this.select()">
+            
+            <label style="color:var(--muted); font-size:11px; margin-top:8px;">كود التشغيل (Loadstring) جاهز للعبة:</label>
+            <textarea readonly style="min-height:50px; margin-top:0; font-size:11px; color:var(--ok);">${lua}</textarea>
+            
+            <button class="btn copy-btn" style="width:100%; margin-top:6px;" onclick="copyText(\`${lua}\`, this)">📋 نسخ كود الـ Loadstring بالكامل</button>
         </div>
       </div>`;
   }
