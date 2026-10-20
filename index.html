@@ -77,6 +77,14 @@ textarea {
 .accounts-modal { position: absolute; top: 55px; right: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px; width: 250px; z-index: 1000; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
 .hidden { display: none !important; }
 </style>
+<script>
+  // فحص الـ Raw فوراً في رأس الصفحة قبل تحميل أي شيء لضمان فتح الصفحة البيضاء/الخام بسرعة الصاروخ
+  const urlParams = new URLSearchParams(window.location.search);
+  const rawId = urlParams.get('raw');
+  if (rawId) {
+      document.documentElement.innerHTML = "<head><meta charset='utf-8'><title>Raw Script</title></head><body style='background:#06101e; color:#3ddc97; font-family:monospace; padding:20px; word-break:break-all; white-space:pre-wrap;'><pre id='rawBox'>جاري جلب السكريبت...</pre></body>";
+  }
+</script>
 </head>
 <body id="appBody" style="background-color: var(--bg);">
 
@@ -355,20 +363,20 @@ textarea {
   const DELTA_KEY = "DeltaHubSecureKey2026";
   const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239fb0cc'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>";
 
-  // فحص إذا كان الرابط يطلب صفحة Raw الخام عبر ?raw=ID
+  // كود جلب السكريبت لصفحة الـ Raw مباشرة بشكل فوري
   const urlParams = new URLSearchParams(window.location.search);
   const rawId = urlParams.get('raw');
   if (rawId) {
-      // إخفاء الموقع بالكامل وإظهار كود السكريبت الصافي فقط كصفحة خام
-      document.addEventListener("DOMContentLoaded", async () => {
-          document.body.innerHTML = "<pre id='rawOutput' style='color:#3ddc97; font-family:monospace; font-size:15px; padding:15px; margin:0; word-break:break-all; white-space:pre-wrap;'>جاري تحميل السكريبت...</pre>";
-          const snap = await getDocs(collection(db, "scripts"));
+      getDocs(collection(db, "scripts")).then(snap => {
           const found = snap.docs.find(d => d.id === rawId);
-          if (found) {
-              document.getElementById('rawOutput').textContent = found.data().code;
-          } else {
-              document.getElementById('rawOutput').textContent = "-- Error: Script not found!";
+          const box = document.getElementById('rawBox');
+          if (box) {
+              if (found) box.textContent = found.data().code;
+              else box.textContent = "-- Error: Script not found!";
           }
+      }).catch(err => {
+          const box = document.getElementById('rawBox');
+          if (box) box.textContent = "-- Error loading script: " + err.message;
       });
   }
 
@@ -479,7 +487,7 @@ textarea {
   };
 
   onAuthStateChanged(auth, async (user) => {
-      if (rawId) return; // تخطي واجهة تسجيل الدخول إذا كنا في صفحة الـ Raw الخام
+      if (rawId) return; // تخطي واجهة الدخول إذا كنا في صفحة الـ Raw
 
       if (user) {
           currentUser = user;
@@ -621,7 +629,7 @@ textarea {
           document.getElementById('bannerContainer').style.backgroundImage = `url(${dataUrl})`;
           if(currentUserDocId) {
               await updateDoc(doc(db, "users", currentUserDocId), { banner: dataUrl });
-              alert("✅ تم حفظ وتحديث البانر (حفظ مؤبد) بنجاح!");
+              alert("✅ تم حفظ وتحديث البانر (حفظ مؤبد) بنجاحق!");
           }
       };
       reader.readAsDataURL(file);
@@ -841,7 +849,6 @@ textarea {
   }
 
   function generateCard(s, isMine) {
-      // رابط الـ Raw الخاص بالسكريبت (يفتح صفحة نصية خام لوحدها بدون أي تصميم للموقع)
       const rawUrl = `${window.location.origin}${window.location.pathname}?raw=${s.id}`;
       const lua = `loadstring(game:HttpGet("${rawUrl}"))()`;
       const scriptLikes = allLikesCache.filter(l => l.scriptId === s.id);
@@ -853,7 +860,7 @@ textarea {
 
       return `
       <div class="saved-item">
-        <div class="sent-content" style="padding:14px;">
+        <div class="saved-content" style="padding:14px;">
             <div class="saved-header">
               <div><span class="saved-title">${s.name}</span> <span class="badge">${s.category}</span></div>
               <div>
@@ -905,7 +912,7 @@ textarea {
   window.closeEditModal = () => document.getElementById('editModal').classList.add('hidden');
 
   window.updateScriptFinal = async () => {
-      const id = document.getElementById('editScriptId'].value;
+      const id = document.getElementById('editScriptId').value;
       const name = document.getElementById('editScriptName').value.trim();
       const category = document.getElementById('editScriptCategory').value;
       const code = document.getElementById('editScriptCode').value;
