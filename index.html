@@ -237,13 +237,12 @@ textarea {
   </div>
 </div>
 
-<!-- Modal بروفايل ديسكورد مع بانر ثابت وصورة ثابتة -->
+<!-- Modal بروفايل ديسكورد مع دعم الصور المتحركة (GIF) للبانر والصورة الشخصية -->
 <div id="profileModal" class="modal-overlay hidden">
     <div class="modal-content" style="padding:0; overflow:hidden;">
         <div id="bannerContainer" style="width:100%; height:110px; background:#1f2d4a; background-size:cover; background-position:center; position:relative;">
-            <button class="btn sm primary" style="position:absolute; bottom:8px; left:8px; font-size:10px;" onclick="document.getElementById('bannerInput').click()">🖼️ تغيير البانر (صورة ثابتة)</button>
-            <!-- تم قصر الـ accept على الصور الثابتة فقط لمنع أي مشاكل في العرض -->
-            <input type="file" id="bannerInput" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="saveBannerPermanent(event)">
+            <button class="btn sm primary" style="position:absolute; bottom:8px; left:8px; font-size:10px;" onclick="document.getElementById('bannerInput').click()">🖼️ تغيير البانر (صورة / GIF)</button>
+            <input type="file" id="bannerInput" accept="image/*,image/gif" style="display:none;" onchange="saveBannerPermanent(event)">
         </div>
 
         <div style="padding:15px; text-align:center; position:relative;">
@@ -291,8 +290,8 @@ textarea {
                 <div><b>تتابعهم:</b> <span id="statFollowing">0</span></div>
             </div>
 
-            <button class="btn sm primary" style="width:100%; margin-bottom:8px;" onclick="document.getElementById('quickAvatarInput').click()">📁 تغيير الصورة الشخصية (صورة ثابتة - حفظ مؤبد)</button>
-            <input type="file" id="quickAvatarInput" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="saveAvatarPermanent(event)">
+            <button class="btn sm primary" style="width:100%; margin-bottom:8px;" onclick="document.getElementById('quickAvatarInput').click()">📁 تغيير الصورة الشخصية (صورة / GIF - حفظ مؤبد)</button>
+            <input type="file" id="quickAvatarInput" accept="image/*,image/gif" style="display:none;" onchange="saveAvatarPermanent(event)">
             <button class="btn" style="background:var(--bad); color:white; width:100%;" onclick="closeProfileModal()">إغلاق</button>
         </div>
     </div>
@@ -612,7 +611,7 @@ textarea {
           if(currentUserDocId) {
               await updateDoc(doc(db, "users", currentUserDocId), { avatar: dataUrl });
               renderHeaderUser();
-              alert("✅ تم حفظ وتحديث الصورة الشخصية بنجاح!");
+              alert("✅ تم حفظ وتحديث الصورة الشخصية (صورة/GIF) بنجاح!");
           }
       };
       reader.readAsDataURL(file);
@@ -628,26 +627,11 @@ textarea {
           document.getElementById('bannerContainer').style.backgroundImage = `url(${dataUrl})`;
           if(currentUserDocId) {
               await updateDoc(doc(db, "users", currentUserDocId), { banner: dataUrl });
-              alert("✅ تم حفظ وتحديث البانر الثابت بنجاح!");
+              alert("✅ تم حفظ وتحديث البانر (صورة/GIF) بنجاح!");
           }
       };
       reader.readAsDataURL(file);
   };
-
-  function renderHeaderUser() {
-      const uInfo = getUserProfileInfo(currentUsername);
-      const lowerName = currentUsername.toLowerCase();
-      const isSuperAdmin = lowerName === 'super admin' || lowerName === 'admin' || lowerName === 'superadmin';
-
-      document.getElementById('userHeaderDisplay').innerHTML = `
-          <div style="display:flex; align-items:center; gap:8px;">
-              <img src="${uInfo.avatar}" class="user-avatar ${uInfo.frameClass}" onclick="openProfileModal()" title="بروفايلك الأسطوري">
-              <span class="user-badge-box ${isSuperAdmin ? 'glow-superadmin' : ''}" onclick="openProfileModal()">
-                  👤 ${currentUsername} ${uInfo.isVerified ? '<span class="verified-badge" title="حساب موثق من الذكاء الاصطناعي">✔</span>' : ''}
-              </span>
-          </div>
-      `;
-  }
 
   window.switchTab = (tab) => {
       ['add', 'tok', 'obf', 'my', 'comm', 'chat'].forEach(t => {
