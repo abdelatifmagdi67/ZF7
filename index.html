@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>دلتا - مجتمع السكريبتات</title>
+<title>دلتا - مجتمع السكريبتات والتحكم</title>
 <style>
 :root{--bg:#0b1220;--card:#111c33;--card2:#16233d;--text:#e8eefc;--muted:#9fb0cc;--line:#1f2d4a;--acc:#4cc9f0;--acc2:#b388ff;--ok:#3ddc97;--bad:#ff6b6b;--r:14px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -21,7 +21,7 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
 .btn:active{transform:scale(.95)}
 .btn.copy-btn { background: #06101e; color: var(--acc); border: 1px solid var(--line); }
 .btn.copy-btn.copied { background: var(--ok); color: #071019; }
-.btn-nav { display: flex; gap: 10px; margin-bottom: 15px; overflow-x:auto; }
+.btn-nav { display: flex; gap: 8px; margin-bottom: 15px; overflow-x:auto; }
 .btn-nav button { flex: 1; padding: 10px; background: var(--card2); border: 1px solid var(--line); color: var(--text); border-radius: 8px; cursor: pointer; font-weight: bold; white-space:nowrap; }
 .btn-nav button.active { background: var(--acc); color: #071019; border-color: var(--acc); }
 
@@ -43,6 +43,17 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
 .flex-row { display: flex; gap: 8px; align-items: center; margin-top: 5px; }
 .flex-row input { margin-top: 0; flex: 1; }
 
+/* الدردشة */
+.chat-container { display: flex; flex-direction: column; height: 400px; background: var(--card2); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+.msg-bubble { max-width: 75%; padding: 10px 14px; border-radius: 12px; font-size: 14px; word-break: break-word; }
+.msg-bubble.sent { background: var(--acc); color: #071019; align-self: flex-end; border-bottom-left-radius: 2px; }
+.msg-bubble.received { background: #1c2c4c; color: var(--text); align-self: flex-start; border-bottom-right-radius: 2px; }
+.msg-bubble img { max-width: 100%; border-radius: 8px; margin-top: 5px; display: block; }
+.chat-input-area { display: flex; padding: 10px; background: var(--card); border-top: 1px solid var(--line); gap: 8px; align-items: center; }
+.chat-input-area input { margin-top: 0; flex: 1; }
+.user-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--card2); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 8px; }
+
 #imagePreview { display:none; width:100%; height:120px; object-fit:cover; border-radius:8px; margin-top:10px; border:1px solid var(--line); }
 .raw-view { background: #000000; color: #00ff66; margin: 0; padding: 20px; font-family: monospace; font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
 
@@ -58,14 +69,14 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
     <div id="errorMsg" class="error-msg"></div>
     
     <div id="loginForm">
-        <input type="text" id="loginUser" placeholder="اسم المستخدم">
-        <input type="password" id="loginPass" placeholder="كلمة المرور">
+        <input type="text" id="loginUser" placeholder="اسم المستخدم (اكتب admin للأدمن)">
+        <input type="password" id="loginPass" placeholder="كلمة المرور القوية">
         <button class="btn primary" style="width:100%" onclick="doLogin()">تسجيل الدخول</button>
         <button class="toggle-btn" onclick="toggleAuth('register')">معندكش حساب؟ سجل من هنا</button>
     </div>
 
     <div id="registerForm" class="hidden">
-        <input type="text" id="regUser" placeholder="اسم المستخدم (لا يتغير)">
+        <input type="text" id="regUser" placeholder="اسم المستخدم (اكتب admin هنا أولاً)">
         <input type="password" id="regPass" placeholder="كلمة المرور (6 حروف على الأقل)">
         <button class="btn primary" style="width:100%" onclick="doRegister()">إنشاء حساب</button>
         <button class="toggle-btn" onclick="toggleAuth('login')">عندك حساب؟ سجل دخول</button>
@@ -75,7 +86,7 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
 <!-- الموقع الأساسي -->
 <div class="wrap" id="mainUI">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-      <h2 style="margin:0;">دلتا</h2>
+      <h2 style="margin:0;">دلتا <span id="adminBadge" style="font-size:12px; background:var(--bad); color:#fff; padding:2px 6px; border-radius:4px; display:none;">أدمن عام</span></h2>
       <div>
           <span id="userDisplay" style="font-weight:bold; color:var(--acc2);"></span>
           <button class="btn sm" onclick="doLogout()" style="background:transparent;color:var(--bad);border:1px solid var(--bad);">خروج</button>
@@ -87,6 +98,7 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
       <button id="navObf" onclick="switchTab('obf')">التمويه</button>
       <button id="navMy" onclick="switchTab('my')">سكريبتاتي</button>
       <button id="navComm" onclick="switchTab('comm')">المجتمع</button>
+      <button id="navChat" onclick="switchTab('chat')">المراسلات</button>
   </div>
 
   <!-- إضافة سكريبت -->
@@ -120,7 +132,7 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
   <div id="tabObf" class="hidden">
       <div class="card">
           <h3>تمويه السكريبت (Delta Obfuscator)</h3>
-          <p style="font-size:12px;color:var(--muted);margin-bottom:15px;">ضع كود Lua في الخانة العلوية، ثم انقر على "تمويه السكريبت" لإنشاء كود مشفر بمفتاح محمي خافِ تماماً لأجهزة دلتا.</p>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:15px;">ضع كود Lua في الأعلى، ثم انقر على "تمويه السكريبت" ليظهر لك الكود المشفر محلياً (بدون روابط خارجية).</p>
           
           <label>الكود العادي (فوق)</label>
           <textarea id="plainCode" placeholder="-- اكتب الكود هنا --" spellcheck="false"></textarea>
@@ -146,13 +158,38 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
       </div>
       <div id="communityList"><p style="color:var(--muted);text-align:center;">جاري التحميل...</p></div>
   </div>
+
+  <!-- المراسلات وإدارة الحسابات (للأدمن) -->
+  <div id="tabChat" class="hidden">
+      <div class="card">
+          <h3>البحث عن الأعضاء وحظرهم والمراسلة</h3>
+          <input type="text" id="userSearchInput" placeholder="ابحث عن اسم المستخدم..." oninput="searchUsers()" style="margin-bottom:12px;">
+          <div id="userSearchResults" style="margin-bottom:15px;"></div>
+
+          <div id="activeChatBox" class="hidden">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                  <span id="chatWithTitle" style="font-weight:bold; color:var(--acc);">المحادثة مع: -</span>
+                  <button class="btn sm" onclick="closeChat()" style="background:var(--bad); color:white;">إغلاق الشات</button>
+              </div>
+              <div class="chat-container">
+                  <div class="chat-messages" id="chatMessages"></div>
+                  <div class="chat-input-area">
+                      <input type="text" id="chatMsgInput" placeholder="اكتب رسالتك...">
+                      <input type="file" id="chatImgInput" accept="image/*" style="display:none;" onchange="sendChatImage(event)">
+                      <button class="btn sm primary" onclick="document.getElementById('chatImgInput').click()">📷</button>
+                      <button class="btn sm primary" onclick="sendChatMessage()">إرسال</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
 </div>
 
-<!-- أكواد Firebase ومفتاحك الجديد -->
+<!-- أكواد Firebase والتطبيق -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, query, where, getDocs, onSnapshot, deleteDoc, doc, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, query, where, getDocs, onSnapshot, deleteDoc, doc, setDoc, getDoc, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyD2DjPpzfS8QT9cJoTdyzSMuwcJfN8Ulrw",
@@ -170,8 +207,9 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
   let currentUser = null;
   let currentUsername = "";
   let allScriptsCache = [];
+  let activeChatUser = null;
+  let chatUnsubscribe = null;
 
-  // مفتاح التشفير الخاص بدلتـا
   const DELTA_KEY = "DeltaHubSecureKey2026";
 
   window.encodeCode = (str) => btoa(unescape(encodeURIComponent(str)));
@@ -224,7 +262,7 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
       return images[category] || images["عام"];
   }
 
-  // 🔐 دالة التمويه والتشفير المخصص لـ Delta
+  // التمويه المحلي
   window.obfuscateCode = () => {
       const plain = document.getElementById('plainCode').value;
       if(!plain) return alert("اكتب الكود الأول!");
@@ -237,19 +275,133 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
           encryptedBytes.push(charCode ^ keyChar);
       }
       
-      const encryptedHex = encryptedBytes.map(b => b.toString(16).padStart(2, '0')).join('');
-      const link = window.location.origin + window.location.pathname + '?raw=' + encryptedHex;
-      
-      const luaScript = `local k="${DELTA_KEY}";local h=game:HttpGet("${link}");local function d(hex) local b={} for i=1,#hex,2 do table.insert(b,tonumber(hex:sub(i,i+1),16)) end return b end;local eb=d(h);local s="";for i=1,#eb do local kc=string.byte(k,(i-1)%#k+1);s=s..string.char(bit32.bxor(eb[i],kc)) end;assert(loadstring(s))()`;
+      const byteArrayStr = encryptedBytes.join(',');
+      const luaScript = `local _k="${DELTA_KEY}";local _e={${byteArrayStr}};local _s="";for i=1,#_e do local _kc=string.byte(_k,(i-1)%#_k+1);_s=_s..string.char(bit32.bxor(_e[i],_kc)) end;assert(loadstring(_s))()`;
       
       document.getElementById('encryptedCode').value = luaScript;
   };
 
+  // البحث عن المستخدمين وإمكانية الحظر (للأدمن)
+  window.searchUsers = async () => {
+      const val = document.getElementById('userSearchInput').value.trim().toLowerCase();
+      const resultsDiv = document.getElementById('userSearchResults');
+      if(!val) { resultsDiv.innerHTML = ''; return; }
+
+      const q = query(collection(db, "users"));
+      const snap = await getDocs(q);
+      const users = snap.docs.map(doc => doc.data()).filter(u => u.username.toLowerCase().includes(val) && u.username !== currentUsername);
+
+      const isAdmin = (currentUsername === 'admin');
+
+      resultsDiv.innerHTML = users.length ? users.map(u => `
+          <div class="user-row">
+              <span>👤 ${u.username}</span>
+              <div>
+                  <button class="btn sm primary" onclick="startChat('${u.username}')">مراسلة</button>
+                  ${isAdmin ? `<button class="btn sm" style="background:var(--bad); color:#fff;" onclick="banUser('${u.username}')">حظر</button>` : ''}
+              </div>
+          </div>
+      `).join('') : '<p style="color:var(--muted);font-size:13px;">لا يوجد مستخدم بهذا الاسم.</p>';
+  };
+
+  // وظيفة الحظر للأدمن
+  window.banUser = async (usernameToBan) => {
+      if(!confirm(`هل أنت متأكد من حظر المستخدم ${usernameToBan} نهائياً من الموقع؟`)) return;
+      try {
+          await setDoc(doc(db, "banned_users", usernameToBan.toLowerCase()), {
+              username: usernameToBan,
+              bannedAt: serverTimestamp()
+          });
+          alert(`تم حظر المستخدم ${usernameToBan} بنجاح!`);
+      } catch(e) {
+          alert("خطأ أثناء الحظر: " + e.message);
+      }
+  };
+
+  // فتح المحادثة الخاصة
+  window.startChat = (targetUsername) => {
+      activeChatUser = targetUsername;
+      document.getElementById('chatWithTitle').textContent = 'المحادثة مع: ' + targetUsername;
+      document.getElementById('activeChatBox').classList.remove('hidden');
+      loadMessages();
+  };
+
+  window.closeChat = () => {
+      activeChatUser = null;
+      document.getElementById('activeChatBox').classList.add('hidden');
+      if(chatUnsubscribe) chatUnsubscribe();
+  };
+
+  window.sendChatMessage = async () => {
+      const txt = document.getElementById('chatMsgInput').value.trim();
+      if(!txt || !activeChatUser) return;
+      document.getElementById('chatMsgInput').value = '';
+
+      await addDoc(collection(db, "messages"), {
+          sender: currentUsername,
+          receiver: activeChatUser,
+          text: txt,
+          image: "",
+          createdAt: serverTimestamp()
+      });
+  };
+
+  window.sendChatImage = (event) => {
+      const file = event.target.files[0];
+      if(!file || !activeChatUser) return;
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+          const img = new Image();
+          img.onload = async () => {
+              const canvas = document.createElement('canvas');
+              canvas.width = 400; canvas.height = (img.height * 400) / img.width;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              const dataUrl = canvas.toDataURL('image/jpeg', 0.5);
+
+              await addDoc(collection(db, "messages"), {
+                  sender: currentUsername,
+                  receiver: activeChatUser,
+                  text: "",
+                  image: dataUrl,
+                  createdAt: serverTimestamp()
+              });
+          };
+          img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+  };
+
+  function loadMessages() {
+      if(chatUnsubscribe) chatUnsubscribe();
+      const q = query(collection(db, "messages"), orderBy("createdAt", "asc"));
+      chatUnsubscribe = onSnapshot(q, (snapshot) => {
+          const msgs = snapshot.docs.map(doc => doc.data()).filter(m => 
+              (m.sender === currentUsername && m.receiver === activeChatUser) ||
+              (m.sender === activeChatUser && m.receiver === currentUsername)
+          );
+          
+          const chatMsgsDiv = document.getElementById('chatMessages');
+          chatMsgsDiv.innerHTML = msgs.length ? msgs.map(m => `
+              <div class="msg-bubble ${m.sender === currentUsername ? 'sent' : 'received'}">
+                  ${m.text ? `<div>${m.text}</div>` : ''}
+                  ${m.image ? `<img src="${m.image}">` : ''}
+              </div>
+          `).join('') : '<p style="color:var(--muted);text-align:center;font-size:13px;">لا توجد رسائل بعد. ابدأ الكلام الآن!</p>';
+          chatMsgsDiv.scrollTop = chatMsgsDiv.scrollHeight;
+      });
+  }
+
   // معالجة فتح رابط الـ RAW
   if (new URLSearchParams(window.location.search).has('raw')) {
-      const hex = new URLSearchParams(window.location.search).get('raw');
-      document.body.innerHTML = hex;
-      document.body.className = 'raw-view';
+      document.body.innerHTML = '<div style="color:#0f0;font-family:monospace;padding:20px;font-size:20px;">[Delta] Loading script...</div>';
+      setTimeout(() => {
+          try {
+              const code = window.decodeCode(new URLSearchParams(window.location.search).get('raw'));
+              document.body.innerHTML = '<pre>' + code.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;") + '</pre>';
+              document.body.className = 'raw-view';
+          } catch(e) { document.body.innerHTML = 'Error'; }
+      }, 600);
   }
 
   window.doRegister = async () => {
@@ -266,6 +418,8 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
           const fakeEmail = username.toLowerCase() + "@delta-hub.com";
           const userCredential = await createUserWithEmailAndPassword(auth, fakeEmail, password);
           await addDoc(collection(db, "users"), { uid: userCredential.user.uid, username: username });
+          alert("تم إنشاء الحساب بنجاح! سجل دخولك الآن.");
+          toggleAuth('login');
       } catch (error) { window.showError("خطأ: " + error.message); }
   };
 
@@ -275,6 +429,13 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
       if(!username || !password) return window.showError("املا كل الخانات!");
 
       try {
+          // التحقق من الحظر قبل تسجيل الدخول
+          const banRef = doc(db, "banned_users", username.toLowerCase());
+          const banSnap = await getDoc(banRef);
+          if (banSnap.exists()) {
+              return window.showError("❌ هذا الحساب محظور من دخول الموقع!");
+          }
+
           const fakeEmail = username.toLowerCase() + "@delta-hub.com";
           await signInWithEmailAndPassword(auth, fakeEmail, password);
       } catch (error) {
@@ -293,20 +454,36 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
           const snap = await getDocs(q);
           if(!snap.empty) {
               currentUsername = snap.docs[0].data().username;
+
+              // التحقق الفوري من الحظر
+              const banSnap = await getDoc(doc(db, "banned_users", currentUsername.toLowerCase()));
+              if (banSnap.exists()) {
+                  alert("⚠️ حسابك محظور من الموقع!");
+                  signOut(auth);
+                  return;
+              }
+
               document.getElementById('userDisplay').textContent = '👤 ' + currentUsername;
+              
+              // إظهار شارة الأدمن لو اسم المستخدم admin
+              if(currentUsername === 'admin') {
+                  document.getElementById('adminBadge').style.display = 'inline-block';
+              }
+
               document.getElementById('authScreen').classList.add('hidden');
               document.querySelector('.wrap').style.display = 'block';
               loadScripts();
           }
       } else {
           currentUser = null; currentUsername = "";
+          document.getElementById('adminBadge').style.display = 'none';
           document.getElementById('authScreen').classList.remove('hidden');
           document.querySelector('.wrap').style.display = 'none';
       }
   });
 
   window.switchTab = (tab) => {
-      ['add', 'obf', 'my', 'comm'].forEach(t => {
+      ['add', 'obf', 'my', 'comm', 'chat'].forEach(t => {
           document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('hidden');
           document.getElementById('nav' + t.charAt(0).toUpperCase() + t.slice(1)).classList.remove('active');
       });
@@ -367,13 +544,17 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
       const lua = `loadstring(game:HttpGet("${link}"))()`;
       const displayImage = s.image ? s.image : getDefaultImage(s.category);
       
+      // الأدمن يقدر يحذف أي منشور (isMine أو حساب admin)
+      const isAdmin = (currentUsername === 'admin');
+      const canDelete = isMine || isAdmin;
+
       return `
       <div class="saved-item">
         <img src="${displayImage}" class="saved-img" alt="${s.name}">
         <div class="saved-content">
             <div class="saved-header">
               <div><span class="saved-title">${s.name}</span> <span class="badge">${s.category}</span></div>
-              ${isMine ? `<button class="btn sm" style="background:var(--bad);color:white;" onclick="deleteScript('${s.id}')">حذف</button>` : ''}
+              ${canDelete ? `<button class="btn sm" style="background:var(--bad);color:white;" onclick="deleteScript('${s.id}')">حذف</button>` : ''}
             </div>
             <div class="author">بواسطة: ${s.author}</div>
             <div class="flex-row" style="margin-top:12px;">
@@ -385,7 +566,10 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
   }
 
   window.deleteScript = async (id) => {
-      if(confirm('متأكد من الحذف؟')) await deleteDoc(doc(doc(db, "scripts", id)));
+      if(confirm('متأكد من حذف هذا السكريبت؟')) {
+          await deleteDoc(doc(db, "scripts", id));
+          alert("تم الحذف بنجاح!");
+      }
   };
 
   window.filterCommunity = () => {
