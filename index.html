@@ -43,10 +43,7 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
 .flex-row { display: flex; gap: 8px; align-items: center; margin-top: 5px; }
 .flex-row input { margin-top: 0; flex: 1; }
 
-/* معاينة الصورة */
 #imagePreview { display:none; width:100%; height:120px; object-fit:cover; border-radius:8px; margin-top:10px; border:1px solid var(--line); }
-
-/* صفحة السكريبت البيضا */
 .raw-view { background: #ffffff; color: #000000; margin: 0; padding: 20px; font-family: monospace; font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
 
 @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -151,20 +148,21 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
   </div>
 </div>
 
-<!-- أكواد Firebase -->
+<!-- أكواد Firebase ومفتاحك جاهز -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
   import { getFirestore, collection, addDoc, query, where, getDocs, onSnapshot, deleteDoc, doc, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-  // ⚠️⚠️ ضع المفتاح بتاعك هنا مكان الكلام ده ⚠️⚠️
+  // ✅ المفتاح بتاعك اتحط هنا أوتوماتيك
   const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyArQz3XCAZPXguYGH_ku07cSRYtCTCzbVo",
+    authDomain: "deltarx-dd044.firebaseapp.com",
+    projectId: "deltarx-dd044",
+    storageBucket: "deltarx-dd044.firebasestorage.app",
+    messagingSenderId: "447540769159",
+    appId: "1:447540769159:web:c6a0e5b1fad8f798b1a322",
+    measurementId: "G-9TZSXH3K6G"
   };
 
   const app = initializeApp(firebaseConfig);
@@ -175,14 +173,13 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
   let currentUsername = "";
   let allScriptsCache = [];
 
-  // دوال مساعدة
   window.encodeCode = (str) => btoa(unescape(encodeURIComponent(str)));
   window.decodeCode = (str) => decodeURIComponent(escape(atob(str)));
   
   window.showError = (msg) => {
       const err = document.getElementById('errorMsg');
       err.textContent = msg; err.style.display = 'block';
-      setTimeout(() => { err.style.display = 'none'; }, 4000);
+      setTimeout(() => { err.style.display = 'none'; }, 5000);
   };
 
   window.toggleAuth = (type) => {
@@ -191,28 +188,22 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
       document.getElementById('errorMsg').style.display = 'none';
   };
 
-  // ====== معالجة الصورة وضغطها ======
   window.handleImageUpload = (event) => {
       const file = event.target.files[0];
       if (!file) return;
-      
       const reader = new FileReader();
       reader.onload = (e) => {
           const img = new Image();
           img.onload = () => {
               const canvas = document.createElement('canvas');
-              const MAX_WIDTH = 500; // عرض مناسب
+              const MAX_WIDTH = 500; 
               const scaleSize = MAX_WIDTH / img.width;
               canvas.width = MAX_WIDTH;
               canvas.height = img.height * scaleSize;
-              
               const ctx = canvas.getContext('2d');
               ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-              
-              // ضغط الصورة لتكون صغيرة الحجم (JPEG 60%)
               const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
               document.getElementById('scriptImageData').value = dataUrl;
-              
               const preview = document.getElementById('imagePreview');
               preview.src = dataUrl;
               preview.style.display = 'block';
@@ -222,7 +213,6 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
       reader.readAsDataURL(file);
   };
 
-  // صور افتراضية حسب التصنيف (لو مرفعش صورة)
   function getDefaultImage(category) {
       const images = {
           "MM2": "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=500&q=80",
@@ -233,23 +223,17 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
       return images[category] || images["عام"];
   }
 
-  // ====== أداة التمويه ======
   window.obfuscateCode = () => {
       const plain = document.getElementById('plainCode').value;
       if(!plain) return alert("اكتب الكود الأول!");
-      
       const utf8 = new TextEncoder().encode(plain);
       const chunks = new Array(utf8.length);
-      
       for (let i = 0; i < utf8.length; i++) {
           chunks[i] = "\\x" + utf8[i].toString(16).padStart(2, '0');
       }
-      
-      const obfuscated = `loadstring("${chunks.join('')}")()`;
-      document.getElementById('encryptedCode').value = obfuscated;
+      document.getElementById('encryptedCode').value = `loadstring("${chunks.join('')}")()`;
   };
 
-  // ====== تشغيل صفحة السكريبت (Raw) ======
   if (new URLSearchParams(window.location.search).has('raw')) {
       document.body.innerHTML = '<div style="color:#0f0;font-family:monospace;padding:20px;font-size:20px;">[Delta] Loading script...</div>';
       setTimeout(() => {
@@ -261,7 +245,6 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
       }, 600);
   }
 
-  // ====== إنشاء حساب ======
   window.doRegister = async () => {
       const username = document.getElementById('regUser').value.trim();
       const password = document.getElementById('regPass').value;
@@ -279,7 +262,6 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
       } catch (error) { window.showError("خطأ: " + error.message); }
   };
 
-  // ====== تسجيل الدخول ======
   window.doLogin = async () => {
       const username = document.getElementById('loginUser').value.trim();
       const password = document.getElementById('loginPass').value;
@@ -297,7 +279,6 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
 
   window.doLogout = () => signOut(auth);
 
-  // ====== متابعة حالة المستخدم ======
   onAuthStateChanged(auth, async (user) => {
       if (user) {
           currentUser = user;
@@ -327,7 +308,6 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
       document.getElementById('nav' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
   };
 
-  // ====== نشر السكريبت ======
   window.saveScript = async () => {
       const name = document.getElementById('scriptName').value.trim();
       const cat = document.getElementById('scriptCategory').value;
@@ -341,20 +321,14 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
 
       try {
           await addDoc(collection(db, "scripts"), {
-              name: name, 
-              category: cat, 
-              code: code, 
-              author: currentUsername,
-              uid: currentUser.uid, 
-              image: imgData || "", // لو مفيش صورة مرفوعة، هيفضل فاضي ونستخدم الصورة الافتراضية
-              createdAt: serverTimestamp()
+              name: name, category: cat, code: code, author: currentUsername,
+              uid: currentUser.uid, image: imgData || "", createdAt: serverTimestamp()
           });
           document.getElementById('scriptName').value = '';
           document.getElementById('scriptCode').value = '';
           document.getElementById('scriptImage').value = '';
           document.getElementById('scriptImageData').value = '';
           document.getElementById('imagePreview').style.display = 'none';
-          
           alert("تم النشر بنجاح!");
           switchTab('my');
       } catch(e) { alert("فشل النشر: " + e.message); }
@@ -395,7 +369,6 @@ textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-sp
               ${isMine ? `<button class="btn sm" style="background:var(--bad);color:white;" onclick="deleteScript('${s.id}')">حذف</button>` : ''}
             </div>
             <div class="author">بواسطة: ${s.author}</div>
-            
             <div class="flex-row" style="margin-top:12px;">
                 <input type="text" class="link-out" value="${lua}" readonly>
                 <button class="btn copy-btn" onclick="copyText('${lua}', this)">📋 نسخ</button>
