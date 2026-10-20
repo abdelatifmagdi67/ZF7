@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>دلتا - مجتمع السكريبتات</title>
+<style>
+:root{--bg:#0b1220;--card:#111c33;--card2:#16233d;--text:#e8eefc;--muted:#9fb0cc;--line:#1f2d4a;--acc:#4cc9f0;--acc2:#b388ff;--ok:#3ddc97;--bad:#ff6b6b;--r:14px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:system-ui,"Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;margin:0;padding:20px 14px;overflow-x:hidden;}
+.wrap{max-width:800px;margin:0 auto;display:none;}
+h2{color:var(--acc);margin-top:0;text-align:center;}
+h3{font-size:16px;margin:20px 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:16px; animation: slideUp 0.4s ease backwards;}
+label{display:block;margin-bottom:10px;font-size:13px;color:var(--muted);font-weight:bold}
+input[type=text],input[type=email],input[type=password],textarea,select{width:100%;padding:12px;border-radius:8px;border:1px solid var(--line);background:#06101e;color:var(--text);font-family:monospace;font-size:14px;margin-top:6px;transition:0.3s;}
+textarea{min-height:150px;resize:vertical;direction:ltr;text-align:left;white-space:pre;}
+.btn{padding:10px 16px;border-radius:8px;border:none;font-weight:bold;cursor:pointer;font-size:14px;margin-bottom:5px;display:inline-block;text-decoration:none;transition:0.3s;text-align:center;}
+.btn.primary{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#071019}
+.btn.sm{padding:6px 10px;font-size:12px;border-radius:6px}
+.btn:active{transform:scale(.95)}
+.btn.copy-btn { background: #06101e; color: var(--acc); border: 1px solid var(--line); }
+.btn.copy-btn.copied { background: var(--ok); color: #071019; }
+.btn-nav { display: flex; gap: 10px; margin-bottom: 15px; overflow-x:auto; }
+.btn-nav button { flex: 1; padding: 10px; background: var(--card2); border: 1px solid var(--line); color: var(--text); border-radius: 8px; cursor: pointer; font-weight: bold; white-space:nowrap; }
+.btn-nav button.active { background: var(--acc); color: #071019; border-color: var(--acc); }
+
+/* شاشات الدخول */
+#authScreen { max-width: 400px; margin: 50px auto; background: var(--card); padding: 20px; border-radius: var(--r); border: 1px solid var(--line); text-align: center; }
+#authScreen input { margin-bottom: 10px; }
+#authScreen .toggle-btn { background: none; border: none; color: var(--acc); cursor: pointer; font-size: 13px; margin-top: 10px; text-decoration: underline; }
+.error-msg { color: var(--bad); font-size: 13px; text-align: center; margin-bottom: 10px; display: none; }
+
+/* السكريبتات */
+.saved-item{border:1px solid var(--line);border-radius:10px;margin-bottom:15px;background:var(--card2); overflow:hidden;}
+.saved-img { width:100%; height:140px; object-fit:cover; border-bottom:1px solid var(--line); background:#000; }
+.saved-content { padding:12px; }
+.saved-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:10px}
+.saved-title{font-weight:bold;font-size:16px;color:var(--acc)}
+.badge { font-size: 11px; background: rgba(179,136,255,0.2); color: var(--acc2); padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+.author { font-size: 12px; color: var(--muted); margin-top: 5px; }
+.link-out{width:100%;padding:10px;border-radius:6px;border:1px solid var(--line);background:#06101e;color:var(--ok);font-family:monospace;font-size:12px;direction:ltr;text-align:left;margin-top:5px;}
+.flex-row { display: flex; gap: 8px; align-items: center; margin-top: 5px; }
+.flex-row input { margin-top: 0; flex: 1; }
+
+/* معاينة الصورة */
+#imagePreview { display:none; width:100%; height:120px; object-fit:cover; border-radius:8px; margin-top:10px; border:1px solid var(--line); }
+
+/* صفحة السكريبت البيضا */
+.raw-view { background: #ffffff; color: #000000; margin: 0; padding: 20px; font-family: monospace; font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+
+@keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- شاشة تسجيل الدخول -->
+<div id="authScreen" class="hidden">
+    <h2>مجتمع دلتا</h2>
+    <div id="errorMsg" class="error-msg"></div>
+    
+    <div id="loginForm">
+        <input type="text" id="loginUser" placeholder="اسم المستخدم">
+        <input type="password" id="loginPass" placeholder="كلمة المرور">
+        <button class="btn primary" style="width:100%" onclick="doLogin()">تسجيل الدخول</button>
+        <button class="toggle-btn" onclick="toggleAuth('register')">معندكش حساب؟ سجل من هنا</button>
+    </div>
+
+    <div id="registerForm" class="hidden">
+        <input type="text" id="regUser" placeholder="اسم المستخدم (لا يتغير)">
+        <input type="password" id="regPass" placeholder="كلمة المرور (6 حروف على الأقل)">
+        <button class="btn primary" style="width:100%" onclick="doRegister()">إنشاء حساب</button>
+        <button class="toggle-btn" onclick="toggleAuth('login')">عندك حساب؟ سجل دخول</button>
+    </div>
+</div>
+
+<!-- الموقع الأساسي -->
+<div class="wrap" id="mainUI">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+      <h2 style="margin:0;">دلتا</h2>
+      <div>
+          <span id="userDisplay" style="font-weight:bold; color:var(--acc2);"></span>
+          <button class="btn sm" onclick="doLogout()" style="background:transparent;color:var(--bad);border:1px solid var(--bad);">خروج</button>
+      </div>
+  </div>
+
+  <div class="btn-nav">
+      <button id="navAdd" class="active" onclick="switchTab('add')">نشر سكريبت</button>
+      <button id="navObf" onclick="switchTab('obf')">التمويه</button>
+      <button id="navMy" onclick="switchTab('my')">سكريبتاتي</button>
+      <button id="navComm" onclick="switchTab('comm')">المجتمع</button>
+  </div>
+
+  <!-- إضافة سكريبت -->
+  <div id="tabAdd">
+      <div class="card">
+        <label>اسم السكريبت
+          <input type="text" id="scriptName" placeholder="مثلاً: سكريبت طيران">
+        </label>
+        <label>التصنيف
+          <select id="scriptCategory">
+              <option value="عام">عام</option>
+              <option value="MM2">MM2 (ميردر ميستري)</option>
+              <option value="ماب السرقة">ماب السرقة</option>
+              <option value="تايم بومب">تايم بومب</option>
+          </select>
+        </label>
+        <label>صورة السكريبت (من معرض الصور)
+          <input type="file" id="scriptImage" accept="image/*" onchange="handleImageUpload(event)" style="padding:10px; background:var(--card2); border:1px dashed var(--acc);">
+          <input type="hidden" id="scriptImageData">
+        </label>
+        <img id="imagePreview" src="" alt="معاينة الصورة">
+        
+        <label style="margin-top:15px;">كود السكريبت (Lua)
+          <textarea id="scriptCode" placeholder="-- الزق الكود هنا" spellcheck="false"></textarea>
+        </label>
+        <button class="btn primary" id="saveBtn" onclick="saveScript()" style="width:100%; margin-top:10px;">🚀 نشر السكريبت</button>
+      </div>
+  </div>
+
+  <!-- أداة التمويه المستقلة -->
+  <div id="tabObf" class="hidden">
+      <div class="card">
+          <h3>تمويه السكريبت (Obfuscator)</h3>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:15px;">حط الكود العادي فوق، ودوس تمويه عشان يطلعلك الكود المموه تحت. الأداة دي سريعة جداً وبتستحمل أي حجم نص.</p>
+          
+          <label>الكود العادي (فوق)</label>
+          <textarea id="plainCode" placeholder="-- اكتب الكود هنا --" spellcheck="false"></textarea>
+          
+          <button class="btn primary" style="width:100%; margin-top:10px; font-size:16px;" onclick="obfuscateCode()">🔐 تمويه السكريبت</button>
+          
+          <label style="margin-top:20px;">الكود المموه (تحت)</label>
+          <textarea id="encryptedCode" placeholder="-- الكود المموه هيظهر هنا --" readonly spellcheck="false"></textarea>
+          
+          <button class="btn copy-btn" style="width:100%; margin-top:5px;" onclick="copyText(document.getElementById('encryptedCode').value, this)">📋 نسخ الكود المموه</button>
+      </div>
+  </div>
+
+  <!-- سكريبتاتي -->
+  <div id="tabMy" class="hidden">
+      <div id="myList"><p style="color:var(--muted);text-align:center;">جاري التحميل...</p></div>
+  </div>
+
+  <!-- المجتمع -->
+  <div id="tabComm" class="hidden">
+      <div class="card" style="padding:10px;">
+          <input type="text" id="searchInput" placeholder="ابحث باسم السكريبت..." oninput="filterCommunity()">
+      </div>
+      <div id="communityList"><p style="color:var(--muted);text-align:center;">جاري التحميل...</p></div>
+  </div>
+</div>
+
+<!-- أكواد Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, query, where, getDocs, onSnapshot, deleteDoc, doc, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  // ⚠️⚠️ ضع المفتاح بتاعك هنا مكان الكلام ده ⚠️⚠️
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null;
+  let currentUsername = "";
+  let allScriptsCache = [];
+
+  // دوال مساعدة
+  window.encodeCode = (str) => btoa(unescape(encodeURIComponent(str)));
+  window.decodeCode = (str) => decodeURIComponent(escape(atob(str)));
+  
+  window.showError = (msg) => {
+      const err = document.getElementById('errorMsg');
+      err.textContent = msg; err.style.display = 'block';
+      setTimeout(() => { err.style.display = 'none'; }, 4000);
+  };
+
+  window.toggleAuth = (type) => {
+      document.getElementById('loginForm').classList.toggle('hidden', type !== 'login');
+      document.getElementById('registerForm').classList.toggle('hidden', type !== 'register');
+      document.getElementById('errorMsg').style.display = 'none';
+  };
+
+  // ====== معالجة الصورة وضغطها ======
+  window.handleImageUpload = (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+              const canvas = document.createElement('canvas');
+              const MAX_WIDTH = 500; // عرض مناسب
+              const scaleSize = MAX_WIDTH / img.width;
+              canvas.width = MAX_WIDTH;
+              canvas.height = img.height * scaleSize;
+              
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              
+              // ضغط الصورة لتكون صغيرة الحجم (JPEG 60%)
+              const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+              document.getElementById('scriptImageData').value = dataUrl;
+              
+              const preview = document.getElementById('imagePreview');
+              preview.src = dataUrl;
+              preview.style.display = 'block';
+          };
+          img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+  };
+
+  // صور افتراضية حسب التصنيف (لو مرفعش صورة)
+  function getDefaultImage(category) {
+      const images = {
+          "MM2": "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=500&q=80",
+          "ماب السرقة": "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?auto=format&fit=crop&w=500&q=80",
+          "تايم بومب": "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=500&q=80",
+          "عام": "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&w=500&q=80"
+      };
+      return images[category] || images["عام"];
+  }
+
+  // ====== أداة التمويه ======
+  window.obfuscateCode = () => {
+      const plain = document.getElementById('plainCode').value;
+      if(!plain) return alert("اكتب الكود الأول!");
+      
+      const utf8 = new TextEncoder().encode(plain);
+      const chunks = new Array(utf8.length);
+      
+      for (let i = 0; i < utf8.length; i++) {
+          chunks[i] = "\\x" + utf8[i].toString(16).padStart(2, '0');
+      }
+      
+      const obfuscated = `loadstring("${chunks.join('')}")()`;
+      document.getElementById('encryptedCode').value = obfuscated;
+  };
+
+  // ====== تشغيل صفحة السكريبت (Raw) ======
+  if (new URLSearchParams(window.location.search).has('raw')) {
+      document.body.innerHTML = '<div style="color:#0f0;font-family:monospace;padding:20px;font-size:20px;">[Delta] Loading script...</div>';
+      setTimeout(() => {
+          try {
+              const code = window.decodeCode(new URLSearchParams(window.location.search).get('raw'));
+              document.body.innerHTML = '<pre>' + code.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;") + '</pre>';
+              document.body.className = 'raw-view';
+          } catch(e) { document.body.innerHTML = 'Error'; }
+      }, 600);
+  }
+
+  // ====== إنشاء حساب ======
+  window.doRegister = async () => {
+      const username = document.getElementById('regUser').value.trim();
+      const password = document.getElementById('regPass').value;
+      if(!username || !password) return window.showError("املا كل الخانات!");
+      if(password.length < 6) return window.showError("كلمة السر لازم 6 حروف على الأقل!");
+
+      try {
+          const q = query(collection(db, "users"), where("username", "==", username));
+          const snap = await getDocs(q);
+          if (!snap.empty) return window.showError("⚠️ الاسم ده متاخد! اختار اسم تاني.");
+
+          const fakeEmail = username.toLowerCase() + "@delta-hub.com";
+          const userCredential = await createUserWithEmailAndPassword(auth, fakeEmail, password);
+          await addDoc(collection(db, "users"), { uid: userCredential.user.uid, username: username });
+      } catch (error) { window.showError("خطأ: " + error.message); }
+  };
+
+  // ====== تسجيل الدخول ======
+  window.doLogin = async () => {
+      const username = document.getElementById('loginUser').value.trim();
+      const password = document.getElementById('loginPass').value;
+      if(!username || !password) return window.showError("املا كل الخانات!");
+
+      try {
+          const fakeEmail = username.toLowerCase() + "@delta-hub.com";
+          await signInWithEmailAndPassword(auth, fakeEmail, password);
+      } catch (error) {
+          if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+              window.showError("❌ الاسم أو كلمة السر غلط!");
+          } else { window.showError("خطأ: " + error.message); }
+      }
+  };
+
+  window.doLogout = () => signOut(auth);
+
+  // ====== متابعة حالة المستخدم ======
+  onAuthStateChanged(auth, async (user) => {
+      if (user) {
+          currentUser = user;
+          const q = query(collection(db, "users"), where("uid", "==", user.uid));
+          const snap = await getDocs(q);
+          if(!snap.empty) {
+              currentUsername = snap.docs[0].data().username;
+              document.getElementById('userDisplay').textContent = '👤 ' + currentUsername;
+              document.getElementById('authScreen').classList.add('hidden');
+              document.querySelector('.wrap').style.display = 'block';
+              loadScripts();
+          }
+      } else {
+          currentUser = null; currentUsername = "";
+          document.getElementById('authScreen').classList.remove('hidden');
+          document.querySelector('.wrap').style.display = 'none';
+      }
+  });
+
+  window.switchTab = (tab) => {
+      ['add', 'obf', 'my', 'comm'].forEach(t => {
+          document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('hidden');
+          document.getElementById('nav' + t.charAt(0).toUpperCase() + t.slice(1)).classList.remove('active');
+      });
+      const activeTab = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+      if(activeTab) activeTab.classList.remove('hidden');
+      document.getElementById('nav' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+  };
+
+  // ====== نشر السكريبت ======
+  window.saveScript = async () => {
+      const name = document.getElementById('scriptName').value.trim();
+      const cat = document.getElementById('scriptCategory').value;
+      const code = document.getElementById('scriptCode').value;
+      const imgData = document.getElementById('scriptImageData').value;
+      
+      if(!name || !code) return alert("اكتب الاسم والكود!");
+
+      const btn = document.getElementById('saveBtn');
+      btn.textContent = "جاري النشر..."; btn.disabled = true;
+
+      try {
+          await addDoc(collection(db, "scripts"), {
+              name: name, 
+              category: cat, 
+              code: code, 
+              author: currentUsername,
+              uid: currentUser.uid, 
+              image: imgData || "", // لو مفيش صورة مرفوعة، هيفضل فاضي ونستخدم الصورة الافتراضية
+              createdAt: serverTimestamp()
+          });
+          document.getElementById('scriptName').value = '';
+          document.getElementById('scriptCode').value = '';
+          document.getElementById('scriptImage').value = '';
+          document.getElementById('scriptImageData').value = '';
+          document.getElementById('imagePreview').style.display = 'none';
+          
+          alert("تم النشر بنجاح!");
+          switchTab('my');
+      } catch(e) { alert("فشل النشر: " + e.message); }
+      finally { btn.textContent = "🚀 نشر السكريبت"; btn.disabled = false; }
+  };
+
+  function loadScripts() {
+      const q = query(collection(db, "scripts"), orderBy("createdAt", "desc"));
+      onSnapshot(q, (snapshot) => {
+          allScriptsCache = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          renderLists();
+      });
+  }
+
+  function renderLists() {
+      if(!currentUser) return;
+      const myList = document.getElementById('myList');
+      const commList = document.getElementById('communityList');
+      
+      const myScripts = allScriptsCache.filter(s => s.uid === currentUser.uid);
+      const commScripts = allScriptsCache.filter(s => s.uid !== currentUser.uid);
+
+      myList.innerHTML = myScripts.length ? myScripts.map(s => generateCard(s, true)).join('') : '<p style="color:var(--muted);text-align:center;">مفيش سكريبتات ليك.</p>';
+      commList.innerHTML = commScripts.length ? commScripts.map(s => generateCard(s, false)).join('') : '<p style="color:var(--muted);text-align:center;">المجتمع فاضي لسه.</p>';
+  }
+
+  function generateCard(s, isMine) {
+      const link = window.location.origin + window.location.pathname + '?raw=' + window.encodeCode(s.code);
+      const lua = `loadstring(game:HttpGet("${link}"))()`;
+      const displayImage = s.image ? s.image : getDefaultImage(s.category);
+      
+      return `
+      <div class="saved-item">
+        <img src="${displayImage}" class="saved-img" alt="${s.name}">
+        <div class="saved-content">
+            <div class="saved-header">
+              <div><span class="saved-title">${s.name}</span> <span class="badge">${s.category}</span></div>
+              ${isMine ? `<button class="btn sm" style="background:var(--bad);color:white;" onclick="deleteScript('${s.id}')">حذف</button>` : ''}
+            </div>
+            <div class="author">بواسطة: ${s.author}</div>
+            
+            <div class="flex-row" style="margin-top:12px;">
+                <input type="text" class="link-out" value="${lua}" readonly>
+                <button class="btn copy-btn" onclick="copyText('${lua}', this)">📋 نسخ</button>
+            </div>
+        </div>
+      </div>`;
+  }
+
+  window.deleteScript = async (id) => {
+      if(confirm('متأكد من الحذف؟')) await deleteDoc(doc(db, "scripts", id));
+  };
+
+  window.filterCommunity = () => {
+      const val = document.getElementById('searchInput').value.toLowerCase();
+      const commScripts = allScriptsCache.filter(s => s.uid !== currentUser.uid && (s.name.toLowerCase().includes(val) || s.category.toLowerCase().includes(val)));
+      document.getElementById('communityList').innerHTML = commScripts.length ? commScripts.map(s => generateCard(s, false)).join('') : '<p style="color:var(--muted);text-align:center;">مفيش نتائج.</p>';
+  };
+
+  window.copyText = (text, btn) => {
+      navigator.clipboard.writeText(text).then(() => {
+          btn.textContent = '✓'; btn.style.background = 'var(--ok)';
+          setTimeout(() => { btn.textContent = '📋 نسخ'; btn.style.background = ''; }, 1500);
+      });
+  };
+</script>
+</body>
+</html>
