@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>دلتا - مجتمع السكريبتات والأضواء والبروفايل المحدث</title>
+<title>دلتا - مجتمع السكريبتات وتحريك الصور الشخصية</title>
 <style>
 :root{--bg:#0b1220;--card:#111c33;--card2:#16233d;--text:#e8eefc;--muted:#9fb0cc;--line:#1f2d4a;--acc:#4cc9f0;--acc2:#b388ff;--ok:#3ddc97;--bad:#ff6b6b;--warn:#f59e0b;--r:14px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -30,16 +30,20 @@ textarea {
 .btn-nav button { flex: 1; padding: 10px; background: var(--card2); border: 1px solid var(--line); color: var(--text); border-radius: 8px; cursor: pointer; font-weight: bold; white-space:nowrap; }
 .btn-nav button.active { background: var(--acc); color: #071019; border-color: var(--acc); }
 
-/* أنظمة الخطوط الغريبة والأضواء حسب المستوى والأدمن */
+/* الأبـاتار الدائري والخطوط والأضواء */
 .user-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; object-position: center; border: 1px solid var(--acc); background: var(--card2); flex-shrink: 0; }
-.user-avatar-lg { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; object-position: center; border: 2px solid var(--acc); background: var(--card2); cursor: pointer; display: block; margin: 0 auto; }
-
 .user-badge-box { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 8px; font-size: 13px; font-weight: bold; background: var(--card2); border: 1px solid var(--line); }
 
-/* إضاءات وخطوط حسب الرتبة والمستوى */
-.glow-admin { font-family: 'Courier New', monospace; letter-spacing: 1px; color: #3ddc97 !important; border: 2px solid #3ddc97; background: rgba(61, 220, 151, 0.1); box-shadow: 0 0 15px #3ddc97, inset 0 0 10px rgba(61, 220, 151, 0.5); text-shadow: 0 0 8px #3ddc97; }
-.glow-diamond { font-family: monospace; color: #4cc9f0 !important; border: 1.5px solid #4cc9f0; box-shadow: 0 0 10px rgba(76, 201, 240, 0.6); text-shadow: 0 0 5px #4cc9f0; }
-.glow-gold { font-family: monospace; color: #f59e0b !important; border: 1px solid #f59e0b; box-shadow: 0 0 8px rgba(245, 158, 11, 0.5); }
+/* محرر وتعديل الصورة (تيك توك ستايل) */
+.avatar-editor-box { display: flex; flex-direction: column; align-items: center; gap: 10px; background: var(--card2); padding: 15px; border-radius: 12px; border: 1px solid var(--line); margin-bottom: 15px; }
+.crop-container { width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--acc); overflow: hidden; position: relative; background: #000; cursor: grab; box-shadow: 0 0 20px rgba(76, 201, 240, 0.4); }
+.crop-container:active { cursor: grabbing; }
+#cropCanvas { position: absolute; top: 0; left: 0; touch-action: none; }
+
+/* إضاءات الخطوط حسب الرتبة والأدمن */
+.glow-admin { font-family: 'Courier New', monospace; letter-spacing: 1px; color: #3ddc97 !important; border: 2px solid #3ddc97; background: rgba(61, 220, 151, 0.1); box-shadow: 0 0 15px #3ddc97; text-shadow: 0 0 8px #3ddc97; }
+.glow-diamond { font-family: monospace; color: #4cc9f0 !important; border: 1.5px solid #4cc9f0; box-shadow: 0 0 10px rgba(76, 201, 240, 0.6); }
+.glow-gold { font-family: monospace; color: #f59e0b !important; border: 1px solid #f59e0b; }
 .glow-silver { font-family: monospace; color: #b388ff !important; border: 1px solid var(--line); }
 .glow-bronze { font-family: monospace; color: var(--muted); }
 
@@ -148,20 +152,23 @@ textarea {
   <!-- إضافة سكريبت وتعديل البروفايل -->
   <div id="tabAdd">
       <div class="card">
-        <h3>⚙️ إعدادات البروفايل الشخصي والصورة</h3>
-        <div style="background:var(--card2); padding:15px; border-radius:10px; margin-bottom:15px; border:1px solid var(--line); text-align:center;">
-            <input type="file" id="profileAvatarInput" accept="image/*,image/gif" style="display:none;" onchange="processAndSaveAvatar(event)">
+        <h3>⚙️ إعدادات البروفايل وتحريك الصورة (TikTok Style)</h3>
+        
+        <div class="avatar-editor-box">
+            <input type="file" id="profileAvatarInput" accept="image/*,image/gif" style="display:none;" onchange="loadAvatarForCrop(event)">
             
-            <div style="margin-bottom:10px; position:relative; display:inline-block;">
-                <img id="myAvatarPreview" src="" class="user-avatar-lg glow-admin" onclick="document.getElementById('profileAvatarInput').click()" title="اضغط لرفع صورتك الشخصية (عادية أو متحركة GIF)">
+            <div style="font-size:13px; color:var(--acc); font-weight:bold;">اسحب الصورة بإصبعك أو الماوس لتحريكها داخل الدايرة بالشكل اللي يعجبك:</div>
+            
+            <div class="crop-container" id="cropArea">
+                <canvas id="cropCanvas" width="200" height="200"></canvas>
             </div>
 
-            <div style="font-size:14px; font-weight:bold; color:var(--acc); margin-top:5px;">صورتك الشخصية الفورية</div>
-            <div style="font-size:11px; color:var(--muted); margin-top:3px;">اضغط على الصورة لرفعها من جهازك (ستحفظ وتظهر فوراً في كل مكان).</div>
+            <button class="btn sm" style="background:var(--card); color:var(--acc); border:1px solid var(--line);" onclick="document.getElementById('profileAvatarInput').click()">📁 اختر صورة جديدة</button>
+            <button class="btn primary" onclick="saveCroppedAvatar()">💾 حفظ وتأكيد الصورة في البروفايل</button>
         </div>
 
         <div style="background:var(--card2); padding:10px; border-radius:8px; margin-bottom:15px; border:1px solid var(--line);">
-            <label style="margin-bottom:5px; color:var(--acc);">🎨 اختر إطار اسمك الشخصي والخطوط:</label>
+            <label style="margin-bottom:5px; color:var(--acc);">🎨 إطار اسمك وشكل الخطوط والأضواء:</label>
             <select id="userFrameSelect" onchange="updateUserSetting('frame', this.value)">
                 <option value="admin">🟢 خطوط أخضر ساطع وإضاءة الأدمن الملكية</option>
                 <option value="diamond">💎 أسطورة دلتا (Diamond Glow)</option>
@@ -332,6 +339,13 @@ textarea {
   const DELTA_KEY = "DeltaHubSecureKey2026";
   const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239fb0cc'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>";
 
+  // متغيرات محرر وصور البروفايل التفاعلية
+  let cropImg = new Image();
+  let imgX = 0, imgY = 0, imgScale = 1;
+  let isDragging = false, startX = 0, startY = 0;
+  const canvas = document.getElementById('cropCanvas');
+  const ctx = canvas.getContext('2d');
+
   window.encodeCode = (str) => btoa(unescape(encodeURIComponent(str)));
   window.decodeCode = (str) => decodeURIComponent(escape(atob(str)));
 
@@ -350,7 +364,6 @@ textarea {
       alert("✅ تم الحفظ!");
   };
 
-  // عرض اسم المستخدم مع الإضاءات والخطوط الأسطورية حسب الرتبة
   window.getUserDisplayHTML = (username) => {
       const uData = allUsersCache.find(u => u.username === username);
       const frame = uData ? (uData.frame || (username === 'admin' ? 'admin' : 'bronze')) : (username === 'admin' ? 'admin' : 'bronze');
@@ -387,24 +400,51 @@ textarea {
       }
   };
 
-  // رفع وحفظ صورة البروفايل فعلياً في السيرفر وتحديثها بالهيدر فوراً
-  window.processAndSaveAvatar = (event) => {
+  // إعدادات محرر وقص وتحريك الصورة التفاعلي
+  function initCropCanvas(imgSrc) {
+      cropImg.onload = () => {
+          imgScale = Math.max(canvas.width / cropImg.width, canvas.height / cropImg.height);
+          imgX = (canvas.width - cropImg.width * imgScale) / 2;
+          imgY = (canvas.height - cropImg.height * imgScale) / 2;
+          drawCrop();
+      };
+      cropImg.src = imgSrc;
+  }
+
+  function drawCrop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(cropImg, imgX, imgY, cropImg.width * imgScale, cropImg.height * imgScale);
+  }
+
+  const cropArea = document.getElementById('cropArea');
+  cropArea.addEventListener('mousedown', (e) => { isDragging = true; startX = e.clientX - imgX; startY = e.clientY - imgY; });
+  window.addEventListener('mousemove', (e) => { if (!isDragging) return; imgX = e.clientX - startX; imgY = e.clientY - startY; drawCrop(); });
+  window.addEventListener('mouseup', () => { isDragging = false; });
+
+  cropArea.addEventListener('touchstart', (e) => { isDragging = true; startX = e.touches[0].clientX - imgX; startY = e.touches[0].clientY - imgY; });
+  window.addEventListener('touchmove', (e) => { if (!isDragging) return; imgX = e.touches[0].clientX - startX; imgY = e.touches[0].clientY - startY; drawCrop(); });
+  window.addEventListener('touchend', () => { isDragging = false; });
+
+  window.loadAvatarForCrop = (event) => {
       const file = event.target.files[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = async (e) => {
-          const dataUrl = e.target.result;
-          document.getElementById('myAvatarPreview').src = dataUrl;
-          userAvatarSetting = dataUrl;
-          
-          if (currentUserDocId) {
-              await updateDoc(doc(db, "users", currentUserDocId), { avatar: dataUrl });
-              renderHeaderUser();
-              renderLists();
-              alert("✅ تم حفظ صورتك الشخصية بنجاح وستظهر في كل التعليقات والمنصة!");
-          }
-      };
+      reader.onload = (e) => { initCropCanvas(e.target.result); };
       reader.readAsDataURL(file);
+  };
+
+  // زر الحفظ والتأكيد الفعلي في البروفايل وقاعدة البيانات
+  window.saveCroppedAvatar = async () => {
+      if (!cropImg.src) return alert("اختر صورة الأول!");
+      const dataUrl = canvas.toDataURL('image/png', 0.95);
+      userAvatarSetting = dataUrl;
+
+      if (currentUserDocId) {
+          await updateDoc(doc(db, "users", currentUserDocId), { avatar: dataUrl });
+          renderHeaderUser();
+          renderLists();
+          alert("✅ تم حفظ وتأكيد صورتك الشخصية بنجاح وستظهر فوراً في كل مكان!");
+      }
   };
 
   function renderHeaderUser() {
@@ -487,7 +527,7 @@ textarea {
               userAvatarSetting = uData.avatar || '';
               
               document.getElementById('userFrameSelect').value = userFrameSetting;
-              document.getElementById('myAvatarPreview').src = userAvatarSetting ? userAvatarSetting : DEFAULT_AVATAR;
+              initCropCanvas(userAvatarSetting ? userAvatarSetting : DEFAULT_AVATAR);
 
               if(currentUsername === 'admin') {
                   document.getElementById('adminBadge').style.display = 'inline-block';
@@ -789,7 +829,7 @@ textarea {
               btn.style.background = 'var(--bad)'; btn.textContent = "⏹️ إيقاف وإرسال";
           } catch(e) { alert("⚠️ تعذر الوصول للميكروفون!"); }
       } else {
-          mediaRecorder.stop(); isRecording, false;
+          mediaRecorder.stop(); isRecording = false;
           btn.style.background = 'var(--card2)'; btn.textContent = "🎤";
       }
   };
