@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>دلتا - منصة الجيمينج والإطارات الأسطورية</title>
+<title>دلتا - منصة الجيمينج والإطارات والتوثيق الذكي</title>
 <style>
 :root{--bg:#0b1220;--card:#111c33;--card2:#16233d;--text:#e8eefc;--muted:#9fb0cc;--line:#1f2d4a;--acc:#4cc9f0;--acc2:#b388ff;--ok:#3ddc97;--bad:#ff6b6b;--warn:#f59e0b;--r:14px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -31,8 +31,13 @@ textarea {
 .btn-nav button.active { background: var(--acc); color: #071019; border-color: var(--acc); }
 
 .user-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; object-position: center; background: var(--card2); flex-shrink: 0; cursor: pointer; }
-.user-badge-box { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 12px; font-size: 13px; font-weight: bold; background: var(--card2); border: 1px solid var(--line); cursor: pointer; }
+.feed-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; object-position: center; background: var(--card2); flex-shrink: 0; }
+.user-badge-box { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 12px; font-size: 13px; font-weight: bold; background: var(--card2); border: 1px solid var(--line); cursor: pointer; }
 
+/* علامة التوثيق الزرقاء */
+.verified-badge { color: #4cc9f0; font-size: 14px; vertical-align: middle; text-shadow: 0 0 8px rgba(76,201,240,0.6); }
+
+/* إطارات أسطورية */
 .frame-fire { border: 3px solid #ff4500; box-shadow: 0 0 15px #ff4500; }
 .frame-superadmin { border: 3px solid #ff6b6b; box-shadow: 0 0 20px #ff6b6b; }
 .frame-neon { border: 3px solid var(--acc); box-shadow: 0 0 15px var(--acc); }
@@ -58,9 +63,10 @@ textarea {
 .tiktok-action-btn.liked { color: var(--bad); }
 
 .ai-warning-box { background: rgba(255,107,107,0.15); border: 1px solid var(--bad); color: var(--bad); padding: 8px; border-radius: 6px; font-size: 11px; margin-bottom: 8px; font-weight: bold; }
+.ai-verify-box { background: rgba(76,201,240,0.15); border: 1px solid var(--acc); color: var(--acc); padding: 8px; border-radius: 6px; font-size: 12px; margin-bottom: 10px; font-weight: bold; text-align: center; }
 
 .comments-section { margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; }
-.comment-item { background: var(--card2); padding: 6px 10px; border-radius: 8px; font-size: 12px; margin-bottom: 5px; border: 1px solid var(--line); }
+.comment-item { background: var(--card2); padding: 6px 10px; border-radius: 8px; font-size: 12px; margin-bottom: 5px; border: 1px solid var(--line); display:flex; align-items:center; gap:8px; }
 
 .bell-btn { position: relative; background: var(--card2); border: 1px solid var(--line); color: var(--text); padding: 6px 10px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
 .badge-count { position: absolute; top: -5px; right: -5px; background: var(--bad); color: #fff; font-size: 10px; padding: 2px 5px; border-radius: 50%; font-weight: bold; display: none; }
@@ -105,10 +111,8 @@ textarea {
 <div class="wrap" id="mainUI">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
       <div style="display:flex; align-items:center; gap:8px; position:relative;">
-          <!-- زرار تبديل وحفظ الحسابات المحدث -->
           <button class="btn sm primary" onclick="toggleAccountsMenu()" title="إدارة وتبديل الحسابات" style="font-size:16px; padding:4px 10px;">➕</button>
           
-          <!-- قائمة إدارة الحسابات (تسجيل دخول أو إنشاء جديد) -->
           <div id="accountsDropdown" class="accounts-modal">
               <h4 style="margin:0 0 8px 0; font-size:12px; color:var(--acc);">حساباتك المحفوظة:</h4>
               <div id="savedAccountsList" style="margin-bottom:8px;"></div>
@@ -228,22 +232,25 @@ textarea {
   </div>
 </div>
 
-<!-- Modal بروفايل ديسكورد ستايل مع البانرات والإطارات الحية -->
+<!-- Modal بروفايل ديسكورد مع التوثيق الذكي وإتاحة كل الإطارات للموثقين -->
 <div id="profileModal" class="modal-overlay hidden">
     <div class="modal-content" style="padding:0; overflow:hidden;">
         <div id="bannerContainer" style="width:100%; height:110px; background:#1f2d4a; background-size:cover; background-position:center; position:relative;">
             <button class="btn sm primary" style="position:absolute; bottom:8px; left:8px; font-size:10px;" onclick="document.getElementById('bannerInput').click()">🖼️ تغيير البانر (صورة/GIF)</button>
-            <input type="file" id="bannerInput" accept="image/*,image/gif" style="display:none;" onchange="saveBannerDirect(event)">
+            <input type="file" id="bannerInput" accept="image/*,image/gif" style="display:none;" onchange="saveBannerPermanent(event)">
         </div>
 
         <div style="padding:15px; text-align:center; position:relative;">
             <img id="profileModalAvatar" src="" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid var(--acc); margin:-50px auto 10px; display:block; background:#000;">
             <h3 id="profileModalUsername" style="margin:5px 0; color:var(--acc);">اسم المستخدم</h3>
+            
+            <!-- تنبيه الذكاء الاصطناعي للتوثيق -->
+            <div id="aiVerifyStatusBox" class="ai-verify-box">🤖 الذكاء الاصطناعي: جارٍ فحص حالة التوثيق...</div>
 
             <div style="background:var(--card2); padding:10px; border-radius:8px; margin:10px 0; text-align:right;">
-                <label style="color:var(--acc); font-size:12px; margin-bottom:4px;">🖼️ اختر الإطار الأسطوري (حسب المستوى):</label>
+                <label style="color:var(--acc); font-size:12px; margin-bottom:4px;">🖼️ الإطارات الأسطورية (مفتوحة بالكامل للموثقين 🔥):</label>
                 <select id="frameSelect" onchange="updateProfileAttr('frame', this.value)" style="margin-top:0; font-size:12px; padding:8px;">
-                    <option value="fire">🔥 إطار النار المشتعلة (أنت والأساطير)</option>
+                    <option value="fire">🔥 إطار النار المشتعلة</option>
                     <option value="superadmin">🔴 إطار الأدمن الملكي</option>
                     <option value="neon">💎 إطار نيون ساطع</option>
                     <option value="gold">🥇 إطار ذهبي</option>
@@ -270,7 +277,7 @@ textarea {
             </div>
 
             <button class="btn sm primary" style="width:100%; margin-bottom:8px;" onclick="document.getElementById('quickAvatarInput').click()">📁 تغيير الصورة الشخصية (صورة/GIF)</button>
-            <input type="file" id="quickAvatarInput" accept="image/*,image/gif" style="display:none;" onchange="saveAvatarDirect(event)">
+            <input type="file" id="quickAvatarInput" accept="image/*,image/gif" style="display:none;" onchange="saveAvatarPermanent(event)">
             <button class="btn" style="background:var(--bad); color:white; width:100%;" onclick="closeProfileModal()">إغلاق</button>
         </div>
     </div>
@@ -354,6 +361,19 @@ textarea {
           if(lower.includes(word)) return { isSafe: false, reason: `تحذير الذكاء الاصطناعي 🛡️: المحتوى يحتوي على كلمات مشبوهة (${word}).` };
       }
       return { isSafe: true, reason: "" };
+  }
+
+  // ذكاء اصطناعي يفحص إذا كان المستخدم يستحق التوثيق (مثلاً وصل لـ 10 متابعين أو أكثر)
+  function aiCheckVerification(username) {
+      const followersCount = allFollowsCache.filter(f => f.target === username).length;
+      const lowerName = username.toLowerCase();
+      const isSuperAdmin = lowerName === 'super admin' || lowerName === 'admin' || lowerName === 'superadmin';
+      
+      // الأدمن الأعلى موثق دائماً، والباقي يشترط وصولهم لـ 10 متابعين أو تفاعل عالي
+      if (isSuperAdmin || followersCount >= 10) {
+          return { isVerified: true, text: `✅ حساب موثق بالذكاء الاصطناعي (${followersCount} متابع) - جميع الإطارات الأسطورية مفتوحة!` };
+      }
+      return { isVerified: false, text: `🔒 غير موثق حالياً (تحتاج 10 متابعين على الأقل لفتح التوثيق وكل الإطارات). لديك ${followersCount} متابع.` };
   }
 
   window.confirmLogout = () => { if(confirm("تسجيل الخروج؟")) signOut(auth); };
@@ -457,7 +477,7 @@ textarea {
   });
 
   function loadAllData() {
-      onSnapshot(collection(db, "users"), (snap) => { allUsersCache = snap.docs.map(d => d.data()); renderHeaderUser(); });
+      onSnapshot(collection(db, "users"), (snap) => { allUsersCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderHeaderUser(); renderLists(); renderTokFeed(); });
       onSnapshot(collection(db, "scripts"), (snap) => { allScriptsCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderLists(); });
       onSnapshot(collection(db, "script_likes"), (snap) => { allLikesCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderLists(); });
       onSnapshot(collection(db, "tok_posts"), (snap) => { allTokPostsCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderTokFeed(); });
@@ -465,6 +485,24 @@ textarea {
       onSnapshot(collection(db, "tok_comments"), (snap) => { allTokCommentsCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderTokFeed(); });
       onSnapshot(collection(db, "follows"), (snap) => { allFollowsCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderTokFeed(); });
       onSnapshot(collection(db, "notifications"), (snap) => { notifsCache = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(n => n.recipient === currentUsername); renderNotifications(); });
+  }
+
+  function getUserProfileInfo(username) {
+      const u = allUsersCache.find(x => x.username === username);
+      const avatar = u && u.avatar ? u.avatar : DEFAULT_AVATAR;
+      const frame = u && u.frame ? u.frame : 'fire';
+      let frameClass = 'frame-fire';
+      if(frame === 'superadmin') frameClass = 'frame-superadmin';
+      else if(frame === 'neon') frameClass = 'frame-neon';
+      else if(frame === 'gold') frameClass = 'frame-gold';
+      else if(frame === 'none') frameClass = 'frame-none';
+
+      // فحص التوثيق الذكي لكل مستخدم
+      const followersCount = allFollowsCache.filter(f => f.target === username).length;
+      const lower = username.toLowerCase();
+      const isVerified = (lower === 'super admin' || lower === 'admin' || lower === 'superadmin' || followersCount >= 10);
+
+      return { avatar, frameClass, isVerified };
   }
 
   window.openProfileModal = () => {
@@ -483,6 +521,10 @@ textarea {
       const following = allFollowsCache.filter(f => f.user === currentUsername).length;
       document.getElementById('statFollowers').textContent = followers;
       document.getElementById('statFollowing').textContent = following;
+
+      // فحص حالة التوثيق بالذكاء الاصطناعي للمستخدم الحالي
+      const vCheck = aiCheckVerification(currentUsername);
+      document.getElementById('aiVerifyStatusBox').textContent = vCheck.text;
 
       document.getElementById('profileModal').classList.remove('hidden');
   };
@@ -511,8 +553,7 @@ textarea {
       document.getElementById('appBody').style.backgroundColor = color;
   }
 
-  // حل مشكلة حفظ الصور وصور الـ GIF المتحركة مباشرة
-  window.saveAvatarDirect = (event) => {
+  window.saveAvatarPermanent = (event) => {
       const file = event.target.files[0]; if(!file) return;
       const reader = new FileReader();
       reader.onload = async (e) => {
@@ -522,14 +563,13 @@ textarea {
           if(currentUserDocId) {
               await updateDoc(doc(db, "users", currentUserDocId), { avatar: dataUrl });
               renderHeaderUser();
-              alert("✅ تم حفظ وتحديث الصورة الشخصية (أو الـ GIF المتحرك) بنجاح!");
+              alert("✅ تم حفظ وتحديث الصورة الشخصية بشكل دائم!");
           }
       };
       reader.readAsDataURL(file);
   };
 
-  // حل مشكلة حفظ البانرات وصور الـ GIF المتحركة للبانر
-  window.saveBannerDirect = (event) => {
+  window.saveBannerPermanent = (event) => {
       const file = event.target.files[0]; if(!file) return;
       const reader = new FileReader();
       reader.onload = async (e) => {
@@ -538,30 +578,23 @@ textarea {
           document.getElementById('bannerContainer').style.backgroundImage = `url(${dataUrl})`;
           if(currentUserDocId) {
               await updateDoc(doc(db, "users", currentUserDocId), { banner: dataUrl });
-              alert("✅ تم حفظ وتحديث بانر الخلفية (أو الـ GIF المتحرك) بنجاح!");
+              alert("✅ تم حفظ وتحديث البانر بشكل دائم!");
           }
       };
       reader.readAsDataURL(file);
   };
 
   function renderHeaderUser() {
-      const uData = allUsersCache.find(u => u.username === currentUsername);
-      const avatar = uData && uData.avatar ? uData.avatar : DEFAULT_AVATAR;
-      const frame = uData && uData.frame ? uData.frame : 'fire';
-      
-      let frameClass = 'frame-fire';
-      if(frame === 'superadmin') frameClass = 'frame-superadmin';
-      else if(frame === 'neon') frameClass = 'frame-neon';
-      else if(frame === 'gold') frameClass = 'frame-gold';
-      else if(frame === 'none') frameClass = 'frame-none';
-
+      const uInfo = getUserProfileInfo(currentUsername);
       const lowerName = currentUsername.toLowerCase();
       const isSuperAdmin = lowerName === 'super admin' || lowerName === 'admin' || lowerName === 'superadmin';
 
       document.getElementById('userHeaderDisplay').innerHTML = `
           <div style="display:flex; align-items:center; gap:8px;">
-              <img src="${avatar}" class="user-avatar ${frameClass}" onclick="openProfileModal()" title="بروفايلك الأسطوري">
-              <span class="user-badge-box ${isSuperAdmin ? 'glow-superadmin' : ''}" onclick="openProfileModal()">👤 ${currentUsername}</span>
+              <img src="${uInfo.avatar}" class="user-avatar ${uInfo.frameClass}" onclick="openProfileModal()" title="بروفايلك الأسطوري">
+              <span class="user-badge-box ${isSuperAdmin ? 'glow-superadmin' : ''}" onclick="openProfileModal()">
+                  👤 ${currentUsername} ${uInfo.isVerified ? '<span class="verified-badge" title="حساب موثق من الذكاء الاصطناعي">✔</span>' : ''}
+              </span>
           </div>
       `;
   }
@@ -654,11 +687,18 @@ textarea {
           const hasLiked = likes.some(l => l.user === currentUsername);
           const comments = allTokCommentsCache.filter(c => c.postId === p.id);
           const isFollowing = allFollowsCache.some(f => f.user === currentUsername && f.target === p.author);
+          
+          const authorInfo = getUserProfileInfo(p.author);
 
           return `
           <div class="tiktok-card">
-              <div class="tiktok-header">
-                  <span style="font-weight:bold; color:var(--acc);">👤 ${p.author} ${p.privacy === 'followers' ? '🔒 [خاص للمتابعين]' : ''}</span>
+              <div class="tiktok-header" style="display:flex; align-items:center; justify-content:space-between;">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                      <img src="${authorInfo.avatar}" class="feed-avatar ${authorInfo.frameClass}">
+                      <span style="font-weight:bold; color:var(--acc);">
+                          👤 ${p.author} ${authorInfo.isVerified ? '<span class="verified-badge">✔</span>' : ''} ${p.privacy === 'followers' ? '🔒 [خاص]' : ''}
+                      </span>
+                  </div>
                   ${p.author !== currentUsername ? `<button class="btn sm ${isFollowing ? '' : 'primary'}" onclick="toggleFollow('${p.author}')">${isFollowing ? '✓ متابَع' : '➕ متابعة'}</button>` : ''}
               </div>
               ${isSuperAdmin && p.aiFlagged ? `<div class="ai-warning-box">🛡️ تنبيه الذكاء الاصطناعي: ${p.aiReason}</div>` : ''}
@@ -670,12 +710,18 @@ textarea {
                       ❤️ <span>${likes.length}</span>
                   </button>
                   <span style="font-size:12px; color:var(--muted);">💬 ${comments.length} تعليقات</span>
-                  ${isSuperAdmin ? `<button class="btn sm" style="background:var(--bad); color:#fff; margin-right:auto;" onclick="deleteDoc(doc(db,'tok_posts','${p.id}'))">🗑️ حذف الأدمن</button>` : ''}
+                  ${isSuperAdmin ? `<button class="btn sm" style="background:var(--bad); color:#fff; margin-right:auto;" onclick="deleteTokPost('${p.id}')">🗑️ حذف الأدمن</button>` : ''}
               </div>
 
               <div class="comments-section" style="padding:10px;">
                   <div style="max-height:120px; overflow-y:auto; margin-bottom:6px;">
-                      ${comments.map(c => `<div class="comment-item"><b>${c.user}:</b> ${c.text}</div>`).join('')}
+                      ${comments.map(c => {
+                          const cAuthorInfo = getUserProfileInfo(c.user);
+                          return `<div class="comment-item">
+                              <img src="${cAuthorInfo.avatar}" style="width:24px; height:24px; border-radius:50%; object-fit:cover;" class="${cAuthorInfo.frameClass}">
+                              <b>${c.user} ${cAuthorInfo.isVerified ? '<span class="verified-badge">✔</span>' : ''}:</b> ${c.text}
+                          </div>`;
+                      }).join('')}
                   </div>
                   <div style="display:flex; gap:6px;">
                       <input type="text" id="tokCommentInput_${p.id}" placeholder="اكتب تعليقاً..." style="margin-top:0; flex:1; font-size:12px; padding:8px;">
@@ -685,6 +731,12 @@ textarea {
           </div>`;
       }).join('') : '<p style="color:var(--muted); text-align:center;">لا توجد فيديوهات تعليمية متاحة.</p>';
   }
+
+  window.deleteTokPost = async (id) => {
+      if(confirm("هل تريد حذف هذا المنشور؟")) {
+          await deleteDoc(doc(db, "tok_posts", id));
+      }
+  };
 
   window.toggleFollow = async (targetUser) => {
       const existing = allFollowsCache.filter(f => f.user === currentUsername && f.target === targetUser);
@@ -753,6 +805,8 @@ textarea {
       const lowerName = currentUsername.toLowerCase();
       const isSuperAdmin = lowerName === 'super admin' || lowerName === 'admin' || lowerName === 'superadmin';
 
+      const authorInfo = getUserProfileInfo(s.author);
+
       return `
       <div class="saved-item">
         <div class="saved-content">
@@ -760,10 +814,13 @@ textarea {
               <div><span class="saved-title">${s.name}</span> <span class="badge">${s.category}</span></div>
               <div>
                   ${isMine || isSuperAdmin ? `<button class="btn sm primary" onclick="openEditModal('${s.id}')">✏️</button>` : ''}
-                  ${isMine || isSuperAdmin ? `<button class="btn sm" style="background:var(--bad);color:white;" onclick="deleteDoc(doc(db,'scripts','${s.id}'))">🗑️</button>` : ''}
+                  ${isMine || isSuperAdmin ? `<button class="btn sm" style="background:var(--bad);color:white;" onclick="deleteScript('${s.id}')">🗑️</button>` : ''}
               </div>
             </div>
-            <div class="author">بواسطة: 👤 ${s.author}</div>
+            <div class="author" style="display:flex; align-items:center; gap:8px;">
+                <img src="${authorInfo.avatar}" class="feed-avatar ${authorInfo.frameClass}">
+                <span>بواسطة: 👤 ${s.author} ${authorInfo.isVerified ? '<span class="verified-badge">✔</span>' : ''}</span>
+            </div>
             <div style="margin-top:6px;">
                 <button class="btn sm" style="background:${hasLiked ? 'var(--bad)' : 'var(--card)'}; color:#fff;" onclick="toggleLike('${s.id}')">❤️ ${scriptLikes.length}</button>
             </div>
@@ -773,6 +830,17 @@ textarea {
       </div>`;
   }
 
+  window.deleteScript = async (id) => {
+      if(confirm("هل أنت متأكد من حذف هذا السكريبت نهائياً؟")) {
+          try {
+              await deleteDoc(doc(db, "scripts", id));
+              alert("✅ تم حذف السكريبت بنجاح!");
+          } catch(e) {
+              alert("❌ خطأ أثناء الحذف: " + e.message);
+          }
+      }
+  };
+
   window.toggleLike = async (scriptId) => {
       const existing = allLikesCache.filter(l => l.scriptId === scriptId && l.user === currentUsername);
       if(existing.length > 0) for(let e of existing) await deleteDoc(doc(db, "script_likes", e.id));
@@ -781,21 +849,31 @@ textarea {
 
   window.openEditModal = (id) => {
       const s = allScriptsCache.find(x => x.id === id);
-      if(!s) return;
+      if(!s) return alert("السكريبت غير موجود!");
       document.getElementById('editScriptId').value = s.id;
       document.getElementById('editScriptName').value = s.name;
       document.getElementById('editScriptCategory').value = s.category || "تعليمي وشرح";
       document.getElementById('editScriptCode').value = s.code || "";
       document.getElementById('editModal').classList.remove('hidden');
   };
+
   window.closeEditModal = () => document.getElementById('editModal').classList.add('hidden');
+
   window.updateScriptFinal = async () => {
       const id = document.getElementById('editScriptId').value;
       const name = document.getElementById('editScriptName').value.trim();
       const category = document.getElementById('editScriptCategory').value;
       const code = document.getElementById('editScriptCode').value;
-      await updateDoc(doc(db, "scripts", id), { name, category, code });
-      alert("✅ تم التعديل!"); closeEditModal();
+      
+      if(!name || !code) return alert("املأ جميع خانات التعديل!");
+
+      try {
+          await updateDoc(doc(db, "scripts", id), { name, category, code });
+          alert("✅ تم تعديل السكريبت بنجاح!"); 
+          closeEditModal();
+      } catch(e) {
+          alert("❌ خطأ أثناء حفظ التعديلات: " + e.message);
+      }
   };
 
   window.toggleNotifications = () => {
@@ -817,7 +895,17 @@ textarea {
       if(!val) { res.innerHTML = ''; return; }
       const snap = await getDocs(collection(db, "users"));
       const users = snap.docs.map(d => d.data()).filter(u => u.username.toLowerCase().includes(val) && u.username !== currentUsername);
-      res.innerHTML = users.length ? users.map(u => `<div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:8px;"><span>👤 ${u.username}</span><button class="btn sm primary" onclick="startChat('${u.username}')">مراسلة</button></div>`).join('') : '';
+      
+      res.innerHTML = users.length ? users.map(u => {
+          const uInfo = getUserProfileInfo(u.username);
+          return `<div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:8px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                  <img src="${uInfo.avatar}" class="feed-avatar ${uInfo.frameClass}">
+                  <span>👤 ${u.username} ${uInfo.isVerified ? '<span class="verified-badge">✔</span>' : ''}</span>
+              </div>
+              <button class="btn sm primary" onclick="startChat('${u.username}')">مراسلة</button>
+          </div>`;
+      }).join('') : '';
   };
 
   window.startChat = (target) => {
@@ -839,7 +927,14 @@ textarea {
       chatUnsubscribe = onSnapshot(query(collection(db, "messages"), orderBy("createdAt", "asc")), (snap) => {
           const msgs = snap.docs.map(d => d.data()).filter(m => (m.sender === currentUsername && m.receiver === activeChatUser) || (m.sender === activeChatUser && m.receiver === currentUsername));
           const box = document.getElementById('chatMessages');
-          box.innerHTML = msgs.length ? msgs.map(m => `<div style="text-align:${m.sender === currentUsername ? 'left' : 'right'};"><span style="background:${m.sender === currentUsername ? 'var(--acc)' : 'var(--card2)'}; color:${m.sender === currentUsername ? '#071019' : 'var(--text)'}; padding:6px 10px; border-radius:8px; display:inline-block; font-size:13px;">${m.text}</span></div>`).join('') : '<p style="color:var(--muted); text-align:center;">لا توجد رسائل.</p>';
+          box.innerHTML = msgs.length ? msgs.map(m => {
+              const mInfo = getUserProfileInfo(m.sender);
+              return `<div style="display:flex; align-items:flex-end; gap:6px; justify-content:${m.sender === currentUsername ? 'flex-start' : 'flex-end'};">
+                  ${m.sender === currentUsername ? `<img src="${mInfo.avatar}" style="width:28px; height:28px; border-radius:50%; object-fit:cover;" class="${mInfo.frameClass}">` : ''}
+                  <span style="background:${m.sender === currentUsername ? 'var(--acc)' : 'var(--card2)'}; color:${m.sender === currentUsername ? '#071019' : 'var(--text)'}; padding:6px 10px; border-radius:8px; display:inline-block; font-size:13px;">${m.text}</span>
+                  ${m.sender !== currentUsername ? `<img src="${mInfo.avatar}" style="width:28px; height:28px; border-radius:50%; object-fit:cover;" class="${mInfo.frameClass}">` : ''}
+              </div>`;
+          }).join('') : '<p style="color:var(--muted); text-align:center;">لا توجد رسائل.</p>';
           box.scrollTop = box.scrollHeight;
       });
   }
