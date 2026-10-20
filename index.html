@@ -30,14 +30,10 @@ textarea {
 .btn-nav button { flex: 1; padding: 8px 6px; background: var(--card2); border: 1px solid var(--line); color: var(--text); border-radius: 8px; cursor: pointer; font-weight: bold; white-space:nowrap; font-size:12px;}
 .btn-nav button.active { background: var(--acc); color: #071019; border-color: var(--acc); }
 
-/* إطارات وبروفايل ديسكورد ستايل */
 .user-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; object-position: center; background: var(--card2); flex-shrink: 0; cursor: pointer; }
 .user-badge-box { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 12px; font-size: 13px; font-weight: bold; background: var(--card2); border: 1px solid var(--line); cursor: pointer; }
 
-/* تأثيرات الإطارات الأسطورية */
-.frame-fire { border: 3px solid #ff4500; box-shadow: 0 0 15px #ff4500, inset 0 0 10px #ff4500; animation: fireGlow 1.5s infinite alternate; }
-@keyframes fireGlow { from { box-shadow: 0 0 10px #ff4500; } to { box-shadow: 0 0 25px #ff4500, 0 0 10px #ff6b6b; } }
-
+.frame-fire { border: 3px solid #ff4500; box-shadow: 0 0 15px #ff4500; }
 .frame-superadmin { border: 3px solid #ff6b6b; box-shadow: 0 0 20px #ff6b6b; }
 .frame-neon { border: 3px solid var(--acc); box-shadow: 0 0 15px var(--acc); }
 .frame-gold { border: 3px solid #f59e0b; box-shadow: 0 0 15px #f59e0b; }
@@ -74,12 +70,13 @@ textarea {
 .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 999; padding: 15px; }
 .modal-content { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 20px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
 
-.accounts-dropdown { position: absolute; top: 55px; right: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px; width: 220px; z-index: 1000; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+.accounts-modal { position: absolute; top: 55px; right: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px; width: 250px; z-index: 1000; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
 .hidden { display: none !important; }
 </style>
 </head>
 <body id="appBody" style="background-color: var(--bg);">
 
+<!-- شاشة الدخول / إنشاء الحساب -->
 <div id="authScreen" class="hidden">
     <h2>منصة دلتا الأسطورية للسكريبتات</h2>
     
@@ -89,7 +86,7 @@ textarea {
         <label style="margin-top:8px;">كلمة المرور</label>
         <input type="password" id="loginPass" placeholder="••••••••">
         <button class="btn primary" style="width:100%; margin-top:10px;" onclick="doLogin()">تسجيل الدخول</button>
-        <button class="toggle-btn" onclick="toggleAuth('register')">حساب جديد؟ اضغط هنا</button>
+        <button class="toggle-btn" onclick="toggleAuth('register')">حساب جديد؟ اضغط هنا لإنشاء حساب</button>
     </div>
 
     <div id="registerForm" class="hidden">
@@ -101,14 +98,26 @@ textarea {
         <label style="margin-top:8px;">كلمة المرور</label>
         <input type="password" id="regPass" placeholder="••••••••">
         <button class="btn primary" style="width:100%; margin-top:10px;" onclick="doRegister()">تأكيد وفتح الحساب 🚀</button>
-        <button class="toggle-btn" onclick="toggleAuth('login')">عندك حساب؟ سجل دخولك</button>
+        <button class="toggle-btn" onclick="toggleAuth('login')">عندك حساب بالفعل؟ سجل دخولك</button>
     </div>
 </div>
 
 <div class="wrap" id="mainUI">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
-      <div style="display:flex; align-items:center; gap:8px;">
-          <button class="btn sm primary" onclick="toggleAccountsMenu()" title="تبديل الحسابات" style="font-size:16px; padding:4px 10px;">➕</button>
+      <div style="display:flex; align-items:center; gap:8px; position:relative;">
+          <!-- زرار تبديل وحفظ الحسابات المحدث -->
+          <button class="btn sm primary" onclick="toggleAccountsMenu()" title="إدارة وتبديل الحسابات" style="font-size:16px; padding:4px 10px;">➕</button>
+          
+          <!-- قائمة إدارة الحسابات (تسجيل دخول أو إنشاء جديد) -->
+          <div id="accountsDropdown" class="accounts-modal">
+              <h4 style="margin:0 0 8px 0; font-size:12px; color:var(--acc);">حساباتك المحفوظة:</h4>
+              <div id="savedAccountsList" style="margin-bottom:8px;"></div>
+              <div style="display:flex; gap:5px; border-top:1px solid var(--line); padding-top:8px;">
+                  <button class="btn sm primary" style="flex:1;" onclick="openAuthModalForAction('login')">تسجيل دخول</button>
+                  <button class="btn sm" style="flex:1; background:var(--card2); color:var(--acc); border:1px solid var(--line);" onclick="openAuthModalForAction('register')">إنشاء حساب</button>
+              </div>
+          </div>
+
           <div id="userHeaderDisplay" style="display:inline-block;"></div>
       </div>
       
@@ -124,12 +133,6 @@ textarea {
           </div>
 
           <button class="btn sm" onclick="confirmLogout()" style="background:transparent;color:var(--bad);border:1px solid var(--bad); margin-bottom:0;">خروج</button>
-      </div>
-
-      <div id="accountsDropdown" class="accounts-dropdown">
-          <h4 style="margin:0 0 8px 0; font-size:12px; color:var(--acc);">حساباتك المحفوظة:</h4>
-          <div id="savedAccountsList" style="margin-bottom:8px;"></div>
-          <button class="btn sm primary" style="width:100%;" onclick="openAddAccountModal()">➕ إضافة حساب</button>
       </div>
   </div>
 
@@ -225,13 +228,12 @@ textarea {
   </div>
 </div>
 
-<!-- Modal بروفايل ديسكورد ستايل مع البانرات والإطارات وخلفية الموقع -->
+<!-- Modal بروفايل ديسكورد ستايل مع البانرات والإطارات الحية -->
 <div id="profileModal" class="modal-overlay hidden">
     <div class="modal-content" style="padding:0; overflow:hidden;">
-        <!-- بانر البروفايل (يدعم صور عادية أو GIF متحرك بدون صوت) -->
         <div id="bannerContainer" style="width:100%; height:110px; background:#1f2d4a; background-size:cover; background-position:center; position:relative;">
             <button class="btn sm primary" style="position:absolute; bottom:8px; left:8px; font-size:10px;" onclick="document.getElementById('bannerInput').click()">🖼️ تغيير البانر (صورة/GIF)</button>
-            <input type="file" id="bannerInput" accept="image/*,image/gif" style="display:none;" onchange="saveBanner(event)">
+            <input type="file" id="bannerInput" accept="image/*,image/gif" style="display:none;" onchange="saveBannerDirect(event)">
         </div>
 
         <div style="padding:15px; text-align:center; position:relative;">
@@ -268,7 +270,7 @@ textarea {
             </div>
 
             <button class="btn sm primary" style="width:100%; margin-bottom:8px;" onclick="document.getElementById('quickAvatarInput').click()">📁 تغيير الصورة الشخصية (صورة/GIF)</button>
-            <input type="file" id="quickAvatarInput" accept="image/*,image/gif" style="display:none;" onchange="saveQuickAvatar(event)">
+            <input type="file" id="quickAvatarInput" accept="image/*,image/gif" style="display:none;" onchange="saveAvatarDirect(event)">
             <button class="btn" style="background:var(--bad); color:white; width:100%;" onclick="closeProfileModal()">إغلاق</button>
         </div>
     </div>
@@ -355,9 +357,17 @@ textarea {
   }
 
   window.confirmLogout = () => { if(confirm("تسجيل الخروج؟")) signOut(auth); };
+  
   window.toggleAuth = (type) => {
       document.getElementById('loginForm').classList.toggle('hidden', type !== 'login');
       document.getElementById('registerForm').classList.toggle('hidden', type !== 'register');
+  };
+
+  window.openAuthModalForAction = (type) => {
+      document.getElementById('accountsDropdown').style.display = 'none';
+      document.getElementById('authScreen').classList.remove('hidden');
+      document.querySelector('.wrap').style.display = 'none';
+      toggleAuth(type);
   };
 
   function saveAccountToLocal(email, password, username) {
@@ -377,20 +387,27 @@ textarea {
               <span>👤 ${acc.username}</span>
               <button class="btn sm primary" onclick="switchAccount('${acc.email}', '${acc.password}')">دخول</button>
           </div>
-      `).join('') : '<span style="font-size:11px; color:var(--muted);">لا توجد حسابات.</span>';
+      `).join('') : '<span style="font-size:11px; color:var(--muted);">لا توجد حسابات محفوظة.</span>';
   };
 
   window.switchAccount = async (email, password) => {
-      try { await signInWithEmailAndPassword(auth, email, password); document.getElementById('accountsDropdown').style.display = 'none'; }
-      catch(e) { alert("خطأ: " + e.message); }
+      try { 
+          await signInWithEmailAndPassword(auth, email, password); 
+          document.getElementById('accountsDropdown').style.display = 'none'; 
+      }
+      catch(e) { alert("خطأ في التبديل: " + e.message); }
   };
-  window.openAddAccountModal = () => { document.getElementById('accountsDropdown').style.display = 'none'; signOut(auth); };
+
+  window.openAddAccountModal = () => { 
+      document.getElementById('accountsDropdown').style.display = 'none'; 
+      signOut(auth); 
+  };
 
   window.doRegister = async () => {
       const username = document.getElementById('regUsername').value.trim();
       const email = document.getElementById('regEmail').value.trim();
       const password = document.getElementById('regPass').value;
-      if(!username || !email || !password) return alert("املأ الخانات!");
+      if(!username || !email || !password) return alert("املأ جميع الخانات!");
       if(!aiCheckUsername(username)) return alert("🛡️ [الذكاء الاصطناعي]: الاسم محظور أو غير لائق!");
 
       try {
@@ -434,8 +451,8 @@ textarea {
           }
       } else {
           currentUser = null; currentUsername = ""; currentUserDocId = "";
-          document.getElementById('authScreen').classList.add('hidden');
-          document.querySelector('.wrap').style.display = 'block';
+          document.getElementById('authScreen').classList.remove('hidden');
+          document.querySelector('.wrap').style.display = 'none';
       }
   });
 
@@ -494,32 +511,34 @@ textarea {
       document.getElementById('appBody').style.backgroundColor = color;
   }
 
-  window.saveQuickAvatar = async (event) => {
+  // حل مشكلة حفظ الصور وصور الـ GIF المتحركة مباشرة
+  window.saveAvatarDirect = (event) => {
       const file = event.target.files[0]; if(!file) return;
       const reader = new FileReader();
       reader.onload = async (e) => {
-          const data = e.target.result;
+          const dataUrl = e.target.result;
+          userAvatarSetting = dataUrl;
+          document.getElementById('profileModalAvatar').src = dataUrl;
           if(currentUserDocId) {
-              await updateDoc(doc(db, "users", currentUserDocId), { avatar: data });
-              userAvatarSetting = data;
+              await updateDoc(doc(db, "users", currentUserDocId), { avatar: dataUrl });
               renderHeaderUser();
-              document.getElementById('profileModalAvatar').src = data;
-              alert("✅ تم تحديث صورتك الشخصية (أو الـ GIF) بنجاح!");
+              alert("✅ تم حفظ وتحديث الصورة الشخصية (أو الـ GIF المتحرك) بنجاح!");
           }
       };
       reader.readAsDataURL(file);
   };
 
-  window.saveBanner = async (event) => {
+  // حل مشكلة حفظ البانرات وصور الـ GIF المتحركة للبانر
+  window.saveBannerDirect = (event) => {
       const file = event.target.files[0]; if(!file) return;
       const reader = new FileReader();
       reader.onload = async (e) => {
-          const data = e.target.result;
+          const dataUrl = e.target.result;
+          userBannerSetting = dataUrl;
+          document.getElementById('bannerContainer').style.backgroundImage = `url(${dataUrl})`;
           if(currentUserDocId) {
-              await updateDoc(doc(db, "users", currentUserDocId), { banner: data });
-              userBannerSetting = data;
-              document.getElementById('bannerContainer').style.backgroundImage = `url(${data})`;
-              alert("✅ تم تحديث بانر الخلفية (صورة أو GIF) بنجاح!");
+              await updateDoc(doc(db, "users", currentUserDocId), { banner: dataUrl });
+              alert("✅ تم حفظ وتحديث بانر الخلفية (أو الـ GIF المتحرك) بنجاح!");
           }
       };
       reader.readAsDataURL(file);
@@ -643,7 +662,6 @@ textarea {
                   ${p.author !== currentUsername ? `<button class="btn sm ${isFollowing ? '' : 'primary'}" onclick="toggleFollow('${p.author}')">${isFollowing ? '✓ متابَع' : '➕ متابعة'}</button>` : ''}
               </div>
               ${isSuperAdmin && p.aiFlagged ? `<div class="ai-warning-box">🛡️ تنبيه الذكاء الاصطناعي: ${p.aiReason}</div>` : ''}
-              <!-- الفيديو مع كتم الصوت تلقائياً (muted) لضمان عدم وجود أصوات مزعجة -->
               <video src="${p.mediaData}" class="tiktok-media" muted controls></video>
               <div style="padding:10px 14px; font-size:13px;">${p.caption}</div>
               
