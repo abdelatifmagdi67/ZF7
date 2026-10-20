@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>دلتا - مجتمع السكريبتات الشامل</title>
+<title>دلتا - منصة الجيمينج والإطارات الأسطورية</title>
 <style>
 :root{--bg:#0b1220;--card:#111c33;--card2:#16233d;--text:#e8eefc;--muted:#9fb0cc;--line:#1f2d4a;--acc:#4cc9f0;--acc2:#b388ff;--ok:#3ddc97;--bad:#ff6b6b;--warn:#f59e0b;--r:14px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:system-ui,"Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;margin:0;padding:20px 14px;overflow-x:hidden;}
+body{font-family:system-ui,"Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;margin:0;padding:14px;overflow-x:hidden;}
 .wrap{max-width:800px;margin:0 auto;display:none;}
 h2{color:var(--acc);margin-top:0;text-align:center;}
 h3{font-size:16px;margin:20px 0 10px}
@@ -16,7 +16,7 @@ label{display:block;margin-bottom:10px;font-size:13px;color:var(--muted);font-we
 input[type=text],input[type=email],input[type=password],select{width:100%;padding:12px;border-radius:8px;border:1px solid var(--line);background:#06101e;color:var(--text);font-family:monospace;font-size:14px;margin-top:6px;}
 
 textarea {
-    width: 100%; min-height: 150px; padding: 12px; border-radius: 8px; border: 1px solid var(--line);
+    width: 100%; min-height: 120px; padding: 12px; border-radius: 8px; border: 1px solid var(--line);
     background: #06101e; color: var(--text); font-family: monospace; font-size: 14px; margin-top: 6px;
     direction: ltr; text-align: left; white-space: pre; overflow-x: auto;
 }
@@ -26,258 +26,266 @@ textarea {
 .btn.sm{padding:6px 10px;font-size:12px;border-radius:6px}
 .btn:active{transform:scale(.95)}
 .btn.copy-btn { background: #06101e; color: var(--acc); border: 1px solid var(--line); }
-.btn-nav { display: flex; gap: 6px; margin-bottom: 15px; overflow-x:auto; }
-.btn-nav button { flex: 1; padding: 10px; background: var(--card2); border: 1px solid var(--line); color: var(--text); border-radius: 8px; cursor: pointer; font-weight: bold; white-space:nowrap; }
+.btn-nav { display: flex; gap: 4px; margin-bottom: 15px; overflow-x:auto; }
+.btn-nav button { flex: 1; padding: 8px 6px; background: var(--card2); border: 1px solid var(--line); color: var(--text); border-radius: 8px; cursor: pointer; font-weight: bold; white-space:nowrap; font-size:12px;}
 .btn-nav button.active { background: var(--acc); color: #071019; border-color: var(--acc); }
 
-.user-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; object-position: center; border: 1px solid var(--acc); background: var(--card2); flex-shrink: 0; }
-.user-badge-box { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 8px; font-size: 13px; font-weight: bold; background: var(--card2); border: 1px solid var(--line); }
+/* إطارات وبروفايل ديسكورد ستايل */
+.user-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; object-position: center; background: var(--card2); flex-shrink: 0; cursor: pointer; }
+.user-badge-box { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 12px; font-size: 13px; font-weight: bold; background: var(--card2); border: 1px solid var(--line); cursor: pointer; }
 
-.avatar-editor-box { display: flex; flex-direction: column; align-items: center; gap: 10px; background: var(--card2); padding: 15px; border-radius: 12px; border: 1px solid var(--line); margin-bottom: 15px; }
-.crop-container { width: 140px; height: 140px; border-radius: 50%; border: 3px solid var(--acc); overflow: hidden; position: relative; background: #000; cursor: grab; box-shadow: 0 0 20px rgba(76, 201, 240, 0.4); touch-action: none; }
-.crop-container:active { cursor: grabbing; }
-#cropCanvas { position: absolute; top: 0; left: 0; }
-.zoom-slider { width: 80%; margin-top: 5px; accent-color: var(--acc); }
+/* تأثيرات الإطارات الأسطورية */
+.frame-fire { border: 3px solid #ff4500; box-shadow: 0 0 15px #ff4500, inset 0 0 10px #ff4500; animation: fireGlow 1.5s infinite alternate; }
+@keyframes fireGlow { from { box-shadow: 0 0 10px #ff4500; } to { box-shadow: 0 0 25px #ff4500, 0 0 10px #ff6b6b; } }
 
-.glow-superadmin { font-family: 'Courier New', monospace; letter-spacing: 1px; color: #ff6b6b !important; border: 2px solid #ff6b6b; background: rgba(255, 107, 107, 0.15); box-shadow: 0 0 18px #ff6b6b; text-shadow: 0 0 8px #ff6b6b; }
-.glow-admin { font-family: 'Courier New', monospace; letter-spacing: 1px; color: #3ddc97 !important; border: 2px solid #3ddc97; background: rgba(61, 220, 151, 0.1); box-shadow: 0 0 15px #3ddc97; text-shadow: 0 0 8px #3ddc97; }
-.glow-diamond { font-family: monospace; color: #4cc9f0 !important; border: 1.5px solid #4cc9f0; box-shadow: 0 0 10px rgba(76, 201, 240, 0.6); }
-.glow-gold { font-family: monospace; color: #f59e0b !important; border: 1px solid #f59e0b; }
-.glow-silver { font-family: monospace; color: #b388ff !important; border: 1px solid var(--line); }
-.glow-bronze { font-family: monospace; color: var(--muted); }
+.frame-superadmin { border: 3px solid #ff6b6b; box-shadow: 0 0 20px #ff6b6b; }
+.frame-neon { border: 3px solid var(--acc); box-shadow: 0 0 15px var(--acc); }
+.frame-gold { border: 3px solid #f59e0b; box-shadow: 0 0 15px #f59e0b; }
+.frame-none { border: 2px solid var(--line); }
 
-#authScreen { max-width: 400px; margin: 50px auto; background: var(--card); padding: 20px; border-radius: var(--r); border: 1px solid var(--line); text-align: center; }
+#authScreen { max-width: 400px; margin: 40px auto; background: var(--card); padding: 20px; border-radius: var(--r); border: 1px solid var(--line); text-align: center; }
 #authScreen input { margin-bottom: 10px; }
 #authScreen .toggle-btn { background: none; border: none; color: var(--acc); cursor: pointer; font-size: 13px; margin-top: 10px; text-decoration: underline; }
 
 .saved-item{border:1px solid var(--line);border-radius:10px;margin-bottom:15px;background:var(--card2); overflow:hidden;}
-.saved-img { width:100%; height:140px; object-fit:cover; border-bottom:1px solid var(--line); background:#000; }
-.saved-content { padding:12px; }
+.saved-content { padding:14px; }
 .saved-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:10px}
 .saved-title{font-weight:bold;font-size:16px;color:var(--acc)}
 .badge { font-size: 11px; background: rgba(179,136,255,0.2); color: var(--acc2); padding: 3px 8px; border-radius: 4px; font-weight: bold; }
-.badge.off { background: rgba(255,107,107,0.2); color: var(--bad); }
 .author { font-size: 12px; color: var(--muted); margin-top: 5px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
 
-.comments-section { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 10px; }
-.comment-item { background: var(--card); padding: 8px 10px; border-radius: 8px; font-size: 12px; margin-bottom: 6px; border: 1px solid var(--line); }
-.reply-item { background: #0b1220; padding: 6px 8px; border-radius: 6px; margin-top: 5px; margin-right: 15px; border-right: 2px solid var(--acc); font-size: 11px; }
-.comment-actions { display: flex; gap: 8px; align-items: center; margin-top: 4px; font-size: 11px; color: var(--muted); }
-.like-comment-btn { background: #1f2d4a; border: none; color: #fff; padding: 3px 8px; border-radius: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; font-size: 11px; }
-.like-comment-btn.liked { background: var(--bad); color: #fff; }
-.sticker-picker { display: flex; gap: 5px; flex-wrap: wrap; margin: 6px 0; background: var(--card2); padding: 6px; border-radius: 6px; }
-.sticker-btn { background: none; border: 1px solid var(--line); border-radius: 4px; font-size: 16px; cursor: pointer; padding: 2px 6px; }
+.tiktok-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); margin-bottom: 20px; overflow: hidden; }
+.tiktok-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+.tiktok-media { width: 100%; max-height: 380px; object-fit: cover; background: #000; display: block; }
+.tiktok-actions { display: flex; gap: 15px; padding: 10px 14px; align-items: center; border-top: 1px solid var(--line); background: var(--card2); }
+.tiktok-action-btn { background: none; border: none; color: #fff; font-size: 15px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-weight: bold; }
+.tiktok-action-btn.liked { color: var(--bad); }
+
+.ai-warning-box { background: rgba(255,107,107,0.15); border: 1px solid var(--bad); color: var(--bad); padding: 8px; border-radius: 6px; font-size: 11px; margin-bottom: 8px; font-weight: bold; }
+
+.comments-section { margin-top: 10px; border-top: 1px solid var(--line); padding-top: 8px; }
+.comment-item { background: var(--card2); padding: 6px 10px; border-radius: 8px; font-size: 12px; margin-bottom: 5px; border: 1px solid var(--line); }
 
 .bell-btn { position: relative; background: var(--card2); border: 1px solid var(--line); color: var(--text); padding: 6px 10px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
 .badge-count { position: absolute; top: -5px; right: -5px; background: var(--bad); color: #fff; font-size: 10px; padding: 2px 5px; border-radius: 50%; font-weight: bold; display: none; }
-.notifications-dropdown { position: absolute; top: 50px; left: 14px; width: 300px; max-height: 350px; overflow-y: auto; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); z-index: 1000; padding: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: none; }
-.notif-item { font-size: 12px; padding: 8px; border-bottom: 1px solid var(--line); margin-bottom: 5px; background: var(--card2); border-radius: 6px; }
+.notifications-dropdown { position: absolute; top: 50px; left: 14px; width: 280px; max-height: 300px; overflow-y: auto; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); z-index: 1000; padding: 10px; display: none; }
+.notif-item { font-size: 11px; padding: 6px; border-bottom: 1px solid var(--line); margin-bottom: 4px; background: var(--card2); border-radius: 6px; }
 
-.chat-container { display: flex; flex-direction: column; height: 350px; background: var(--card2); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin-top: 10px; }
-.chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-.msg-bubble { max-width: 75%; padding: 10px 14px; border-radius: 12px; font-size: 14px; word-break: break-word; }
-.msg-bubble.sent { background: var(--acc); color: #071019; align-self: flex-end; border-bottom-left-radius: 2px; }
-.msg-bubble.received { background: #1c2c4c; color: var(--text); align-self: flex-start; border-bottom-right-radius: 2px; }
-.msg-bubble img { max-width: 100%; max-height: 180px; border-radius: 8px; margin-top: 5px; display: block; object-fit: cover; }
-.chat-input-area { display: flex; padding: 10px; background: var(--card); border-top: 1px solid var(--line); gap: 6px; align-items: center; }
-.chat-input-area input { margin-top: 0; flex: 1; }
-.user-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--card2); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 8px; }
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 999; padding: 15px; }
+.modal-content { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 20px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
 
-.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 999; padding: 15px; }
-.modal-content { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 20px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
-
-#imagePreview { display:none; width:100%; height:120px; object-fit:cover; border-radius:8px; margin-top:10px; border:1px solid var(--line); }
+.accounts-dropdown { position: absolute; top: 55px; right: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px; width: 220px; z-index: 1000; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
 .hidden { display: none !important; }
 </style>
 </head>
-<body>
+<body id="appBody" style="background-color: var(--bg);">
 
 <div id="authScreen" class="hidden">
-    <h2>مجتمع دلتا</h2>
+    <h2>منصة دلتا الأسطورية للسكريبتات</h2>
     
     <div id="loginForm">
         <label>البريد الإلكتروني</label>
-        <input type="email" id="loginEmail" placeholder="اكتب بريدك الإلكتروني...">
+        <input type="email" id="loginEmail" placeholder="اكتب بريدك...">
         <label style="margin-top:8px;">كلمة المرور</label>
         <input type="password" id="loginPass" placeholder="••••••••">
         <button class="btn primary" style="width:100%; margin-top:10px;" onclick="doLogin()">تسجيل الدخول</button>
-        <button class="toggle-btn" onclick="toggleAuth('register')">حساب جديد؟ اضغط هنا لإنشاء حساب</button>
+        <button class="toggle-btn" onclick="toggleAuth('register')">حساب جديد؟ اضغط هنا</button>
     </div>
 
     <div id="registerForm" class="hidden">
-        <h3>إنشاء حساب جديد</h3>
-        <label>اسم المستخدم (اكتب Super Admin للأدمن الأعلى)</label>
-        <input type="text" id="regUsername" placeholder="اكتب Super Admin...">
+        <h3>إنشاء حساب جديد (بواسطة الذكاء الاصطناعي 🛡️)</h3>
+        <label>اسم المستخدم</label>
+        <input type="text" id="regUsername" placeholder="اكتب اسمك...">
         <label style="margin-top:8px;">البريد الإلكتروني</label>
         <input type="email" id="regEmail" placeholder="اكتب إيميلك...">
-        <label style="margin-top:8px;">كلمة المرور (6 حروف/أرقام على الأقل)</label>
+        <label style="margin-top:8px;">كلمة المرور</label>
         <input type="password" id="regPass" placeholder="••••••••">
         <button class="btn primary" style="width:100%; margin-top:10px;" onclick="doRegister()">تأكيد وفتح الحساب 🚀</button>
-        <button class="toggle-btn" onclick="toggleAuth('login')">عندك حساب بالفعل؟ سجل دخولك</button>
+        <button class="toggle-btn" onclick="toggleAuth('login')">عندك حساب؟ سجل دخولك</button>
     </div>
 </div>
 
 <div class="wrap" id="mainUI">
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
-      <h2 style="margin:0;">دلتا <span id="adminBadge" style="font-size:12px; background:var(--bad); color:#fff; padding:2px 6px; border-radius:4px; display:none;">أدمن أعلى</span></h2>
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+      <div style="display:flex; align-items:center; gap:8px;">
+          <button class="btn sm primary" onclick="toggleAccountsMenu()" title="تبديل الحسابات" style="font-size:16px; padding:4px 10px;">➕</button>
+          <div id="userHeaderDisplay" style="display:inline-block;"></div>
+      </div>
       
-      <div style="display:flex; align-items:center; gap:8px; position:relative;">
+      <div style="display:flex; align-items:center; gap:6px; position:relative;">
           <button class="bell-btn" onclick="toggleNotifications()">
-              🔔 التنبيهات
+              🔔
               <span id="notifBadge" class="badge-count">0</span>
           </button>
           
           <div id="notifDropdown" class="notifications-dropdown">
-              <h4 style="margin:0 0 8px 0; font-size:13px; color:var(--acc);">التنبيهات الجديدة:</h4>
-              <div id="notifList">لا توجد تنبيهات جديدة.</div>
+              <h4 style="margin:0 0 8px 0; font-size:12px; color:var(--acc);">التنبيهات:</h4>
+              <div id="notifList">لا توجد تنبيهات.</div>
           </div>
 
-          <a href="https://discord.gg/YOUR_DISCORD_LINK" target="_blank" class="btn sm" style="background:#5865F2; color:#fff; text-decoration:none; display:inline-flex; align-items:center; gap:5px; margin-bottom:0;">ديسكورد</a>
-          <div id="userHeaderDisplay" style="display:inline-block;"></div>
           <button class="btn sm" onclick="confirmLogout()" style="background:transparent;color:var(--bad);border:1px solid var(--bad); margin-bottom:0;">خروج</button>
+      </div>
+
+      <div id="accountsDropdown" class="accounts-dropdown">
+          <h4 style="margin:0 0 8px 0; font-size:12px; color:var(--acc);">حساباتك المحفوظة:</h4>
+          <div id="savedAccountsList" style="margin-bottom:8px;"></div>
+          <button class="btn sm primary" style="width:100%;" onclick="openAddAccountModal()">➕ إضافة حساب</button>
       </div>
   </div>
 
   <div class="btn-nav">
-      <button id="navAdd" class="active" onclick="switchTab('add')">نشر وبروفايل</button>
-      <button id="navObf" onclick="switchTab('obf')">التمويه</button>
+      <button id="navAdd" class="active" onclick="switchTab('add')">نشر سكريبت</button>
+      <button id="navTok" onclick="switchTab('tok')">🎬 دلتا توك (تعليم)</button>
+      <button id="navObf" onclick="switchTab('obf')">تمويه</button>
       <button id="navMy" onclick="switchTab('my')">سكريبتاتي</button>
       <button id="navComm" onclick="switchTab('comm')">المجتمع</button>
-      <button id="navChat" onclick="switchTab('chat')">المراسلات والصوتيات</button>
+      <button id="navChat" onclick="switchTab('chat')">المراسلات</button>
   </div>
 
   <div id="tabAdd">
       <div class="card">
-        <h3>⚙️ إعدادات البروفايل والصورة الشخصية</h3>
-
-        <div class="avatar-editor-box">
-            <input type="file" id="profileAvatarInput" accept="image/*,image/gif" style="display:none;" onchange="loadAvatarForCrop(event)">
-            <div style="font-size:13px; color:var(--acc); font-weight:bold; text-align:center;">اسحب الصورة للتحريك، واستخدم شريط الزووم للتكبير والتصغير:</div>
-            <div class="crop-container" id="cropArea">
-                <canvas id="cropCanvas" width="140" height="140"></canvas>
-            </div>
-            <label style="margin:0; font-size:11px; color:var(--muted);">تكبير / تصغير الصورة:</label>
-            <input type="range" id="zoomSlider" class="zoom-slider" min="0.2" max="3" step="0.05" value="1" oninput="changeZoom(this.value)">
-            <button class="btn sm" style="background:var(--card); color:var(--acc); border:1px solid var(--line);" onclick="document.getElementById('profileAvatarInput').click()">📁 اختر صورة جديدة</button>
-            <button class="btn primary" onclick="saveCroppedAvatar()">💾 حفظ وتأكيد الصورة في البروفايل</button>
-        </div>
-
-        <div style="background:var(--card2); padding:10px; border-radius:8px; margin-bottom:15px; border:1px solid var(--line);">
-            <label style="margin-bottom:5px; color:var(--acc);">🎨 إطار اسمك وشكل الخطوط والأضواء:</label>
-            <select id="userFrameSelect" onchange="updateUserSetting('frame', this.value)">
-                <option value="superadmin">🔴 إطار الأدمن الأعلى (Super Admin)</option>
-                <option value="admin">🟢 خطوط أخضر ساطع وإضاءة الأدمن الملكية</option>
-                <option value="diamond">💎 أسطورة دلتا (Diamond Glow)</option>
-                <option value="gold">🥇 محترف سكريبتات (Gold Neon)</option>
-                <option value="silver">🥈 مطور صاعد (Silver)</option>
-                <option value="bronze">🥉 مبتدئ (Bronze)</option>
-                <option value="none">❌ بدون إطار</option>
-            </select>
-        </div>
-
-        <h3 style="margin-top:20px;">🚀 نشر سكريبت جديد</h3>
-        <label>اسم السكريبت<input type="text" id="scriptName" placeholder="مثلاً: سكريبت طيران"></label>
-        <label>التصنيف
+        <h3>🚀 نشر سكريبت جديد (نصي تعليمي)</h3>
+        <label>اسم السكريبت<input type="text" id="scriptName" placeholder="مثلاً: سكريبت شرح طيران"></label>
+        <label>التصنيف التعليمي
           <select id="scriptCategory">
-              <option value="عام">عام</option>
+              <option value="تعليمي وشرح">تعليمي وشرح</option>
+              <option value="تجربة سكريبت">تجربة سكريبت</option>
               <option value="MM2">MM2</option>
               <option value="ماب السرقة">ماب السرقة</option>
-              <option value="تايم بومب">تايم بومب</option>
           </select>
         </label>
-        <label>صورة السكريبت (عادية أو GIF متحركة)
-          <input type="file" id="scriptImage" accept="image/*,image/gif" onchange="handleImageUpload(event)" style="padding:10px; background:var(--card2); border:1px dashed var(--acc);">
-          <input type="hidden" id="scriptImageData">
-        </label>
-        <img id="imagePreview" src="" alt="معاينة">
-        
-        <label style="margin-top:15px;">كود السكريبت (Lua)<textarea id="scriptCode" placeholder="-- الزق الكود هنا" spellcheck="false"></textarea></label>
-        <button class="btn primary" id="saveBtn" onclick="saveScriptWithAI()" style="width:100%; margin-top:10px;">🚀 نشر السكريبت</button>
+        <label style="margin-top:15px;">كود السكريبت أو شرحه (Lua)<textarea id="scriptCode" placeholder="-- اكتب كود السكريبت أو شرحه هنا" spellcheck="false"></textarea></label>
+        <button class="btn primary" onclick="saveScriptWithAI()" style="width:100%; margin-top:10px;">🚀 نشر السكريبت</button>
       </div>
+  </div>
+
+  <div id="tabTok" class="hidden">
+      <div class="card">
+          <h3>🎬 نشر فيديو تعليمي أو تجربة سكريبت</h3>
+          <label>وصف الفيديو التعليمي<input type="text" id="tokCaption" placeholder="اشرح الشرح أو التجربة باختصار..."></label>
+          <label>خصوصية المنشور
+              <select id="tokPrivacy">
+                  <option value="public">🌐 عام (للجميع)</option>
+                  <option value="followers">🔒 خاص (للمتابعين فقط)</option>
+              </select>
+          </label>
+          <label>رفع ملف الفيديو أو الشرح التعليمي 🎥 (بدون صوت افتراضي)
+              <input type="file" id="tokMediaInput" accept="video/*,audio/*" onchange="handleTokMediaUpload(event)" style="padding:10px; background:var(--card2); border:1px dashed var(--acc);">
+              <input type="hidden" id="tokMediaData">
+          </label>
+          <video id="tokVideoPreview" style="display:none; width:100%; max-height:150px; margin-top:8px;" muted controls></video>
+          <button class="btn primary" onclick="publishTokPost()" style="width:100%; margin-top:10px;">🚀 نشر الفيديو التعليمي</button>
+      </div>
+      
+      <div style="display:flex; gap:8px; margin-bottom:12px;">
+          <button class="btn sm primary" id="tokFeedAll" onclick="setTokFeedMode('all')">🌐 كل الفيديوهات</button>
+          <button class="btn sm" id="tokFeedFollowing" onclick="setTokFeedMode('following')" style="background:var(--card2); color:var(--acc); border:1px solid var(--line);">⭐ فيديوهات المتابَعين فقط</button>
+      </div>
+
+      <div id="deltaTokFeed"><p style="color:var(--muted); text-align:center;">جاري تحميل محتوى دلتا توك التعليمي...</p></div>
   </div>
 
   <div id="tabObf" class="hidden">
       <div class="card">
           <h3>تمويه السكريبت (Delta Obfuscator)</h3>
           <textarea id="plainCode" placeholder="-- اكتب الكود هنا --" spellcheck="false"></textarea>
-          <button class="btn primary" style="width:100%; margin-top:10px; font-size:16px;" onclick="obfuscateCode()">🔐 تمويه السكريبت</button>
-          <label style="margin-top:20px;">الكود المموه (تحت)</label>
-          <textarea id="encryptedCode" placeholder="-- الكود المموه هيظهر هنا --" readonly spellcheck="false"></textarea>
-          <button class="btn copy-btn" style="width:100%; margin-top:5px;" onclick="copyText(document.getElementById('encryptedCode').value, this)">📋 نسخ الكود المموه</button>
+          <button class="btn primary" style="width:100%; margin-top:10px;" onclick="obfuscateCode()">🔐 تمويه السكريبت</button>
+          <label style="margin-top:15px;">الكود المموه</label>
+          <textarea id="encryptedCode" readonly spellcheck="false"></textarea>
+          <button class="btn copy-btn" style="width:100%; margin-top:5px;" onclick="copyText(document.getElementById('encryptedCode').value, this)">📋 نسخ الكود</button>
       </div>
   </div>
 
   <div id="tabMy" class="hidden"><div id="myList"><p style="color:var(--muted);text-align:center;">جاري التحميل...</p></div></div>
 
   <div id="tabComm" class="hidden">
-      <div class="card" style="padding:10px; display:flex; gap:8px; align-items:center;">
-          <input type="text" id="searchInput" placeholder="ابحث باسم السكريبت..." oninput="filterCommunity()" style="margin-top:0; flex:1;">
-          <button class="btn sm" id="toggleFeedBtn" onclick="toggleFeedMode()" style="background:var(--card2); border:1px solid var(--line); color:var(--acc);">⭐ المتابَعين</button>
+      <div class="card" style="padding:10px;">
+          <input type="text" id="searchInput" placeholder="ابحث باسم السكريبت..." oninput="renderLists()" style="margin-top:0;">
       </div>
       <div id="communityList"><p style="color:var(--muted);text-align:center;">المجتمع فاضي.</p></div>
   </div>
 
   <div id="tabChat" class="hidden">
-      <div id="adminSettingsPanel" class="card hidden" style="border-color: var(--acc2);">
-          <h3 style="color: var(--acc2);">⚙️ إعدادات الأدمن المركزي</h3>
-          <input type="password" id="adminGlobalApiKey" placeholder="أدخل مفتاح Gemini API هنا..." style="margin-bottom:10px; font-size:12px;">
-          <button class="btn sm primary" onclick="saveGlobalApiKey()">حفظ المفتاح</button>
-      </div>
-
-      <div id="adminBanPanel" class="card hidden" style="border-color: var(--bad);">
-          <h3 style="color: var(--bad);">🚨 لوحة تحكم الأدمن الأعلى (الحذف النهائي للأعضاء)</h3>
-          <p style="font-size:12px; color:var(--muted);">يمكنك هنا حذف أي حساب نهائياً من الموقع كأنه لم يكن:</p>
-          <div id="adminAllUsersList" style="max-height:250px; overflow-y:auto; margin-top:10px;"></div>
-      </div>
-
       <div class="card">
-          <h3>👥 الأصدقاء والمتابَِعون</h3>
-          <div id="friendsList" style="margin-bottom:15px; font-size:13px; color:var(--muted);">لا توجد أصدقاء حالياً.</div>
-
-          <h3>البحث عن الأعضاء</h3>
+          <h3>👥 المحادثات المباشرة</h3>
           <input type="text" id="userSearchInput" placeholder="ابحث عن اسم المستخدم..." oninput="searchUsers()" style="margin-bottom:12px;">
           <div id="userSearchResults" style="margin-bottom:15px;"></div>
-
-          <div id="activeChatBox" class="hidden" style="margin-top:15px;">
+          <div id="activeChatBox" class="hidden">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                   <span id="chatWithTitle" style="font-weight:bold; color:var(--acc);">المحادثة مع: -</span>
-                  <button class="btn sm" onclick="closeChat()" style="background:var(--bad); color:white;">إغلاق الشات</button>
+                  <button class="btn sm" onclick="closeChat()" style="background:var(--bad); color:white;">إغلاق</button>
               </div>
-              <div class="chat-container">
-                  <div class="chat-messages" id="chatMessages"></div>
-                  <div class="sticker-picker">
-                      <button class="sticker-btn" onclick="insertSticker('chatMsgInput', '🔥')">🔥</button>
-                      <button class="sticker-btn" onclick="insertSticker('chatMsgInput', '💀')">💀</button>
-                      <button class="sticker-btn" onclick="insertSticker('chatMsgInput', '👑')">👑</button>
-                      <button class="sticker-btn" onclick="insertSticker('chatMsgInput', '😎')">😎</button>
-                      <button class="sticker-btn" onclick="insertSticker('chatMsgInput', '🚀')">🚀</button>
-                      <button class="sticker-btn" onclick="insertSticker('chatMsgInput', '💎')">💎</button>
-                  </div>
-                  <div class="chat-input-area">
-                      <input type="text" id="chatMsgInput" placeholder="اكتب رسالتك...">
-                      <button class="btn sm" id="recordVoiceBtn" onclick="toggleVoiceRecording()" style="background:var(--card2); color:var(--bad); border:1px solid var(--line);">🎤</button>
-                      <input type="file" id="chatImgInput" accept="image/*,image/gif" style="display:none;" onchange="sendChatImage(event)">
-                      <button class="btn sm primary" onclick="document.getElementById('chatImgInput').click()">📷</button>
-                      <button class="btn sm primary" onclick="sendChatMessage()">إرسال</button>
-                  </div>
+              <div class="card" style="height:280px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;" id="chatMessages"></div>
+              <div style="display:flex; gap:6px;">
+                  <input type="text" id="chatMsgInput" placeholder="اكتب رسالتك..." style="margin-top:0; flex:1;">
+                  <button class="btn sm primary" onclick="sendChatMessage()">إرسال</button>
               </div>
           </div>
       </div>
   </div>
 </div>
 
+<!-- Modal بروفايل ديسكورد ستايل مع البانرات والإطارات وخلفية الموقع -->
+<div id="profileModal" class="modal-overlay hidden">
+    <div class="modal-content" style="padding:0; overflow:hidden;">
+        <!-- بانر البروفايل (يدعم صور عادية أو GIF متحرك بدون صوت) -->
+        <div id="bannerContainer" style="width:100%; height:110px; background:#1f2d4a; background-size:cover; background-position:center; position:relative;">
+            <button class="btn sm primary" style="position:absolute; bottom:8px; left:8px; font-size:10px;" onclick="document.getElementById('bannerInput').click()">🖼️ تغيير البانر (صورة/GIF)</button>
+            <input type="file" id="bannerInput" accept="image/*,image/gif" style="display:none;" onchange="saveBanner(event)">
+        </div>
+
+        <div style="padding:15px; text-align:center; position:relative;">
+            <img id="profileModalAvatar" src="" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid var(--acc); margin:-50px auto 10px; display:block; background:#000;">
+            <h3 id="profileModalUsername" style="margin:5px 0; color:var(--acc);">اسم المستخدم</h3>
+
+            <div style="background:var(--card2); padding:10px; border-radius:8px; margin:10px 0; text-align:right;">
+                <label style="color:var(--acc); font-size:12px; margin-bottom:4px;">🖼️ اختر الإطار الأسطوري (حسب المستوى):</label>
+                <select id="frameSelect" onchange="updateProfileAttr('frame', this.value)" style="margin-top:0; font-size:12px; padding:8px;">
+                    <option value="fire">🔥 إطار النار المشتعلة (أنت والأساطير)</option>
+                    <option value="superadmin">🔴 إطار الأدمن الملكي</option>
+                    <option value="neon">💎 إطار نيون ساطع</option>
+                    <option value="gold">🥇 إطار ذهبي</option>
+                    <option value="none">❌ بدون إطار</option>
+                </select>
+
+                <label style="color:var(--acc); font-size:12px; margin:10px 0 4px;">🎨 لون خلفية المنصة العامة:</label>
+                <select id="bgThemeSelect" onchange="updateBackgroundTheme(this.value)" style="margin-top:0; font-size:12px; padding:8px;">
+                    <option value="#0b1220">🌑 غامق كلاسيكي (Dark)</option>
+                    <option value="#1a1a2e">🌌 ليلي عميق</option>
+                    <option value="#f0f4f8">☀️ فاتح ناصع (Light)</option>
+                </select>
+
+                <label style="color:var(--acc); font-size:12px; margin:10px 0 4px;">🔒 خصوصية قائمة المتابعين:</label>
+                <select id="privacyFollowingSelect" onchange="updateProfileAttr('privacy', this.value)" style="margin-top:0; font-size:12px; padding:8px;">
+                    <option value="public">🌐 عامة (للجميع)</option>
+                    <option value="private">🔒 خاصة (مخفية)</option>
+                </select>
+            </div>
+
+            <div style="display:flex; justify-content:center; gap:20px; margin:15px 0; font-size:14px; background:var(--card2); padding:10px; border-radius:8px;">
+                <div><b>المتابِعون:</b> <span id="statFollowers">0</span></div>
+                <div><b>تتابعهم:</b> <span id="statFollowing">0</span></div>
+            </div>
+
+            <button class="btn sm primary" style="width:100%; margin-bottom:8px;" onclick="document.getElementById('quickAvatarInput').click()">📁 تغيير الصورة الشخصية (صورة/GIF)</button>
+            <input type="file" id="quickAvatarInput" accept="image/*,image/gif" style="display:none;" onchange="saveQuickAvatar(event)">
+            <button class="btn" style="background:var(--bad); color:white; width:100%;" onclick="closeProfileModal()">إغلاق</button>
+        </div>
+    </div>
+</div>
+
 <!-- Modal تعديل السكريبت -->
 <div id="editModal" class="modal-overlay hidden">
-    <div class="modal-content">
+    <div class="modal-content" style="padding:20px;">
         <h3>✏️ تعديل السكريبت</h3>
         <input type="hidden" id="editScriptId">
         <label>اسم السكريبت<input type="text" id="editScriptName"></label>
         <label>التصنيف
             <select id="editScriptCategory">
-                <option value="عام">عام</option>
+                <option value="تعليمي وشرح">تعليمي وشرح</option>
+                <option value="تجربة سكريبت">تجربة سكريبت</option>
                 <option value="MM2">MM2</option>
                 <option value="ماب السرقة">ماب السرقة</option>
-                <option value="تايم بومب">تايم بومب</option>
             </select>
         </label>
         <label>كود السكريبت (Lua)<textarea id="editScriptCode" spellcheck="false"></textarea></label>
@@ -291,7 +299,7 @@ textarea {
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, query, where, getDocs, onSnapshot, deleteDoc, doc, updateDoc, setDoc, getDoc, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, query, where, getDocs, onSnapshot, deleteDoc, doc, updateDoc, setDoc, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyD2DjPpzfS8QT9cJoTdyzSMuwcJfN8Ulrw",
@@ -309,247 +317,238 @@ textarea {
   let currentUser = null;
   let currentUsername = "";
   let currentUserDocId = "";
-  let userFrameSetting = "admin";
   let userAvatarSetting = "";
+  let userBannerSetting = "";
+  let userFrameSetting = "fire";
+  let userPrivacySetting = "public";
+  let userBgTheme = "#0b1220";
 
   let allScriptsCache = [];
-  let allCommentsCache = [];
-  let allCommentLikesCache = [];
+  let allTokPostsCache = [];
+  let allTokLikesCache = [];
+  let allTokCommentsCache = [];
   let allLikesCache = [];
   let allUsersCache = [];
-  let allFriendsCache = [];
+  let allFollowsCache = [];
   let notifsCache = [];
   let activeChatUser = null;
   let chatUnsubscribe = null;
-  let isOnlyFollowingFeed = false;
-  let mediaRecorder = null;
-  let audioChunks = [];
-  let isRecording = false;
+  let tokFeedMode = 'all';
 
   const DELTA_KEY = "DeltaHubSecureKey2026";
   const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239fb0cc'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>";
 
-  let cropImg = new Image();
-  let imgX = 0, imgY = 0, imgScale = 1;
-  let isDragging = false, startX = 0, startY = 0;
-  const canvas = document.getElementById('cropCanvas');
-  const ctx = canvas.getContext('2d');
+  function aiCheckUsername(name) {
+      const badWords = ["سافل", "قذر", "حمار", "كلب", "sex", "hack", "admin_fake", "porn"];
+      const lower = name.toLowerCase();
+      for(let w of badWords) if(lower.includes(w)) return false;
+      return true;
+  }
 
-  window.confirmLogout = () => { 
-      if (confirm("هل أنت متأكد أنك تريد تسجيل الخروج؟")) {
-          signOut(auth);
-      } 
-  };
+  function aiInspectPostContent(text) {
+      const suspiciousKeywords = ["تهكير حسابات", "سرقة بيانات", "malware", "scam", "phishing", "illegal", "سحب حسابات", "تخريب"];
+      const lower = text.toLowerCase();
+      for(let word of suspiciousKeywords) {
+          if(lower.includes(word)) return { isSafe: false, reason: `تحذير الذكاء الاصطناعي 🛡️: المحتوى يحتوي على كلمات مشبوهة (${word}).` };
+      }
+      return { isSafe: true, reason: "" };
+  }
 
+  window.confirmLogout = () => { if(confirm("تسجيل الخروج؟")) signOut(auth); };
   window.toggleAuth = (type) => {
       document.getElementById('loginForm').classList.toggle('hidden', type !== 'login');
       document.getElementById('registerForm').classList.toggle('hidden', type !== 'register');
   };
 
+  function saveAccountToLocal(email, password, username) {
+      let accounts = JSON.parse(localStorage.getItem('delta_saved_accounts') || '[]');
+      if(!accounts.some(acc => acc.email === email)) {
+          accounts.push({ email, password, username });
+          localStorage.setItem('delta_saved_accounts', JSON.stringify(accounts));
+      }
+  }
+
+  window.toggleAccountsMenu = () => {
+      const drop = document.getElementById('accountsDropdown');
+      drop.style.display = drop.style.display === 'block' ? 'none' : 'block';
+      let accounts = JSON.parse(localStorage.getItem('delta_saved_accounts') || '[]');
+      document.getElementById('savedAccountsList').innerHTML = accounts.length ? accounts.map(acc => `
+          <div style="display:flex; justify-content:space-between; align-items:center; background:var(--card2); padding:6px; border-radius:6px; margin-bottom:4px; font-size:12px;">
+              <span>👤 ${acc.username}</span>
+              <button class="btn sm primary" onclick="switchAccount('${acc.email}', '${acc.password}')">دخول</button>
+          </div>
+      `).join('') : '<span style="font-size:11px; color:var(--muted);">لا توجد حسابات.</span>';
+  };
+
+  window.switchAccount = async (email, password) => {
+      try { await signInWithEmailAndPassword(auth, email, password); document.getElementById('accountsDropdown').style.display = 'none'; }
+      catch(e) { alert("خطأ: " + e.message); }
+  };
+  window.openAddAccountModal = () => { document.getElementById('accountsDropdown').style.display = 'none'; signOut(auth); };
+
   window.doRegister = async () => {
       const username = document.getElementById('regUsername').value.trim();
       const email = document.getElementById('regEmail').value.trim();
       const password = document.getElementById('regPass').value;
-
-      if(!username || !email || !password) return alert("يرجى ملء جميع الخانات!");
-      if(password.length < 6) return alert("كلمة المرور يجب ألا تقل عن 6 أحرف/أرقام!");
-
-      const lowerName = username.toLowerCase();
-      const isSuperAdmin = lowerName === 'super admin' || lowerName === 'admin' || lowerName === 'superadmin';
+      if(!username || !email || !password) return alert("املأ الخانات!");
+      if(!aiCheckUsername(username)) return alert("🛡️ [الذكاء الاصطناعي]: الاسم محظور أو غير لائق!");
 
       try {
-          if (!isSuperAdmin) {
-              const qCheck = query(collection(db, "users"), where("username", "==", username));
-              const snapCheck = await getDocs(qCheck);
-              if (!snapCheck.empty) {
-                  return alert("⚠️ اسم المستخدم هذا مأخوذ مسبقاً! اختر اسماً آخر.");
-              }
-          }
-
           const cred = await createUserWithEmailAndPassword(auth, email, password);
-
-          await addDoc(collection(db, "users"), { 
-              uid: cred.user.uid, 
-              username: username, 
-              email: email, 
-              frame: isSuperAdmin ? 'superadmin' : 'bronze', 
-              avatar: '' 
-          });
-          
-          alert(isSuperAdmin ? "👑 مبروك! تم إنشاء حساب الأدمن الأعلى بنجاح." : "✅ تم إنشاء الحساب بنجاح!");
-      } catch(e) {
-          alert("حدث خطأ أثناء التسجيل: " + e.message);
-      }
+          await addDoc(collection(db, "users"), { uid: cred.user.uid, username, email, frame: 'fire', avatar: '', banner: '', privacy: 'public', bgTheme: '#0b1220' });
+          saveAccountToLocal(email, password, username);
+          alert("✅ تم إنشاء الحساب بنجاح!");
+      } catch(e) { alert("خطأ: " + e.message); }
   };
 
   window.doLogin = async () => {
       const email = document.getElementById('loginEmail').value.trim();
       const password = document.getElementById('loginPass').value;
-      if(!email || !password) return alert("اكتب البريد الإلكتروني وكلمة المرور!");
-
+      if(!email || !password) return alert("اكتب البريد وكلمة المرور!");
       try {
-          await signInWithEmailAndPassword(auth, email, password);
-      } catch(e) {
-          alert("❌ البريد الإلكتروني أو كلمة المرور غير صحيحة!");
-      }
+          const cred = await signInWithEmailAndPassword(auth, email, password);
+          const snap = await getDocs(query(collection(db, "users"), where("uid", "==", cred.user.uid)));
+          if(!snap.empty) saveAccountToLocal(email, password, snap.docs[0].data().username);
+      } catch(e) { alert("❌ بيانات الدخول خاطئة!"); }
   };
 
   onAuthStateChanged(auth, async (user) => {
       if (user) {
           currentUser = user;
-          const q = query(collection(db, "users"), where("uid", "==", user.uid));
-          const snap = await getDocs(q);
+          const snap = await getDocs(query(collection(db, "users"), where("uid", "==", user.uid)));
           if(!snap.empty) {
               const uDoc = snap.docs[0];
               currentUserDocId = uDoc.id;
-              const uData = uDoc.data();
-              currentUsername = uData.username;
-              userFrameSetting = uData.frame || 'bronze';
-              userAvatarSetting = uData.avatar || '';
+              currentUsername = uDoc.data().username;
+              userAvatarSetting = uDoc.data().avatar || '';
+              userBannerSetting = uDoc.data().banner || '';
+              userFrameSetting = uDoc.data().frame || 'fire';
+              userPrivacySetting = uDoc.data().privacy || 'public';
+              userBgTheme = uDoc.data().bgTheme || '#0b1220';
               
-              document.getElementById('userFrameSelect').value = userFrameSetting;
-              initCropCanvas(userAvatarSetting ? userAvatarSetting : DEFAULT_AVATAR);
-
-              const lowerName = currentUsername.toLowerCase();
-              const isSuperAdmin = lowerName === 'super admin' || lowerName === 'admin' || lowerName === 'superadmin' || userFrameSetting === 'superadmin';
-
-              if(isSuperAdmin) {
-                  document.getElementById('adminBadge').style.display = 'inline-block';
-                  document.getElementById('adminBanPanel').classList.remove('hidden');
-                  document.getElementById('adminSettingsPanel').classList.remove('hidden');
-                  renderAdminUsersList();
-              }
-
+              applyBackgroundTheme(userBgTheme);
+              renderHeaderUser();
               document.getElementById('authScreen').classList.add('hidden');
               document.querySelector('.wrap').style.display = 'block';
               loadAllData();
           }
       } else {
           currentUser = null; currentUsername = ""; currentUserDocId = "";
-          document.getElementById('authScreen').classList.remove('hidden');
-          document.querySelector('.wrap').style.display = 'none';
+          document.getElementById('authScreen').classList.add('hidden');
+          document.querySelector('.wrap').style.display = 'block';
       }
   });
 
   function loadAllData() {
-      onSnapshot(collection(db, "users"), (snap) => { 
-          allUsersCache = snap.docs.map(d => ({id: d.id, ...d.data()})); 
-          renderHeaderUser(); 
-          const lowerName = currentUsername.toLowerCase();
-          const isSuperAdmin = lowerName === 'super admin' || lowerName === 'admin' || lowerName === 'superadmin' || userFrameSetting === 'superadmin';
-          if(isSuperAdmin) renderAdminUsersList();
-      });
+      onSnapshot(collection(db, "users"), (snap) => { allUsersCache = snap.docs.map(d => d.data()); renderHeaderUser(); });
       onSnapshot(collection(db, "scripts"), (snap) => { allScriptsCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderLists(); });
       onSnapshot(collection(db, "script_likes"), (snap) => { allLikesCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderLists(); });
-      onSnapshot(collection(db, "script_comments"), (snap) => { allCommentsCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderLists(); });
-      onSnapshot(collection(db, "comment_likes"), (snap) => { allCommentLikesCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderLists(); });
-      onSnapshot(collection(db, "friendships"), (snap) => { allFriendsCache = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(f => f.user === currentUsername); renderFriendsList(); renderLists(); });
+      onSnapshot(collection(db, "tok_posts"), (snap) => { allTokPostsCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderTokFeed(); });
+      onSnapshot(collection(db, "tok_likes"), (snap) => { allTokLikesCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderTokFeed(); });
+      onSnapshot(collection(db, "tok_comments"), (snap) => { allTokCommentsCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderTokFeed(); });
+      onSnapshot(collection(db, "follows"), (snap) => { allFollowsCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderTokFeed(); });
       onSnapshot(collection(db, "notifications"), (snap) => { notifsCache = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(n => n.recipient === currentUsername); renderNotifications(); });
   }
 
-  window.permanentlyDeleteUser = async (userDocId, usernameToDel) => {
-      if(confirm(`⚠️ هل أنت متأكد من حذف الحساب "${usernameToDel}" نهائياً كأنه لم يكن؟`)) {
-          try {
-              await deleteDoc(doc(db, "users", userDocId));
-              const userScripts = allScriptsCache.filter(s => s.author === usernameToDel);
-              for(let scr of userScripts) {
-                  await deleteDoc(doc(db, "scripts", scr.id));
-              }
-              alert(`✅ تم حذف الحساب "${usernameToDel}" نهائياً من الموقع بنجاح!`);
-          } catch(e) {
-              alert("حدث خطأ أثناء الحذف: " + e.message);
-          }
+  window.openProfileModal = () => {
+      const uData = allUsersCache.find(u => u.username === currentUsername);
+      const avatar = uData && uData.avatar ? uData.avatar : DEFAULT_AVATAR;
+      const banner = uData && uData.banner ? `url(${uData.banner})` : '#1f2d4a';
+      
+      document.getElementById('profileModalAvatar').src = avatar;
+      document.getElementById('bannerContainer').style.backgroundImage = banner;
+      document.getElementById('profileModalUsername').textContent = currentUsername;
+      document.getElementById('frameSelect').value = userFrameSetting;
+      document.getElementById('privacyFollowingSelect').value = userPrivacySetting;
+      document.getElementById('bgThemeSelect').value = userBgTheme;
+      
+      const followers = allFollowsCache.filter(f => f.target === currentUsername).length;
+      const following = allFollowsCache.filter(f => f.user === currentUsername).length;
+      document.getElementById('statFollowers').textContent = followers;
+      document.getElementById('statFollowing').textContent = following;
+
+      document.getElementById('profileModal').classList.remove('hidden');
+  };
+  window.closeProfileModal = () => document.getElementById('profileModal').classList.add('hidden');
+
+  window.updateProfileAttr = async (field, val) => {
+      if(field === 'frame') userFrameSetting = val;
+      if(field === 'privacy') userPrivacySetting = val;
+      if(currentUserDocId) {
+          let updateData = {}; updateData[field] = val;
+          await updateDoc(doc(db, "users", currentUserDocId), updateData);
+          renderHeaderUser();
+          alert("✅ تم التحديث بنجاح!");
       }
   };
 
-  function renderAdminUsersList() {
-      const listDiv = document.getElementById('adminAllUsersList');
-      if(!listDiv) return;
-      const otherUsers = allUsersCache.filter(u => u.username !== currentUsername);
-      listDiv.innerHTML = otherUsers.length ? otherUsers.map(u => `
-          <div style="display:flex; justify-content:space-between; align-items:center; background:var(--card2); padding:8px 12px; border-radius:6px; margin-bottom:6px;">
-              <span>👤 ${u.username} (${u.email || 'بدون إيميل'})</span>
-              <button class="btn sm" style="background:var(--bad); color:#fff;" onclick="permanentlyDeleteUser('${u.id}', '${u.username}')">🗑️ حذف نهائي</button>
-          </div>
-      `).join('') : '<p style="color:var(--muted); font-size:12px;">لا توجد حسابات أخرى مسجلة.</p>';
+  window.updateBackgroundTheme = async (val) => {
+      userBgTheme = val;
+      applyBackgroundTheme(val);
+      if(currentUserDocId) {
+          await updateDoc(doc(db, "users", currentUserDocId), { bgTheme: val });
+      }
+  };
+
+  function applyBackgroundTheme(color) {
+      document.getElementById('appBody').style.backgroundColor = color;
   }
 
-  // دالة الحذف السريع والمباشر للسكريبت
-  window.deleteScript = async (scriptId) => {
-      if (confirm("🗑️ هل أنت متأكد من حذف هذا السكريبت نهائياً؟")) {
-          try {
-              await deleteDoc(doc(db, "scripts", scriptId));
-              alert("✅ تم حذف السكريبت بنجاح!");
-          } catch (e) {
-              alert("❌ حدث خطأ أثناء الحذف: " + e.message);
+  window.saveQuickAvatar = async (event) => {
+      const file = event.target.files[0]; if(!file) return;
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+          const data = e.target.result;
+          if(currentUserDocId) {
+              await updateDoc(doc(db, "users", currentUserDocId), { avatar: data });
+              userAvatarSetting = data;
+              renderHeaderUser();
+              document.getElementById('profileModalAvatar').src = data;
+              alert("✅ تم تحديث صورتك الشخصية (أو الـ GIF) بنجاح!");
           }
-      }
+      };
+      reader.readAsDataURL(file);
   };
 
-  window.openEditModal = (id) => {
-      const script = allScriptsCache.find(s => s.id === id);
-      if(!script) return;
-      document.getElementById('editScriptId').value = script.id;
-      document.getElementById('editScriptName').value = script.name;
-      document.getElementById('editScriptCategory').value = script.category || "عام";
-      document.getElementById('editScriptCode').value = script.code || "";
-      document.getElementById('editModal').classList.remove('hidden');
-  };
-
-  window.closeEditModal = () => {
-      document.getElementById('editModal').classList.add('hidden');
-  };
-
-  window.updateScriptFinal = async () => {
-      const id = document.getElementById('editScriptId').value;
-      const name = document.getElementById('editScriptName').value.trim();
-      const category = document.getElementById('editScriptCategory').value;
-      const code = document.getElementById('editScriptCode').value;
-      if(!name || !code) return alert("املأ الخانات!");
-
-      try {
-          await updateDoc(doc(db, "scripts", id), { name, category, code });
-          alert("✅ تم تعديل السكريبت وحفظه بنجاح!");
-          closeEditModal();
-      } catch(e) {
-          alert("خطأ أثناء التعديل: " + e.message);
-      }
-  };
-
-  window.getUserDisplayHTML = (username) => {
-      const uData = allUsersCache.find(u => u.username === username);
-      const frame = uData ? (uData.frame || 'bronze') : 'bronze';
-      const avatar = uData && uData.avatar ? uData.avatar : DEFAULT_AVATAR;
-      
-      const userScripts = allScriptsCache.filter(s => s.author === username);
-      const totalLikes = allLikesCache.filter(l => userScripts.map(s=>s.id).includes(l.scriptId)).length;
-
-      let levelTitle = "🥉 مبتدئ";
-      let frameClass = "glow-bronze";
-      const lowerName = username.toLowerCase();
-      
-      if (lowerName === 'super admin' || lowerName === 'admin' || lowerName === 'superadmin' || frame === 'superadmin') {
-          levelTitle = "🔴 الأدمن الأعلى"; frameClass = "glow-superadmin";
-      } else if (frame === 'admin') {
-          levelTitle = "👑 أدمن عام"; frameClass = "glow-admin";
-      } else if (totalLikes >= 15 || userScripts.length >= 5 || frame === 'diamond') {
-          levelTitle = "💎 أسطورة"; frameClass = "glow-diamond";
-      } else if (totalLikes >= 7 || userScripts.length >= 3 || frame === 'gold') {
-          levelTitle = "🥇 محترف"; frameClass = "glow-gold";
-      }
-
-      if (frame === 'none') {
-          return `<span class="user-badge-box glow-bronze"><img src="${avatar}" class="user-avatar"> 👤 ${username}</span>`;
-      }
-      return `<span class="user-badge-box ${frameClass}"><img src="${avatar}" class="user-avatar"> 👤 ${username} [${levelTitle}]</span>`;
+  window.saveBanner = async (event) => {
+      const file = event.target.files[0]; if(!file) return;
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+          const data = e.target.result;
+          if(currentUserDocId) {
+              await updateDoc(doc(db, "users", currentUserDocId), { banner: data });
+              userBannerSetting = data;
+              document.getElementById('bannerContainer').style.backgroundImage = `url(${data})`;
+              alert("✅ تم تحديث بانر الخلفية (صورة أو GIF) بنجاح!");
+          }
+      };
+      reader.readAsDataURL(file);
   };
 
   function renderHeaderUser() {
-      document.getElementById('userHeaderDisplay').innerHTML = getUserDisplayHTML(currentUsername);
+      const uData = allUsersCache.find(u => u.username === currentUsername);
+      const avatar = uData && uData.avatar ? uData.avatar : DEFAULT_AVATAR;
+      const frame = uData && uData.frame ? uData.frame : 'fire';
+      
+      let frameClass = 'frame-fire';
+      if(frame === 'superadmin') frameClass = 'frame-superadmin';
+      else if(frame === 'neon') frameClass = 'frame-neon';
+      else if(frame === 'gold') frameClass = 'frame-gold';
+      else if(frame === 'none') frameClass = 'frame-none';
+
+      const lowerName = currentUsername.toLowerCase();
+      const isSuperAdmin = lowerName === 'super admin' || lowerName === 'admin' || lowerName === 'superadmin';
+
+      document.getElementById('userHeaderDisplay').innerHTML = `
+          <div style="display:flex; align-items:center; gap:8px;">
+              <img src="${avatar}" class="user-avatar ${frameClass}" onclick="openProfileModal()" title="بروفايلك الأسطوري">
+              <span class="user-badge-box ${isSuperAdmin ? 'glow-superadmin' : ''}" onclick="openProfileModal()">👤 ${currentUsername}</span>
+          </div>
+      `;
   }
 
   window.switchTab = (tab) => {
-      ['add', 'obf', 'my', 'comm', 'chat'].forEach(t => {
+      ['add', 'tok', 'obf', 'my', 'comm', 'chat'].forEach(t => {
           document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('hidden');
           document.getElementById('nav' + t.charAt(0).toUpperCase() + t.slice(1)).classList.remove('active');
       });
@@ -557,238 +556,241 @@ textarea {
       document.getElementById('nav' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
   };
 
+  window.handleTokMediaUpload = (event) => {
+      const file = event.target.files[0]; if(!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+          const res = e.target.result;
+          document.getElementById('tokMediaData').value = res;
+          const vPrev = document.getElementById('tokVideoPreview');
+          vPrev.src = res; vPrev.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+  };
+
+  window.publishTokPost = async () => {
+      const caption = document.getElementById('tokCaption').value.trim();
+      const mediaData = document.getElementById('tokMediaData').value;
+      const privacy = document.getElementById('tokPrivacy').value;
+      if(!mediaData) return alert("يرجى رفع فيديو الشرح أو التجربة التعليمية!");
+
+      const aiCheck = aiInspectPostContent(caption);
+
+      try {
+          await addDoc(collection(db, "tok_posts"), {
+              author: currentUsername,
+              caption,
+              mediaData,
+              privacy,
+              aiFlagged: !aiCheck.isSafe,
+              aiReason: aiCheck.reason,
+              createdAt: serverTimestamp()
+          });
+          document.getElementById('tokCaption').value = '';
+          document.getElementById('tokMediaData').value = '';
+          alert(aiCheck.isSafe ? "✅ تم نشر الشرح التعليمي بنجاح!" : "⚠️ تم النشر، لكن الذكاء الاصطناعي رصد ملاحظة أمنية وتم تمييزه للأدمن!");
+      } catch(e) { alert("خطأ: " + e.message); }
+  };
+
+  window.setTokFeedMode = (mode) => {
+      tokFeedMode = mode;
+      document.getElementById('tokFeedAll').style.background = mode === 'all' ? 'var(--acc)' : 'var(--card2)';
+      document.getElementById('tokFeedAll').style.color = mode === 'all' ? '#071019' : 'var(--acc)';
+      document.getElementById('tokFeedFollowing').style.background = mode === 'following' ? 'var(--acc)' : 'var(--card2)';
+      document.getElementById('tokFeedFollowing').style.color = mode === 'following' ? '#071019' : 'var(--acc)';
+      renderTokFeed();
+  };
+
+  function renderTokFeed() {
+      const feed = document.getElementById('deltaTokFeed');
+      let posts = allTokPostsCache;
+      const lowerName = currentUsername.toLowerCase();
+      const isSuperAdmin = lowerName === 'super admin' || lowerName === 'admin' || lowerName === 'superadmin';
+
+      posts = posts.filter(p => {
+          if (isSuperAdmin) return true;
+          if (p.author === currentUsername) return true;
+          
+          const authorData = allUsersCache.find(u => u.username === p.author);
+          const isAuthorPrivate = authorData && authorData.privacy === 'private';
+
+          if (isAuthorPrivate) {
+              const isFollowing = allFollowsCache.some(f => (f.user === currentUsername && f.target === p.author) || (f.user === p.author && f.target === currentUsername));
+              if (!isFollowing) return false;
+          }
+
+          if (p.privacy === 'public') return true;
+          
+          const isFollowing = allFollowsCache.some(f => (f.user === currentUsername && f.target === p.author) || (f.user === p.author && f.target === currentUsername));
+          return isFollowing;
+      });
+
+      if(tokFeedMode === 'following') {
+          const followingList = allFollowsCache.filter(f => f.user === currentUsername).map(f => f.target);
+          posts = posts.filter(p => followingList.includes(p.author) || p.author === currentUsername);
+      }
+
+      feed.innerHTML = posts.length ? posts.map(p => {
+          const likes = allTokLikesCache.filter(l => l.postId === p.id);
+          const hasLiked = likes.some(l => l.user === currentUsername);
+          const comments = allTokCommentsCache.filter(c => c.postId === p.id);
+          const isFollowing = allFollowsCache.some(f => f.user === currentUsername && f.target === p.author);
+
+          return `
+          <div class="tiktok-card">
+              <div class="tiktok-header">
+                  <span style="font-weight:bold; color:var(--acc);">👤 ${p.author} ${p.privacy === 'followers' ? '🔒 [خاص للمتابعين]' : ''}</span>
+                  ${p.author !== currentUsername ? `<button class="btn sm ${isFollowing ? '' : 'primary'}" onclick="toggleFollow('${p.author}')">${isFollowing ? '✓ متابَع' : '➕ متابعة'}</button>` : ''}
+              </div>
+              ${isSuperAdmin && p.aiFlagged ? `<div class="ai-warning-box">🛡️ تنبيه الذكاء الاصطناعي: ${p.aiReason}</div>` : ''}
+              <!-- الفيديو مع كتم الصوت تلقائياً (muted) لضمان عدم وجود أصوات مزعجة -->
+              <video src="${p.mediaData}" class="tiktok-media" muted controls></video>
+              <div style="padding:10px 14px; font-size:13px;">${p.caption}</div>
+              
+              <div class="tiktok-actions">
+                  <button class="tiktok-action-btn ${hasLiked ? 'liked' : ''}" onclick="toggleTokLike('${p.id}')">
+                      ❤️ <span>${likes.length}</span>
+                  </button>
+                  <span style="font-size:12px; color:var(--muted);">💬 ${comments.length} تعليقات</span>
+                  ${isSuperAdmin ? `<button class="btn sm" style="background:var(--bad); color:#fff; margin-right:auto;" onclick="deleteDoc(doc(db,'tok_posts','${p.id}'))">🗑️ حذف الأدمن</button>` : ''}
+              </div>
+
+              <div class="comments-section" style="padding:10px;">
+                  <div style="max-height:120px; overflow-y:auto; margin-bottom:6px;">
+                      ${comments.map(c => `<div class="comment-item"><b>${c.user}:</b> ${c.text}</div>`).join('')}
+                  </div>
+                  <div style="display:flex; gap:6px;">
+                      <input type="text" id="tokCommentInput_${p.id}" placeholder="اكتب تعليقاً..." style="margin-top:0; flex:1; font-size:12px; padding:8px;">
+                      <button class="btn sm primary" onclick="addTokComment('${p.id}')">إرسال</button>
+                  </div>
+              </div>
+          </div>`;
+      }).join('') : '<p style="color:var(--muted); text-align:center;">لا توجد فيديوهات تعليمية متاحة.</p>';
+  }
+
+  window.toggleFollow = async (targetUser) => {
+      const existing = allFollowsCache.filter(f => f.user === currentUsername && f.target === targetUser);
+      if(existing.length > 0) {
+          for(let e of existing) await deleteDoc(doc(db, "follows", e.id));
+      } else {
+          await addDoc(collection(db, "follows"), { user: currentUsername, target: targetUser });
+      }
+  };
+
+  window.toggleTokLike = async (postId) => {
+      const existing = allTokLikesCache.filter(l => l.postId === postId && l.user === currentUsername);
+      if(existing.length > 0) {
+          for(let e of existing) await deleteDoc(doc(db, "tok_likes", e.id));
+      } else {
+          await addDoc(collection(db, "tok_likes"), { postId, user: currentUsername });
+      }
+  };
+
+  window.addTokComment = async (postId) => {
+      const input = document.getElementById(`tokCommentInput_${postId}`);
+      const txt = input.value.trim(); if(!txt) return; input.value = '';
+      await addDoc(collection(db, "tok_comments"), { postId, user: currentUsername, text: txt, createdAt: serverTimestamp() });
+  };
+
   window.obfuscateCode = () => {
       const plain = document.getElementById('plainCode').value;
-      if(!plain) return alert("اكتب الكود الأول!");
+      if(!plain) return alert("اكتب الكود!");
       const utf8 = new TextEncoder().encode(plain);
       const encryptedBytes = [];
       for (let i = 0; i < utf8.length; i++) encryptedBytes.push(utf8[i] ^ DELTA_KEY.charCodeAt(i % DELTA_KEY.length));
-      
       const luaScript = `local _k = "${DELTA_KEY}"\nlocal _e = {${encryptedBytes.join(',')}}\nlocal _s = ""\nfor i = 1, #_e do\n    local _kc = string.byte(_k, (i - 1) % #_k + 1)\n    _s = _s .. string.char(bit32.bxor(_e[i], _kc))\nend\nassert(loadstring(_s))()`;
       document.getElementById('encryptedCode').value = luaScript;
-  };
-
-  window.handleImageUpload = (event) => {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-          const dataUrl = e.target.result;
-          document.getElementById('scriptImageData').value = dataUrl;
-          const preview = document.getElementById('imagePreview');
-          preview.src = dataUrl; preview.style.display = 'block';
-      };
-      reader.readAsDataURL(file);
   };
 
   window.saveScriptWithAI = async () => {
       const name = document.getElementById('scriptName').value.trim();
       const cat = document.getElementById('scriptCategory').value;
       const code = document.getElementById('scriptCode').value;
-      const imgData = document.getElementById('scriptImageData').value;
       if(!name || !code) return alert("املأ الخانات!");
-
       try {
-          await addDoc(collection(db, "scripts"), {
-              name, category: cat, code, author: currentUsername, uid: currentUser.uid, image: imgData || "", disabled: false, createdAt: serverTimestamp()
-          });
-          alert("✅ تم النشر بنجاح!"); switchTab('my');
+          await addDoc(collection(db, "scripts"), { name, category: cat, code, author: currentUsername, uid: currentUser.uid, createdAt: serverTimestamp() });
+          alert("✅ تم نشر السكريبت التعليمي بنجاح!"); switchTab('my');
       } catch(e) { alert("خطأ: " + e.message); }
-  };
-
-  window.toggleFeedMode = () => {
-      isOnlyFollowingFeed = !isOnlyFollowingFeed;
-      const btn = document.getElementById('toggleFeedBtn');
-      btn.style.background = isOnlyFollowingFeed ? 'var(--acc)' : 'var(--card2)';
-      btn.style.color = isOnlyFollowingFeed ? '#071019' : 'var(--acc)';
-      btn.textContent = isOnlyFollowingFeed ? "⭐ عرض الكل" : "⭐ المتابَعين";
-      renderLists();
   };
 
   function renderLists() {
       if(!currentUser) return;
       const myList = document.getElementById('myList');
       const commList = document.getElementById('communityList');
+      const search = document.getElementById('searchInput').value.trim().toLowerCase();
+
       const myScripts = allScriptsCache.filter(s => s.uid === currentUser.uid || s.author === currentUsername);
-      const myFriendsNames = allFriendsCache.map(f => f.friend);
       let commScripts = allScriptsCache.filter(s => s.uid !== currentUser.uid && s.author !== currentUsername);
+      if(search) commScripts = commScripts.filter(s => s.name.toLowerCase().includes(search));
 
-      if (isOnlyFollowingFeed) commScripts = commScripts.filter(s => myFriendsNames.includes(s.author));
-
-      myList.innerHTML = myScripts.length ? myScripts.map(s => generateCard(s, true)).join('') : '<p style="color:var(--muted);text-align:center;">مفيش سكريبتات ليك.</p>';
+      myList.innerHTML = myScripts.length ? myScripts.map(s => generateCard(s, true)).join('') : '<p style="color:var(--muted);text-align:center;">مفيش سكريبتات.</p>';
       commList.innerHTML = commScripts.length ? commScripts.map(s => generateCard(s, false)).join('') : '<p style="color:var(--muted);text-align:center;">مفيش سكريبتات.</p>';
   }
 
   function generateCard(s, isMine) {
       const rawUrl = `https://deltarx.devs.li/?raw=${s.id}`;
       const lua = `loadstring(game:HttpGet("${rawUrl}"))()`;
-      const displayImage = s.image ? s.image : "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&w=500&q=80";
       const scriptLikes = allLikesCache.filter(l => l.scriptId === s.id);
       const hasLiked = scriptLikes.some(l => l.user === currentUsername);
-      const scriptComments = allCommentsCache.filter(c => c.scriptId === s.id && !c.replyTo);
       const lowerName = currentUsername.toLowerCase();
-      const isSuperAdmin = lowerName === 'super admin' || lowerName === 'admin' || lowerName === 'superadmin' || userFrameSetting === 'superadmin';
+      const isSuperAdmin = lowerName === 'super admin' || lowerName === 'admin' || lowerName === 'superadmin';
 
       return `
       <div class="saved-item">
-        <img src="${displayImage}" class="saved-img" alt="${s.name}">
         <div class="saved-content">
             <div class="saved-header">
+              <div><span class="saved-title">${s.name}</span> <span class="badge">${s.category}</span></div>
               <div>
-                  <span class="saved-title">${s.name}</span> 
-                  <span class="badge ${s.disabled ? 'off' : ''}">${s.disabled ? '⛔ متوقف' : s.category}</span>
-              </div>
-              <div>
-                  ${isMine || isSuperAdmin ? `<button class="btn sm primary" onclick="openEditModal('${s.id}')">✏️ تعديل</button>` : ''}
-                  ${isMine || isSuperAdmin ? `<button class="btn sm" style="background:var(--bad);color:white;" onclick="deleteScript('${s.id}')">🗑️ حذف</button>` : ''}
+                  ${isMine || isSuperAdmin ? `<button class="btn sm primary" onclick="openEditModal('${s.id}')">✏️</button>` : ''}
+                  ${isMine || isSuperAdmin ? `<button class="btn sm" style="background:var(--bad);color:white;" onclick="deleteDoc(doc(db,'scripts','${s.id}'))">🗑️</button>` : ''}
               </div>
             </div>
-            <div class="author">بواسطة: ${getUserDisplayHTML(s.author)}</div>
-            
-            <div style="margin-top:8px;">
-                <button class="btn sm" style="background:${hasLiked ? 'var(--bad)' : 'var(--card)'}; color:#fff;" onclick="toggleLike('${s.id}', '${s.author}')">❤️ ${scriptLikes.length} إعجاب</button>
+            <div class="author">بواسطة: 👤 ${s.author}</div>
+            <div style="margin-top:6px;">
+                <button class="btn sm" style="background:${hasLiked ? 'var(--bad)' : 'var(--card)'}; color:#fff;" onclick="toggleLike('${s.id}')">❤️ ${scriptLikes.length}</button>
             </div>
-
-            <textarea readonly style="min-height:65px; margin-top:8px; font-size:12px; color:var(--ok);">${lua}</textarea>
-            <button class="btn copy-btn" style="width:100%; margin-top:5px;" onclick="copyText(\`${lua}\`, this)">📋 نسخ السكريبت كاملاً</button>
-
-            <div class="comments-section">
-                <div style="font-size:12px; color:var(--acc2); margin-bottom:5px;">💬 التعليقات (${allCommentsCache.filter(c=>c.scriptId === s.id).length}):</div>
-                
-                <div style="max-height:160px; overflow-y:auto; margin-bottom:8px;">
-                    ${scriptComments.length ? scriptComments.map(c => renderCommentHTML(c)).join('') : '<div style="font-size:11px; color:var(--muted);">لا توجد تعليقات.</div>'}
-                </div>
-
-                <div class="sticker-picker">
-                    <button class="sticker-btn" onclick="insertSticker('commentInput_${s.id}', '🔥')">🔥</button>
-                    <button class="sticker-btn" onclick="insertSticker('commentInput_${s.id}', '💀')">💀</button>
-                    <button class="sticker-btn" onclick="insertSticker('commentInput_${s.id}', '👑')">👑</button>
-                    <button class="sticker-btn" onclick="insertSticker('commentInput_${s.id}', '😎')">😎</button>
-                    <button class="sticker-btn" onclick="insertSticker('commentInput_${s.id}', '🚀')">🚀</button>
-                    <button class="sticker-btn" onclick="insertSticker('commentInput_${s.id}', '💎')">💎</button>
-                </div>
-                <div class="comment-input-row" style="display:flex; gap:6px;">
-                    <input type="text" id="commentInput_${s.id}" placeholder="اكتب تعليقاً أو ملصقاً..." style="flex:1;">
-                    <button class="btn sm primary" onclick="addComment('${s.id}', '${s.author}')">إرسال</button>
-                </div>
-            </div>
+            <textarea readonly style="min-height:50px; margin-top:6px; font-size:11px; color:var(--ok);">${lua}</textarea>
+            <button class="btn copy-btn" style="width:100%; margin-top:4px;" onclick="copyText(\`${lua}\`, this)">📋 نسخ السكريبت</button>
         </div>
       </div>`;
   }
 
-  function renderCommentHTML(c) {
-      const commentLikes = allCommentLikesCache.filter(l => l.commentId === c.id);
-      const hasLiked = commentLikes.some(l => l.user === currentUsername);
-      const replies = allCommentsCache.filter(r => r.replyTo === c.id);
-      const lowerName = currentUsername.toLowerCase();
-      const isSuperAdmin = lowerName === 'super admin' || lowerName === 'admin' || lowerName === 'superadmin' || userFrameSetting === 'superadmin';
-      const isOwner = c.user === currentUsername || isSuperAdmin;
-
-      return `
-      <div class="comment-item">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-              <div>${getUserDisplayHTML(c.user)}</div>
-              <div style="display:flex; gap:5px;">
-                  ${isOwner ? `<button class="btn sm" style="background:none; border:none; color:var(--bad); font-size:11px;" onclick="deleteComment('${c.id}')">🗑️</button>` : ''}
-              </div>
-          </div>
-          <div style="margin:4px 0; font-size:13px;">${c.text}</div>
-          
-          <div class="comment-actions">
-              <button class="like-comment-btn ${hasLiked ? 'liked' : ''}" onclick="toggleCommentLike('${c.id}')">
-                  ❤️ <span>${commentLikes.length}</span>
-              </button>
-              <button class="btn sm" style="background:none; border:none; color:var(--acc); padding:0; font-size:11px;" onclick="toggleReplyBox('${c.id}')">💬 رد</button>
-          </div>
-
-          <div id="replies_${c.id}" style="margin-top:5px;">
-              ${replies.map(r => `
-                  <div class="reply-item">
-                      <div style="display:flex; justify-content:space-between;">
-                          <div>${getUserDisplayHTML(r.user)}</div>
-                          ${r.user === currentUsername || isSuperAdmin ? `<button style="background:none; border:none; color:var(--bad); font-size:10px; cursor:pointer;" onclick="deleteComment('${r.id}')">حذف</button>` : ''}
-                      </div>
-                      <div style="margin-top:2px;">${r.text}</div>
-                  </div>
-              `).join('')}
-          </div>
-
-          <div id="replyBox_${c.id}" class="hidden" style="margin-top:6px;">
-              <input type="text" id="replyInput_${c.id}" placeholder="اكتب ردك هنا..." style="padding:6px; font-size:11px; margin-bottom:4px;">
-              <button class="btn sm primary" onclick="sendReply('${c.scriptId}', '${c.id}', '${c.user}')">إرسال الرد</button>
-          </div>
-      </div>`;
-  }
-
-  window.insertSticker = (inputId, sticker) => {
-      const input = document.getElementById(inputId);
-      if(input) { input.value += sticker; input.focus(); }
-  };
-
-  window.toggleCommentLike = async (commentId) => {
-      const existing = allCommentLikesCache.filter(l => l.commentId === commentId && l.user === currentUsername);
-      if(existing.length > 0) {
-          for(let e of existing) await deleteDoc(doc(db, "comment_likes", e.id));
-      } else {
-          await addDoc(collection(db, "comment_likes"), { commentId, user: currentUsername });
-      }
-  };
-
-  window.addComment = async (scriptId, author) => {
-      const input = document.getElementById(`commentInput_${scriptId}`);
-      const txt = input.value.trim(); if(!txt) return; input.value = '';
-      await addDoc(collection(db, "script_comments"), { scriptId, user: currentUsername, text: txt, replyTo: null, createdAt: serverTimestamp() });
-      if(author !== currentUsername) await addDoc(collection(db, "notifications"), { recipient: author, message: `تعليق جديد من ${currentUsername} 💬`, read: false, createdAt: serverTimestamp() });
-  };
-
-  window.toggleReplyBox = (commentId) => {
-      document.getElementById(`replyBox_${commentId}`).classList.toggle('hidden');
-  };
-
-  window.sendReply = async (scriptId, commentId, commentAuthor) => {
-      const input = document.getElementById(`replyInput_${commentId}`);
-      const txt = input.value.trim(); if(!txt) return; input.value = '';
-      await addDoc(collection(db, "script_comments"), { scriptId, user: currentUsername, text: txt, replyTo: commentId, createdAt: serverTimestamp() });
-      if(commentAuthor !== currentUsername) await addDoc(collection(db, "notifications"), { recipient: commentAuthor, message: `رد ${currentUsername} على تعليقك 💬`, read: false, createdAt: serverTimestamp() });
-  };
-
-  window.deleteComment = async (commentId) => {
-      if(confirm("حذف التعليق؟")) await deleteDoc(doc(db, "script_comments", commentId));
-  };
-
-  window.toggleLike = async (scriptId, author) => {
+  window.toggleLike = async (scriptId) => {
       const existing = allLikesCache.filter(l => l.scriptId === scriptId && l.user === currentUsername);
-      if (existing.length > 0) {
-          for(let e of existing) await deleteDoc(doc(db, "script_likes", e.id));
-      } else {
-          await addDoc(collection(db, "script_likes"), { scriptId, user: currentUsername, createdAt: serverTimestamp() });
-          if(author !== currentUsername) await addDoc(collection(db, "notifications"), { recipient: author, message: `أعجب ${currentUsername} بسكريبتك! ❤️`, read: false, createdAt: serverTimestamp() });
-      }
+      if(existing.length > 0) for(let e of existing) await deleteDoc(doc(db, "script_likes", e.id));
+      else await addDoc(collection(db, "script_likes"), { scriptId, user: currentUsername });
+  };
+
+  window.openEditModal = (id) => {
+      const s = allScriptsCache.find(x => x.id === id);
+      if(!s) return;
+      document.getElementById('editScriptId').value = s.id;
+      document.getElementById('editScriptName').value = s.name;
+      document.getElementById('editScriptCategory').value = s.category || "تعليمي وشرح";
+      document.getElementById('editScriptCode').value = s.code || "";
+      document.getElementById('editModal').classList.remove('hidden');
+  };
+  window.closeEditModal = () => document.getElementById('editModal').classList.add('hidden');
+  window.updateScriptFinal = async () => {
+      const id = document.getElementById('editScriptId').value;
+      const name = document.getElementById('editScriptName').value.trim();
+      const category = document.getElementById('editScriptCategory').value;
+      const code = document.getElementById('editScriptCode').value;
+      await updateDoc(doc(db, "scripts", id), { name, category, code });
+      alert("✅ تم التعديل!"); closeEditModal();
   };
 
   window.toggleNotifications = () => {
       const d = document.getElementById('notifDropdown');
       d.style.display = d.style.display === 'block' ? 'none' : 'block';
   };
-
   function renderNotifications() {
       const list = document.getElementById('notifList');
       const badge = document.getElementById('notifBadge');
       const unread = notifsCache.filter(n => !n.read);
       if(unread.length > 0) { badge.textContent = unread.length; badge.style.display = 'inline-block'; }
       else badge.style.display = 'none';
-
-      list.innerHTML = notifsCache.length ? notifsCache.map(n => `<div class="notif-item">${n.message}</div>`).join('') : '<div style="font-size:12px; color:var(--muted); text-align:center;">لا توجد تنبيهات.</div>';
-  }
-
-  window.addFriend = async (friend) => {
-      await addDoc(collection(db, "friendships"), { user: currentUsername, friend, createdAt: serverTimestamp() });
-      alert("تمت الإضافة!");
-  };
-
-  function renderFriendsList() {
-      const div = document.getElementById('friendsList');
-      div.innerHTML = allFriendsCache.length ? allFriendsCache.map(f => `<div style="display:flex; justify-content:space-between; align-items:center; background:var(--card2); padding:6px 10px; border-radius:6px; margin-bottom:4px;"><span>🤝 ${f.friend}</span><button class="btn sm primary" onclick="startChat('${f.friend}')">مراسلة</button></div>`).join('') : '<span style="color:var(--muted);">لا توجد أصدقاء.</span>';
+      list.innerHTML = notifsCache.length ? notifsCache.map(n => `<div class="notif-item">${n.message}</div>`).join('') : '<div style="font-size:11px; color:var(--muted); text-align:center;">لا توجد تنبيهات.</div>';
   }
 
   window.searchUsers = async () => {
@@ -797,47 +799,21 @@ textarea {
       if(!val) { res.innerHTML = ''; return; }
       const snap = await getDocs(collection(db, "users"));
       const users = snap.docs.map(d => d.data()).filter(u => u.username.toLowerCase().includes(val) && u.username !== currentUsername);
-      res.innerHTML = users.length ? users.map(u => `<div class="user-row"><span>${getUserDisplayHTML(u.username)}</span><div><button class="btn sm primary" onclick="startChat('${u.username}')">مراسلة</button><button class="btn sm" style="background:var(--ok); color:#000;" onclick="addFriend('${u.username}')">➕ متابعة</button></div></div>`).join('') : '<p style="color:var(--muted); font-size:12px;">لا يوجد.</p>';
+      res.innerHTML = users.length ? users.map(u => `<div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:8px;"><span>👤 ${u.username}</span><button class="btn sm primary" onclick="startChat('${u.username}')">مراسلة</button></div>`).join('') : '';
   };
 
   window.startChat = (target) => {
       activeChatUser = target;
       document.getElementById('chatWithTitle').textContent = 'المحادثة مع: ' + target;
-      document.getElementById('activeChatBox').classList.add('hidden'); // Fix toggle
       document.getElementById('activeChatBox').classList.remove('hidden');
       loadMessages();
   };
-
   window.closeChat = () => { activeChatUser = null; document.getElementById('activeChatBox').classList.add('hidden'); if(chatUnsubscribe) chatUnsubscribe(); };
 
   window.sendChatMessage = async () => {
       const txt = document.getElementById('chatMsgInput').value.trim(); if(!txt || !activeChatUser) return;
       document.getElementById('chatMsgInput').value = '';
-      await addDoc(collection(db, "messages"), { sender: currentUsername, receiver: activeChatUser, text: txt, image: "", audio: "", createdAt: serverTimestamp() });
-  };
-
-  window.toggleVoiceRecording = async () => {
-      const btn = document.getElementById('recordVoiceBtn');
-      if (!isRecording) {
-          try {
-              const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-              mediaRecorder = new MediaRecorder(stream);
-              audioChunks = [];
-              mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-              mediaRecorder.onstop = async () => {
-                  const reader = new FileReader();
-                  reader.readAsDataURL(new Blob(audioChunks, { type: 'audio/webm' }));
-                  reader.onloadend = async () => {
-                      await addDoc(collection(db, "messages"), { sender: currentUsername, receiver: activeChatUser, text: "", image: "", audio: reader.result, createdAt: serverTimestamp() });
-                  };
-              };
-              mediaRecorder.start(); isRecording = true;
-              btn.style.background = 'var(--bad)'; btn.textContent = "⏹️ إيقاف وإرسال";
-          } catch(e) { alert("⚠️ تعذر الوصول للميكروفون!"); }
-      } else {
-          mediaRecorder.stop(); isRecording = false;
-          btn.style.background = 'var(--card2)'; btn.textContent = "🎤";
-      }
+      await addDoc(collection(db, "messages"), { sender: currentUsername, receiver: activeChatUser, text: txt, createdAt: serverTimestamp() });
   };
 
   function loadMessages() {
@@ -845,76 +821,10 @@ textarea {
       chatUnsubscribe = onSnapshot(query(collection(db, "messages"), orderBy("createdAt", "asc")), (snap) => {
           const msgs = snap.docs.map(d => d.data()).filter(m => (m.sender === currentUsername && m.receiver === activeChatUser) || (m.sender === activeChatUser && m.receiver === currentUsername));
           const box = document.getElementById('chatMessages');
-          box.innerHTML = msgs.length ? msgs.map(m => `
-              <div class="msg-bubble ${m.sender === currentUsername ? 'sent' : 'received'}">
-                  ${m.text ? `<div>${m.text}</div>` : ''}
-                  ${m.image ? `<img src="${m.image}">` : ''}
-                  ${m.audio ? `<audio controls style="max-width:200px; height:32px;"><source src="${m.audio}" type="audio/webm"></audio>` : ''}
-              </div>
-          `).join('') : '<p style="color:var(--muted); text-align:center;">لا توجد رسائل.</p>';
+          box.innerHTML = msgs.length ? msgs.map(m => `<div style="text-align:${m.sender === currentUsername ? 'left' : 'right'};"><span style="background:${m.sender === currentUsername ? 'var(--acc)' : 'var(--card2)'}; color:${m.sender === currentUsername ? '#071019' : 'var(--text)'}; padding:6px 10px; border-radius:8px; display:inline-block; font-size:13px;">${m.text}</span></div>`).join('') : '<p style="color:var(--muted); text-align:center;">لا توجد رسائل.</p>';
           box.scrollTop = box.scrollHeight;
       });
   }
-
-  function initCropCanvas(imgSrc) {
-      cropImg.onload = () => {
-          imgScale = Math.max(canvas.width / cropImg.width, canvas.height / cropImg.height);
-          document.getElementById('zoomSlider').value = imgScale;
-          imgX = (canvas.width - cropImg.width * imgScale) / 2;
-          imgY = (canvas.height - cropImg.height * imgScale) / 2;
-          drawCrop();
-      };
-      cropImg.src = imgSrc;
-  }
-
-  function drawCrop() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(cropImg, imgX, imgY, cropImg.width * imgScale, cropImg.height * imgScale);
-  }
-
-  window.changeZoom = (val) => { 
-      const oldScale = imgScale;
-      imgScale = parseFloat(val);
-      imgX = canvas.width / 2 - (canvas.width / 2 - imgX) * (imgScale / oldScale);
-      imgY = canvas.height / 2 - (canvas.height / 2 - imgY) * (imgScale / oldScale);
-      drawCrop(); 
-  };
-
-  const cropArea = document.getElementById('cropArea');
-  cropArea.addEventListener('mousedown', (e) => { isDragging = true; startX = e.clientX - imgX; startY = e.clientY - imgY; });
-  window.addEventListener('mousemove', (e) => { if (!isDragging) return; imgX = e.clientX - startX; imgY = e.clientY - startY; drawCrop(); });
-  window.addEventListener('mouseup', () => { isDragging = false; });
-
-  cropArea.addEventListener('touchstart', (e) => { isDragging = true; startX = e.touches[0].clientX - imgX; startY = e.touches[0].clientY - imgY; });
-  window.addEventListener('touchmove', (e) => { if (!isDragging) return; imgX = e.touches[0].clientX - startX; imgY = e.touches[0].clientY - startY; drawCrop(); });
-  window.addEventListener('touchend', () => { isDragging = false; });
-
-  window.loadAvatarForCrop = (event) => {
-      const file = event.target.files[0]; if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (e) => { initCropCanvas(e.target.result); };
-      reader.readAsDataURL(file);
-  };
-
-  window.saveCroppedAvatar = async () => {
-      if (!cropImg.src) return alert("اختر صورة الأول!");
-      const dataUrl = canvas.toDataURL('image/png', 0.95);
-      userAvatarSetting = dataUrl;
-
-      if (currentUserDocId) {
-          await updateDoc(doc(db, "users", currentUserDocId), { avatar: dataUrl });
-          renderHeaderUser();
-          alert("✅ تم حفظ وتأكيد الصورة في البروفايل بنجاح!");
-      }
-  };
-
-  window.updateUserSetting = async (field, val) => {
-      if (currentUserDocId) {
-          const updateData = {}; updateData[field] = val;
-          await updateDoc(doc(db, "users", currentUserDocId), updateData);
-          userFrameSetting = val; renderHeaderUser();
-      }
-  };
 
   window.copyText = (text, btn) => {
       navigator.clipboard.writeText(text).then(() => {
