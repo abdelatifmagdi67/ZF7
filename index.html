@@ -13,7 +13,7 @@ h2{color:var(--acc);margin-top:0;text-align:center;}
 h3{font-size:16px;margin:20px 0 10px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:16px;}
 label{display:block;margin-bottom:10px;font-size:13px;color:var(--muted);font-weight:bold}
-input[type=text],input[type=email],input[type=password],select{width:100%;padding:12px;border-radius:8px;border:1px solid var(--line);background:#06101e;color:var(--text);font-family:monospace;font-size:14px;margin-top:6px;}
+input[type=text],input[type=email],input[type=password],input[type=number],select{width:100%;padding:12px;border-radius:8px;border:1px solid var(--line);background:#06101e;color:var(--text);font-family:monospace;font-size:14px;margin-top:6px;}
 
 textarea {
     width: 100%; min-height: 120px; padding: 12px; border-radius: 8px; border: 1px solid var(--line);
@@ -34,10 +34,8 @@ textarea {
 .feed-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; object-position: center; background: var(--card2); flex-shrink: 0; }
 .user-badge-box { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 12px; font-size: 13px; font-weight: bold; background: var(--card2); border: 1px solid var(--line); cursor: pointer; }
 
-/* علامة التوثيق الزرقاء */
 .verified-badge { color: #4cc9f0; font-size: 14px; vertical-align: middle; text-shadow: 0 0 8px rgba(76,201,240,0.6); }
 
-/* إطارات أسطورية */
 .frame-fire { border: 3px solid #ff4500; box-shadow: 0 0 15px #ff4500; }
 .frame-superadmin { border: 3px solid #ff6b6b; box-shadow: 0 0 20px #ff6b6b; }
 .frame-neon { border: 3px solid var(--acc); box-shadow: 0 0 15px var(--acc); }
@@ -81,6 +79,11 @@ textarea {
 </style>
 </head>
 <body id="appBody" style="background-color: var(--bg);">
+
+<!-- صفحة الـ Raw الخام المستقلة للسكريبت (تأخذ مكان الشاشة بالكامل لعرض الكود الصافي) -->
+<div id="rawPageContainer" class="hidden" style="position:fixed; top:0; left:0; right:0; bottom:0; background:#06101e; z-index:99999; padding:20px; overflow:auto; direction:ltr; text-align:left;">
+    <pre id="rawCodeContent" style="color:#3ddc97; font-family:monospace; font-size:15px; margin:0; white-space:pre-wrap; word-break:break-all;"></pre>
+</div>
 
 <!-- شاشة الدخول / إنشاء الحساب -->
 <div id="authScreen" class="hidden">
@@ -232,7 +235,7 @@ textarea {
   </div>
 </div>
 
-<!-- Modal بروفايل ديسكورد مع التوثيق الذكي وإتاحة كل الإطارات للموثقين -->
+<!-- Modal بروفايل ديسكورد مع حفظ مؤبد حقيقي وخيارات التوثيق -->
 <div id="profileModal" class="modal-overlay hidden">
     <div class="modal-content" style="padding:0; overflow:hidden;">
         <div id="bannerContainer" style="width:100%; height:110px; background:#1f2d4a; background-size:cover; background-position:center; position:relative;">
@@ -244,8 +247,17 @@ textarea {
             <img id="profileModalAvatar" src="" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid var(--acc); margin:-50px auto 10px; display:block; background:#000;">
             <h3 id="profileModalUsername" style="margin:5px 0; color:var(--acc);">اسم المستخدم</h3>
             
-            <!-- تنبيه الذكاء الاصطناعي للتوثيق -->
             <div id="aiVerifyStatusBox" class="ai-verify-box">🤖 الذكاء الاصطناعي: جارٍ فحص حالة التوثيق...</div>
+
+            <!-- تحكم الأدمن لعدد المتابعين للتوثيق -->
+            <div id="adminVerifyControlBox" class="card" style="background:var(--card2); padding:10px; border-radius:8px; margin:10px 0; text-align:right; display:none;">
+                <label style="color:var(--warn); font-size:12px; margin-bottom:4px;">👑 تحكم الأدمن والذكاء الاصطناعي (عدد المتابعين للتوثيق):</label>
+                <div style="display:flex; gap:6px;">
+                    <input type="number" id="requiredFollowersInput" value="5" min="1" style="margin-top:0; padding:6px; font-size:13px;" placeholder="كم متابع...">
+                    <button class="btn sm primary" onclick="saveRequiredFollowersSetting()">حفظ الحد</button>
+                </div>
+                <span style="font-size:10px; color:var(--muted); display:block; margin-top:4px;">أي مستخدم يصل لهذا الرقم أو يتجاوزه سيحصل على علامة التوثيق وفتح كل الإطارات أوتوماتيكياً.</span>
+            </div>
 
             <div style="background:var(--card2); padding:10px; border-radius:8px; margin:10px 0; text-align:right;">
                 <label style="color:var(--acc); font-size:12px; margin-bottom:4px;">🖼️ الإطارات الأسطورية (مفتوحة بالكامل للموثقين 🔥):</label>
@@ -276,7 +288,7 @@ textarea {
                 <div><b>تتابعهم:</b> <span id="statFollowing">0</span></div>
             </div>
 
-            <button class="btn sm primary" style="width:100%; margin-bottom:8px;" onclick="document.getElementById('quickAvatarInput').click()">📁 تغيير الصورة الشخصية (صورة/GIF)</button>
+            <button class="btn sm primary" style="width:100%; margin-bottom:8px;" onclick="document.getElementById('quickAvatarInput').click()">📁 تغيير الصورة الشخصية (صورة/GIF - حفظ مؤبد)</button>
             <input type="file" id="quickAvatarInput" accept="image/*,image/gif" style="display:none;" onchange="saveAvatarPermanent(event)">
             <button class="btn" style="background:var(--bad); color:white; width:100%;" onclick="closeProfileModal()">إغلاق</button>
         </div>
@@ -331,6 +343,7 @@ textarea {
   let userFrameSetting = "fire";
   let userPrivacySetting = "public";
   let userBgTheme = "#0b1220";
+  let globalRequiredFollowers = parseInt(localStorage.getItem('delta_required_followers') || '5');
 
   let allScriptsCache = [];
   let allTokPostsCache = [];
@@ -346,6 +359,27 @@ textarea {
 
   const DELTA_KEY = "DeltaHubSecureKey2026";
   const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239fb0cc'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>";
+
+  // فحص ما إذا كان الرابط يطلب صفحة Raw خام للسكريبت (مثل ?raw=ID) عند فتح الموقع
+  window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const rawId = urlParams.get('raw');
+      if (rawId) {
+          // جلب السكريبت وعرضه في صفحة الـ Raw المستقلة بدلاً من الموقع
+          const scriptUnsub = onSnapshot(collection(db, "scripts"), (snap) => {
+              const found = snap.docs.find(d => d.id === rawId);
+              document.getElementById('authScreen').classList.add('hidden');
+              document.querySelector('.wrap').style.display = 'none';
+              const rawCont = document.getElementById('rawPageContainer');
+              rawCont.classList.remove('hidden');
+              if (found) {
+                  document.getElementById('rawCodeContent').textContent = found.data().code;
+              } else {
+                  document.getElementById('rawCodeContent').textContent = "-- Error: Script not found or deleted!";
+              }
+          });
+      }
+  });
 
   function aiCheckUsername(name) {
       const badWords = ["سافل", "قذر", "حمار", "كلب", "sex", "hack", "admin_fake", "porn"];
@@ -363,18 +397,27 @@ textarea {
       return { isSafe: true, reason: "" };
   }
 
-  // ذكاء اصطناعي يفحص إذا كان المستخدم يستحق التوثيق (مثلاً وصل لـ 10 متابعين أو أكثر)
   function aiCheckVerification(username) {
       const followersCount = allFollowsCache.filter(f => f.target === username).length;
       const lowerName = username.toLowerCase();
       const isSuperAdmin = lowerName === 'super admin' || lowerName === 'admin' || lowerName === 'superadmin';
       
-      // الأدمن الأعلى موثق دائماً، والباقي يشترط وصولهم لـ 10 متابعين أو تفاعل عالي
-      if (isSuperAdmin || followersCount >= 10) {
-          return { isVerified: true, text: `✅ حساب موثق بالذكاء الاصطناعي (${followersCount} متابع) - جميع الإطارات الأسطورية مفتوحة!` };
+      if (isSuperAdmin || followersCount >= globalRequiredFollowers) {
+          return { isVerified: true, text: `✅ حساب موثق بالذكاء الاصطناعي (${followersCount}/${globalRequiredFollowers} متابع) - فتح التوثيق وكل الإطارات الأسطورية!` };
       }
-      return { isVerified: false, text: `🔒 غير موثق حالياً (تحتاج 10 متابعين على الأقل لفتح التوثيق وكل الإطارات). لديك ${followersCount} متابع.` };
+      return { isVerified: false, text: `🔒 غير موثق حالياً (مطلوب ${globalRequiredFollowers} متابعين للتوثيق). لديك حالياً ${followersCount} متابع.` };
   }
+
+  window.saveRequiredFollowersSetting = () => {
+      const val = parseInt(document.getElementById('requiredFollowersInput').value);
+      if(isNaN(val) || val < 1) return alert("أدخل رقماً صحيحاً للمتابعين!");
+      globalRequiredFollowers = val;
+      localStorage.setItem('delta_required_followers', val);
+      alert("✅ تم حفظ حد المتابعين للتوثيق بنجاح!");
+      openProfileModal();
+      renderLists();
+      renderTokFeed();
+  };
 
   window.confirmLogout = () => { if(confirm("تسجيل الخروج؟")) signOut(auth); };
   
@@ -418,11 +461,6 @@ textarea {
       catch(e) { alert("خطأ في التبديل: " + e.message); }
   };
 
-  window.openAddAccountModal = () => { 
-      document.getElementById('accountsDropdown').style.display = 'none'; 
-      signOut(auth); 
-  };
-
   window.doRegister = async () => {
       const username = document.getElementById('regUsername').value.trim();
       const email = document.getElementById('regEmail').value.trim();
@@ -450,6 +488,10 @@ textarea {
   };
 
   onAuthStateChanged(auth, async (user) => {
+      // إذا كان الرابط فيه ?raw= فإننا في صفحة الـ Raw الخام ولا داعي لعرض واجهة تسجيل الدخول
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('raw')) return;
+
       if (user) {
           currentUser = user;
           const snap = await getDocs(query(collection(db, "users"), where("uid", "==", user.uid)));
@@ -457,8 +499,10 @@ textarea {
               const uDoc = snap.docs[0];
               currentUserDocId = uDoc.id;
               currentUsername = uDoc.data().username;
-              userAvatarSetting = uDoc.data().avatar || '';
-              userBannerSetting = uDoc.data().banner || '';
+              
+              userAvatarSetting = localStorage.getItem(`delta_avatar_${currentUsername}`) || uDoc.data().avatar || '';
+              userBannerSetting = localStorage.getItem(`delta_banner_${currentUsername}`) || uDoc.data().banner || '';
+              
               userFrameSetting = uDoc.data().frame || 'fire';
               userPrivacySetting = uDoc.data().privacy || 'public';
               userBgTheme = uDoc.data().bgTheme || '#0b1220';
@@ -489,7 +533,9 @@ textarea {
 
   function getUserProfileInfo(username) {
       const u = allUsersCache.find(x => x.username === username);
-      const avatar = u && u.avatar ? u.avatar : DEFAULT_AVATAR;
+      const localAvatar = localStorage.getItem(`delta_avatar_${username}`);
+      const avatar = localAvatar || (u && u.avatar ? u.avatar : DEFAULT_AVATAR);
+      
       const frame = u && u.frame ? u.frame : 'fire';
       let frameClass = 'frame-fire';
       if(frame === 'superadmin') frameClass = 'frame-superadmin';
@@ -497,18 +543,20 @@ textarea {
       else if(frame === 'gold') frameClass = 'frame-gold';
       else if(frame === 'none') frameClass = 'frame-none';
 
-      // فحص التوثيق الذكي لكل مستخدم
       const followersCount = allFollowsCache.filter(f => f.target === username).length;
       const lower = username.toLowerCase();
-      const isVerified = (lower === 'super admin' || lower === 'admin' || lower === 'superadmin' || followersCount >= 10);
+      const isVerified = (lower === 'super admin' || lower === 'admin' || lower === 'superadmin' || followersCount >= globalRequiredFollowers);
 
       return { avatar, frameClass, isVerified };
   }
 
   window.openProfileModal = () => {
       const uData = allUsersCache.find(u => u.username === currentUsername);
-      const avatar = uData && uData.avatar ? uData.avatar : DEFAULT_AVATAR;
-      const banner = uData && uData.banner ? `url(${uData.banner})` : '#1f2d4a';
+      const localAvatar = localStorage.getItem(`delta_avatar_${currentUsername}`);
+      const localBanner = localStorage.getItem(`delta_banner_${currentUsername}`);
+
+      const avatar = localAvatar || (uData && uData.avatar ? uData.avatar : DEFAULT_AVATAR);
+      const banner = localBanner ? `url(${localBanner})` : (uData && uData.banner ? `url(${uData.banner})` : '#1f2d4a');
       
       document.getElementById('profileModalAvatar').src = avatar;
       document.getElementById('bannerContainer').style.backgroundImage = banner;
@@ -516,15 +564,19 @@ textarea {
       document.getElementById('frameSelect').value = userFrameSetting;
       document.getElementById('privacyFollowingSelect').value = userPrivacySetting;
       document.getElementById('bgThemeSelect').value = userBgTheme;
+      document.getElementById('requiredFollowersInput').value = globalRequiredFollowers;
       
       const followers = allFollowsCache.filter(f => f.target === currentUsername).length;
       const following = allFollowsCache.filter(f => f.user === currentUsername).length;
       document.getElementById('statFollowers').textContent = followers;
       document.getElementById('statFollowing').textContent = following;
 
-      // فحص حالة التوثيق بالذكاء الاصطناعي للمستخدم الحالي
       const vCheck = aiCheckVerification(currentUsername);
       document.getElementById('aiVerifyStatusBox').textContent = vCheck.text;
+
+      const lowerName = currentUsername.toLowerCase();
+      const isSuperAdmin = lowerName === 'super admin' || lowerName === 'admin' || lowerName === 'superadmin';
+      document.getElementById('adminVerifyControlBox').style.display = isSuperAdmin ? 'block' : 'none';
 
       document.getElementById('profileModal').classList.remove('hidden');
   };
@@ -559,11 +611,12 @@ textarea {
       reader.onload = async (e) => {
           const dataUrl = e.target.result;
           userAvatarSetting = dataUrl;
+          localStorage.setItem(`delta_avatar_${currentUsername}`, dataUrl);
           document.getElementById('profileModalAvatar').src = dataUrl;
           if(currentUserDocId) {
               await updateDoc(doc(db, "users", currentUserDocId), { avatar: dataUrl });
               renderHeaderUser();
-              alert("✅ تم حفظ وتحديث الصورة الشخصية بشكل دائم!");
+              alert("✅ تم حفظ وتحديث الصورة الشخصية (حفظ مؤبد) بنجاح!");
           }
       };
       reader.readAsDataURL(file);
@@ -575,10 +628,11 @@ textarea {
       reader.onload = async (e) => {
           const dataUrl = e.target.result;
           userBannerSetting = dataUrl;
+          localStorage.setItem(`delta_banner_${currentUsername}`, dataUrl);
           document.getElementById('bannerContainer').style.backgroundImage = `url(${dataUrl})`;
           if(currentUserDocId) {
               await updateDoc(doc(db, "users", currentUserDocId), { banner: dataUrl });
-              alert("✅ تم حفظ وتحديث البانر بشكل دائم!");
+              alert("✅ تم حفظ وتحديث البانر (حفظ مؤبد) بنجاح!");
           }
       };
       reader.readAsDataURL(file);
@@ -779,7 +833,7 @@ textarea {
       if(!name || !code) return alert("املأ الخانات!");
       try {
           await addDoc(collection(db, "scripts"), { name, category: cat, code, author: currentUsername, uid: currentUser.uid, createdAt: serverTimestamp() });
-          alert("✅ تم نشر السكريبت التعليمي بنجاح!"); switchTab('my');
+          alert("✅ تم نشر السكريبت بنجاح!"); switchTab('my');
       } catch(e) { alert("خطأ: " + e.message); }
   };
 
@@ -798,7 +852,8 @@ textarea {
   }
 
   function generateCard(s, isMine) {
-      const rawUrl = `https://deltarx.devs.li/?raw=${s.id}`;
+      // رابط الـ Raw الخاص بالصفحة المستقلة الخام
+      const rawUrl = `${window.location.origin}${window.location.pathname}?raw=${s.id}`;
       const lua = `loadstring(game:HttpGet("${rawUrl}"))()`;
       const scriptLikes = allLikesCache.filter(l => l.scriptId === s.id);
       const hasLiked = scriptLikes.some(l => l.user === currentUsername);
@@ -823,9 +878,10 @@ textarea {
             </div>
             <div style="margin-top:6px;">
                 <button class="btn sm" style="background:${hasLiked ? 'var(--bad)' : 'var(--card)'}; color:#fff;" onclick="toggleLike('${s.id}')">❤️ ${scriptLikes.length}</button>
+                <a href="${rawUrl}" target="_blank" class="btn sm" style="background:var(--card2); color:var(--acc); border:1px solid var(--line); text-decoration:none;">📄 فتح صفحة Raw الخام</a>
             </div>
             <textarea readonly style="min-height:50px; margin-top:6px; font-size:11px; color:var(--ok);">${lua}</textarea>
-            <button class="btn copy-btn" style="width:100%; margin-top:4px;" onclick="copyText(\`${lua}\`, this)">📋 نسخ السكريبت</button>
+            <button class="btn copy-btn" style="width:100%; margin-top:4px;" onclick="copyText(\`${lua}\`, this)">📋 نسخ السكريبت (للعبة)</button>
         </div>
       </div>`;
   }
@@ -857,7 +913,7 @@ textarea {
       document.getElementById('editModal').classList.remove('hidden');
   };
 
-  window.closeEditModal = () => document.getElementById('editModal').classList.add('hidden');
+  window.closeEditModal = () => document.getElementById('editModal'].classList.add('hidden');
 
   window.updateScriptFinal = async () => {
       const id = document.getElementById('editScriptId').value;
