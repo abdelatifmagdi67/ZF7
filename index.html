@@ -236,12 +236,12 @@ textarea {
   </div>
 </div>
 
-<!-- Modal بروفايل ديسكورد (دعم كامل للصور العادية و الـ GIF المتحركة) -->
+<!-- Modal بروفايل ديسكورد (دعم كامل ومطلق للصور العادية و الـ GIF المتحركة عبر Base64) -->
 <div id="profileModal" class="modal-overlay hidden">
     <div class="modal-content" style="padding:0; overflow:hidden;">
         <div id="bannerContainer" style="width:100%; height:110px; background:#1f2d4a; background-size:cover; background-position:center; position:relative;">
-            <button class="btn sm primary" style="position:absolute; bottom:8px; left:8px; font-size:10px;" onclick="document.getElementById('bannerInput').click()">🖼️ تغيير البانر (عادي أو GIF)</button>
-            <input type="file" id="bannerInput" accept="image/*" style="display:none;" onchange="saveBannerPermanent(event)">
+            <button class="btn sm primary" style="position:absolute; bottom:8px; left:8px; font-size:10px;" onclick="document.getElementById('bannerInput').click()">🖼️ تغيير البانر المتحرك (GIF / Base64)</button>
+            <input type="file" id="bannerInput" accept="image/*" style="display:none;" onchange="saveBannerBase64(event)">
         </div>
 
         <div style="padding:15px; text-align:center; position:relative;">
@@ -287,8 +287,8 @@ textarea {
                 <div><b>تتابعهم:</b> <span id="statFollowing">0</span></div>
             </div>
 
-            <button class="btn sm primary" style="width:100%; margin-bottom:8px;" onclick="document.getElementById('quickAvatarInput').click()">📁 تغيير الصورة الشخصية (عادية أو GIF - حفظ مؤبد)</button>
-            <input type="file" id="quickAvatarInput" accept="image/*" style="display:none;" onchange="saveAvatarPermanent(event)">
+            <button class="btn sm primary" style="width:100%; margin-bottom:8px;" onclick="document.getElementById('quickAvatarInput').click()">📁 تغيير الصورة الشخصية المتحركة (GIF / Base64)</button>
+            <input type="file" id="quickAvatarInput" accept="image/*" style="display:none;" onchange="saveAvatarBase64(event)">
             <button class="btn" style="background:var(--bad); color:white; width:100%;" onclick="closeProfileModal()">إغلاق</button>
         </div>
     </div>
@@ -437,8 +437,8 @@ textarea {
               currentUserDocId = uDoc.id;
               currentUsername = uDoc.data().username;
               
-              userAvatarSetting = localStorage.getItem(`delta_avatar_${currentUsername}`) || uDoc.data().avatar || '';
-              userBannerSetting = localStorage.getItem(`delta_banner_${currentUsername}`) || uDoc.data().banner || '';
+              userAvatarSetting = localStorage.getItem(`delta_b64_avatar_${currentUsername}`) || uDoc.data().avatar || '';
+              userBannerSetting = localStorage.getItem(`delta_b64_banner_${currentUsername}`) || uDoc.data().banner || '';
               
               userFrameSetting = uDoc.data().frame || 'fire';
               userPrivacySetting = uDoc.data().privacy || 'public';
@@ -469,7 +469,7 @@ textarea {
 
   function getUserProfileInfo(username) {
       const u = allUsersCache.find(x => x.username === username);
-      const localAvatar = localStorage.getItem(`delta_avatar_${username}`);
+      const localAvatar = localStorage.getItem(`delta_b64_avatar_${username}`);
       const avatar = localAvatar || (u && u.avatar ? u.avatar : DEFAULT_AVATAR);
       
       const frame = u && u.frame ? u.frame : 'fire';
@@ -499,8 +499,8 @@ textarea {
 
   window.openProfileModal = () => {
       const uData = allUsersCache.find(u => u.username === currentUsername);
-      const localAvatar = localStorage.getItem(`delta_avatar_${currentUsername}`);
-      const localBanner = localStorage.getItem(`delta_banner_${currentUsername}`);
+      const localAvatar = localStorage.getItem(`delta_b64_avatar_${currentUsername}`);
+      const localBanner = localStorage.getItem(`delta_b64_banner_${currentUsername}`);
 
       const avatar = localAvatar || (uData && uData.avatar ? uData.avatar : DEFAULT_AVATAR);
       const banner = localBanner ? `url(${localBanner})` : (uData && uData.banner ? `url(${uData.banner})` : '#1f2d4a');
@@ -550,34 +550,36 @@ textarea {
 
   function applyBackgroundTheme(color) { document.getElementById('appBody').style.backgroundColor = color; }
 
-  window.saveAvatarPermanent = (event) => {
+  // تحفظ وحفظ الصورة المتحركة Base64 بدقة تامة
+  window.saveAvatarBase64 = (event) => {
       const file = event.target.files[0]; if(!file) return;
       const reader = new FileReader();
       reader.onload = async (e) => {
-          const dataUrl = e.target.result;
-          userAvatarSetting = dataUrl;
-          localStorage.setItem(`delta_avatar_${currentUsername}`, dataUrl);
-          document.getElementById('profileModalAvatar').src = dataUrl;
+          const base64Data = e.target.result;
+          userAvatarSetting = base64Data;
+          localStorage.setItem(`delta_b64_avatar_${currentUsername}`, base64Data);
+          document.getElementById('profileModalAvatar').src = base64Data;
           if(currentUserDocId) {
-              await updateDoc(doc(db, "users", currentUserDocId), { avatar: dataUrl });
+              await updateDoc(doc(db, "users", currentUserDocId), { avatar: base64Data });
               renderHeaderUser();
-              alert("✅ تم حفظ الصورة الشخصية (عادية أو GIF) بنجاح!");
+              alert("✅ تم تحفظ وصور البروفايل المتحركة (Base64) بنجاح وزي الفل!");
           }
       };
       reader.readAsDataURL(file);
   };
 
-  window.saveBannerPermanent = (event) => {
+  // تحفظ وحفظ البانر المتحرك Base64 بدقة تامة
+  window.saveBannerBase64 = (event) => {
       const file = event.target.files[0]; if(!file) return;
       const reader = new FileReader();
       reader.onload = async (e) => {
-          const dataUrl = e.target.result;
-          userBannerSetting = dataUrl;
-          localStorage.setItem(`delta_banner_${currentUsername}`, dataUrl);
-          document.getElementById('bannerContainer').style.backgroundImage = `url(${dataUrl})`;
+          const base64Data = e.target.result;
+          userBannerSetting = base64Data;
+          localStorage.setItem(`delta_b64_banner_${currentUsername}`, base64Data);
+          document.getElementById('bannerContainer').style.backgroundImage = `url(${base64Data})`;
           if(currentUserDocId) {
-              await updateDoc(doc(db, "users", currentUserDocId), { banner: dataUrl });
-              alert("✅ تم حفظ البانر (عادي أو GIF) بنجاح!");
+              await updateDoc(doc(db, "users", currentUserDocId), { banner: base64Data });
+              alert("✅ تم تحفظ وصور البانر المتحرك (Base64) بنجاح وزي الفل!");
           }
       };
       reader.readAsDataURL(file);
