@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>دلتا - مجتمع السكريبتات ونظام تسجيل الحسابات الآمن</title>
+<title>دلتا - مجتمع السكريبتات والتسجيل بالبريد الحقيقي</title>
 <style>
 :root{--bg:#0b1220;--card:#111c33;--card2:#16233d;--text:#e8eefc;--muted:#9fb0cc;--line:#1f2d4a;--acc:#4cc9f0;--acc2:#b388ff;--ok:#3ddc97;--bad:#ff6b6b;--warn:#f59e0b;--r:14px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -100,30 +100,26 @@ textarea {
 </head>
 <body>
 
-<!-- شاشة تسجيل الدخول النظيفة -->
+<!-- شاشة تسجيل الدخول بالبريد الإلكتروني الحقيقي -->
 <div id="authScreen" class="hidden">
     <h2>مجتمع دلتا</h2>
     <div id="errorMsg" class="error-msg"></div>
     
     <div id="loginForm">
-        <label>اسم المستخدم</label>
-        <input type="text" id="loginUser" placeholder="اكتب اسم المستخدم هنا...">
+        <label>البريد الإلكتروني الحقيقي</label>
+        <input type="email" id="loginEmail" placeholder="example@gmail.com">
         <label style="margin-top:8px;">كلمة المرور</label>
         <input type="password" id="loginPass" placeholder="••••••••">
         <button class="btn primary" style="width:100%; margin-top:10px;" onclick="doLogin()">تسجيل الدخول</button>
         
-        <!-- الحسابات المحفوظة للتبديل السريع -->
-        <div id="savedAccountsSection" style="margin-top:15px; text-align:right; display:none;">
-            <label style="font-size:11px; color:var(--acc);">حساباتك المحفوظة على الجهاز (دخول سريع):</label>
-            <div id="savedAccountsList" style="display:flex; flex-direction:column; gap:5px; margin-top:5px;"></div>
-        </div>
-
-        <button class="toggle-btn" onclick="toggleAuth('register')">معندكش حساب؟ سجل من هنا</button>
+        <button class="toggle-btn" onclick="toggleAuth('register')">معندكش حساب؟ سجل ببريدك الحقيقي</button>
     </div>
 
     <div id="registerForm" class="hidden">
-        <label>اختر اسم المستخدم</label>
-        <input type="text" id="regUser" placeholder="اسم المستخدم الجديد...">
+        <label>اسم المستخدم في المجتمع</label>
+        <input type="text" id="regUsername" placeholder="اكتب اسمك هنا...">
+        <label style="margin-top:8px;">البريد الإلكتروني الحقيقي</label>
+        <input type="email" id="regEmail" placeholder="example@gmail.com">
         <label style="margin-top:8px;">كلمة المرور (6 حروف على الأقل)</label>
         <input type="password" id="regPass" placeholder="••••••••">
         <button class="btn primary" style="width:100%; margin-top:10px;" onclick="doRegister()">إنشاء حساب</button>
@@ -169,8 +165,7 @@ textarea {
         <div style="background:var(--card2); padding:12px; border-radius:8px; margin-bottom:15px; border:1px solid var(--line);">
             <label style="color:var(--acc); margin-bottom:8px;">🔄 إدارة الحسابات:</label>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <button class="btn sm primary" onclick="confirmLogout()">تسجيل خروج وتبديل حساب</button>
-                <button class="btn sm" style="background:var(--card); color:var(--text); border:1px solid var(--line);" onclick="showAddAccountPrompt()">➕ إضافة حساب آخر</button>
+                <button class="btn sm primary" onclick="confirmLogout()">تسجيل خروج آمن</button>
             </div>
         </div>
 
@@ -321,7 +316,7 @@ textarea {
     </div>
 </div>
 
-<!-- أكواد التطبيق -->
+<!-- أكواد التطبيق النسيقية والمصادقة بفايربيس الحقيقي -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -392,45 +387,104 @@ textarea {
       }
   };
 
-  window.showAddAccountPrompt = () => {
-      if (confirm("هل تريد تسجيل الخروج مؤقتاً لإضافة حساب آخر أو التبديل؟")) {
-          signOut(auth);
+  window.toggleAuth = (type) => {
+      document.getElementById('loginForm').classList.toggle('hidden', type !== 'login');
+      document.getElementById('registerForm').classList.toggle('hidden', type !== 'register');
+  };
+
+  window.doRegister = async () => {
+      const username = document.getElementById('regUsername').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPass').value;
+      
+      if(!username || !email || !password) return alert("املأ جميع الخانات!");
+      
+      try {
+          const q = query(collection(db, "users"), where("username", "==", username));
+          if (!(await getDocs(q)).empty) return alert("⚠️ اسم المستخدم مأخوذ مسبقاً، اختر اسماً آخر!");
+
+          const cred = await createUserWithEmailAndPassword(auth, email, password);
+          await addDoc(collection(db, "users"), { 
+              uid: cred.user.uid, 
+              username: username, 
+              email: email, 
+              warnings: 0, 
+              frame: username === 'admin' ? 'admin' : 'bronze', 
+              avatar: '' 
+          });
+          
+          alert("✅ تم إنشاء الحساب بنجاح! سجل دخولك الآن.");
+          toggleAuth('login');
+      } catch(e) { 
+          alert("خطأ في التسجيل: " + e.message); 
       }
   };
 
-  function saveAccountLocally(username, password) {
-      let accounts = JSON.parse(localStorage.getItem('delta_accounts') || '{}');
-      accounts[username] = password;
-      localStorage.setItem('delta_accounts', JSON.stringify(accounts));
-  }
-
-  function loadSavedAccounts() {
-      let accounts = JSON.parse(localStorage.getItem('delta_accounts') || '{}');
-      let listDiv = document.getElementById('savedAccountsList');
-      let section = document.getElementById('savedAccountsSection');
-      let usernames = Object.keys(accounts);
-
-      if (usernames.length > 0) {
-          section.style.display = 'block';
-          listDiv.innerHTML = usernames.map(u => `
-              <div style="display:flex; justify-content:space-between; align-items:center; background:var(--card); padding:8px 12px; border-radius:6px; border:1px solid var(--line);">
-                  <span style="font-size:13px; color:var(--text);">👤 ${u}</span>
-                  <button class="btn sm primary" onclick="quickLogin('${u}', '${accounts[u]}')">دخول سريع</button>
-              </div>
-          `).join('');
-      } else {
-          section.style.display = 'none';
-      }
-  }
-
-  window.quickLogin = async (username, password) => {
+  window.doLogin = async () => {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPass').value;
+      
+      if(!email || !password) return alert("اكتب البريد الإلكتروني وكلمة المرور!");
+      
       try {
-          const email = username.toLowerCase() === 'admin' ? "admin@delta.com" : username.toLowerCase() + "@delta.com";
           await signInWithEmailAndPassword(auth, email, password);
       } catch(e) {
-          alert("❌ فشل الدخول السريع، يرجى كتابة البيانات يدوياً.");
+          alert("❌ البريد الإلكتروني أو كلمة المرور غير صحيحة!");
       }
   };
+
+  onAuthStateChanged(auth, async (user) => {
+      if (user) {
+          currentUser = user;
+          const q = query(collection(db, "users"), where("uid", "==", user.uid));
+          const snap = await getDocs(q);
+          if(!snap.empty) {
+              const uDoc = snap.docs[0];
+              currentUserDocId = uDoc.id;
+              const uData = uDoc.data();
+              currentUsername = uData.username;
+              userFrameSetting = uData.frame || (currentUsername === 'admin' ? 'admin' : 'bronze');
+              userAvatarSetting = uData.avatar || '';
+              
+              document.getElementById('userFrameSelect').value = userFrameSetting;
+              initCropCanvas(userAvatarSetting ? userAvatarSetting : DEFAULT_AVATAR);
+
+              if(currentUsername === 'admin') {
+                  document.getElementById('adminBadge').style.display = 'inline-block';
+                  document.getElementById('adminBanPanel').classList.remove('hidden');
+                  document.getElementById('adminSettingsPanel').classList.remove('hidden');
+                  getGlobalApiKey().then(k => { if(k) document.getElementById('adminGlobalApiKey').value = k; });
+              }
+
+              document.getElementById('authScreen').classList.add('hidden');
+              document.querySelector('.wrap').style.display = 'block';
+              loadAllData();
+          }
+      } else {
+          currentUser = null; currentUsername = ""; currentUserDocId = "";
+          document.getElementById('authScreen').classList.remove('hidden');
+          document.querySelector('.wrap').style.display = 'none';
+      }
+  });
+
+  window.switchTab = (tab) => {
+      ['add', 'obf', 'my', 'comm', 'chat'].forEach(t => {
+          document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('hidden');
+          document.getElementById('nav' + t.charAt(0).toUpperCase() + t.slice(1)).classList.remove('active');
+      });
+      document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.remove('hidden');
+      document.getElementById('nav' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+  };
+
+  function loadAllData() {
+      onSnapshot(collection(db, "users"), (snap) => { allUsersCache = snap.docs.map(d => d.data()); renderHeaderUser(); });
+      onSnapshot(collection(db, "scripts"), (snap) => { allScriptsCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderLists(); });
+      onSnapshot(collection(db, "script_likes"), (snap) => { allLikesCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderLists(); });
+      onSnapshot(collection(db, "script_comments"), (snap) => { allCommentsCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderLists(); });
+      onSnapshot(collection(db, "comment_likes"), (snap) => { allCommentLikesCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderLists(); });
+      onSnapshot(collection(db, "friendships"), (snap) => { allFriendsCache = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(f => f.user === currentUsername); renderFriendsList(); renderLists(); });
+      onSnapshot(collection(db, "notifications"), (snap) => { notifsCache = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(n => n.recipient === currentUsername); renderNotifications(); });
+  }
 
   window.getUserDisplayHTML = (username) => {
       const uData = allUsersCache.find(u => u.username === username);
@@ -534,12 +588,6 @@ textarea {
       });
   }
 
-  window.toggleAuth = (type) => {
-      document.getElementById('loginForm').classList.toggle('hidden', type !== 'login');
-      document.getElementById('registerForm').classList.toggle('hidden', type !== 'register');
-      if (type === 'login') loadSavedAccounts();
-  };
-
   window.handleImageUpload = (event) => {
       const file = event.target.files[0];
       if (!file) return;
@@ -564,94 +612,12 @@ textarea {
       document.getElementById('encryptedCode').value = luaScript;
   };
 
-  window.doRegister = async () => {
-      const username = document.getElementById('regUser').value.trim();
-      const password = document.getElementById('regPass').value;
-      if(!username || !password) return alert("املا الخانات!");
-      try {
-          const q = query(collection(db, "users"), where("username", "==", username));
-          if (!(await getDocs(q)).empty) return alert("⚠️ الاسم متاخد!");
-          const email = username.toLowerCase() === 'admin' ? "admin@delta.com" : username.toLowerCase() + "@delta.com";
-          const cred = await createUserWithEmailAndPassword(auth, email, password);
-          await addDoc(collection(db, "users"), { uid: cred.user.uid, username: username, warnings: 0, frame: username === 'admin' ? 'admin' : 'bronze', avatar: '' });
-          saveAccountLocally(username, password);
-          alert("تم التسجيل بنجاح!"); toggleAuth('login');
-      } catch(e) { alert("خطأ: " + e.message); }
-  };
-
-  window.doLogin = async () => {
-      let username = document.getElementById('loginUser').value.trim();
-      const password = document.getElementById('loginPass').value;
-      if(!username || !password) return alert("اكتب اسم المستخدم وكلمة المرور!");
-      try {
-          const email = username.toLowerCase() === 'admin' ? "admin@delta.com" : username.toLowerCase() + "@delta.com";
-          await signInWithEmailAndPassword(auth, email, password);
-          saveAccountLocally(username, password);
-      } catch(e) {
-          alert("❌ خطأ في اسم المستخدم أو كلمة المرور!");
-      }
-  };
-
-  onAuthStateChanged(auth, async (user) => {
-      if (user) {
-          currentUser = user;
-          const q = query(collection(db, "users"), where("uid", "==", user.uid));
-          const snap = await getDocs(q);
-          if(!snap.empty) {
-              const uDoc = snap.docs[0];
-              currentUserDocId = uDoc.id;
-              const uData = uDoc.data();
-              currentUsername = uData.username;
-              userFrameSetting = uData.frame || (currentUsername === 'admin' ? 'admin' : 'bronze');
-              userAvatarSetting = uData.avatar || '';
-              
-              document.getElementById('userFrameSelect').value = userFrameSetting;
-              initCropCanvas(userAvatarSetting ? userAvatarSetting : DEFAULT_AVATAR);
-
-              if(currentUsername === 'admin') {
-                  document.getElementById('adminBadge').style.display = 'inline-block';
-                  document.getElementById('adminBanPanel').classList.remove('hidden');
-                  document.getElementById('adminSettingsPanel').classList.remove('hidden');
-                  getGlobalApiKey().then(k => { if(k) document.getElementById('adminGlobalApiKey').value = k; });
-              }
-
-              document.getElementById('authScreen').classList.add('hidden');
-              document.querySelector('.wrap').style.display = 'block';
-              loadAllData();
-          }
-      } else {
-          currentUser = null; currentUsername = ""; currentUserDocId = "";
-          document.getElementById('authScreen').classList.remove('hidden');
-          document.querySelector('.wrap').style.display = 'none';
-          loadSavedAccounts();
-      }
-  });
-
-  window.switchTab = (tab) => {
-      ['add', 'obf', 'my', 'comm', 'chat'].forEach(t => {
-          document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('hidden');
-          document.getElementById('nav' + t.charAt(0).toUpperCase() + t.slice(1)).classList.remove('active');
-      });
-      document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.remove('hidden');
-      document.getElementById('nav' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
-  };
-
-  function loadAllData() {
-      onSnapshot(collection(db, "users"), (snap) => { allUsersCache = snap.docs.map(d => d.data()); renderHeaderUser(); });
-      onSnapshot(collection(db, "scripts"), (snap) => { allScriptsCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderLists(); });
-      onSnapshot(collection(db, "script_likes"), (snap) => { allLikesCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderLists(); });
-      onSnapshot(collection(db, "script_comments"), (snap) => { allCommentsCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderLists(); });
-      onSnapshot(collection(db, "comment_likes"), (snap) => { allCommentLikesCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderLists(); });
-      onSnapshot(collection(db, "friendships"), (snap) => { allFriendsCache = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(f => f.user === currentUsername); renderFriendsList(); renderLists(); });
-      onSnapshot(collection(db, "notifications"), (snap) => { notifsCache = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(n => n.recipient === currentUsername); renderNotifications(); });
-  }
-
   window.saveScriptWithAI = async () => {
       const name = document.getElementById('scriptName').value.trim();
       const cat = document.getElementById('scriptCategory').value;
       const code = document.getElementById('scriptCode').value;
       const imgData = document.getElementById('scriptImageData').value;
-      if(!name || !code) return alert("املا الخانات!");
+      if(!name || !code) return alert("املأ الخانات!");
 
       try {
           await addDoc(collection(db, "scripts"), {
