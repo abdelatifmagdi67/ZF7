@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>دلتا - مجتمع السكريبتات ونظام الدخول السريع</title>
+<title>دلتا - مجتمع السكريبتات الشامل</title>
 <style>
 :root{--bg:#0b1220;--card:#111c33;--card2:#16233d;--text:#e8eefc;--muted:#9fb0cc;--line:#1f2d4a;--acc:#4cc9f0;--acc2:#b388ff;--ok:#3ddc97;--bad:#ff6b6b;--warn:#f59e0b;--r:14px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -43,6 +43,7 @@ textarea {
 .glow-admin { font-family: 'Courier New', monospace; letter-spacing: 1px; color: #3ddc97 !important; border: 2px solid #3ddc97; background: rgba(61, 220, 151, 0.1); box-shadow: 0 0 15px #3ddc97; text-shadow: 0 0 8px #3ddc97; }
 .glow-diamond { font-family: monospace; color: #4cc9f0 !important; border: 1.5px solid #4cc9f0; box-shadow: 0 0 10px rgba(76, 201, 240, 0.6); }
 .glow-gold { font-family: monospace; color: #f59e0b !important; border: 1px solid #f59e0b; }
+.glow-silver { font-family: monospace; color: #b388ff !important; border: 1px solid var(--line); }
 .glow-bronze { font-family: monospace; color: var(--muted); }
 
 #authScreen { max-width: 400px; margin: 50px auto; background: var(--card); padding: 20px; border-radius: var(--r); border: 1px solid var(--line); text-align: center; }
@@ -94,7 +95,6 @@ textarea {
 <div id="authScreen" class="hidden">
     <h2>مجتمع دلتا</h2>
     
-    <!-- 1. تسجيل الدخول بالإيميل والباسورد الثابتين -->
     <div id="loginForm">
         <label>البريد الإلكتروني</label>
         <input type="email" id="loginEmail" placeholder="اكتب بريدك الإلكتروني المحفوظ...">
@@ -104,11 +104,10 @@ textarea {
         <button class="toggle-btn" onclick="toggleAuth('register')">حساب جديد؟ اضغط هنا لإنشاء حساب</button>
     </div>
 
-    <!-- 2. إنشاء حساب (يطلب الاسم، الإيميل، والباسورد الثابتين) -->
     <div id="registerForm" class="hidden">
         <h3>إنشاء حساب جديد</h3>
-        <label>اسم المستخدم (اكتب admin للأدمن الأعلى)</label>
-        <input type="text" id="regUsername" placeholder="اكتب اسمك أو admin...">
+        <label>اسم المستخدم (اكتب Super Admin للأدمن الأعلى)</label>
+        <input type="text" id="regUsername" placeholder="اكتب Super Admin أو أي اسم...">
         <label style="margin-top:8px;">البريد الإلكتروني</label>
         <input type="email" id="regEmail" placeholder="اكتب إيميلك...">
         <label style="margin-top:8px;">كلمة المرور (6 حروف/أرقام على الأقل)</label>
@@ -120,7 +119,7 @@ textarea {
 
 <div class="wrap" id="mainUI">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
-      <h2 style="margin:0;">دلتا <span id="adminBadge" style="font-size:12px; background:var(--bad); color:#fff; padding:2px 6px; border-radius:4px; display:none;">أدمن عام</span></h2>
+      <h2 style="margin:0;">دلتا <span id="adminBadge" style="font-size:12px; background:var(--bad); color:#fff; padding:2px 6px; border-radius:4px; display:none;">أدمن أعلى</span></h2>
       
       <div style="display:flex; align-items:center; gap:8px; position:relative;">
           <button class="bell-btn" onclick="toggleNotifications()">
@@ -226,10 +225,9 @@ textarea {
       </div>
 
       <div id="adminBanPanel" class="card hidden" style="border-color: var(--bad);">
-          <h3 style="color: var(--bad);">🚨 لوحة الأدمن الأعلى (صلاحيات مطلقة)</h3>
-          <p style="font-size:12px; color:var(--muted);">بصفتك الأدمن الأعلى، يمكنك حذف أي منشور أو مراقبة المحتوى.</p>
-          <div id="adminReportsList" style="max-height:200px; overflow-y:auto; margin-bottom:10px;"></div>
-          <div id="adminBannedList"></div>
+          <h3 style="color: var(--bad);">🚨 لوحة تحكم الأدمن الأعلى (الحذف النهائي للأعضاء)</h3>
+          <p style="font-size:12px; color:var(--muted);">يمكنك هنا حذف أي حساب نهائياً من الموقع كأنه لم يكن:</p>
+          <div id="adminAllUsersList" style="max-height:250px; overflow-y:auto; margin-top:10px;"></div>
       </div>
 
       <div class="card">
@@ -347,7 +345,6 @@ textarea {
       document.getElementById('registerForm').classList.toggle('hidden', type !== 'register');
   };
 
-  // تسجيل الحساب وحفظ الإيميل والباسورد والاسم في الفايربيس
   window.doRegister = async () => {
       const username = document.getElementById('regUsername').value.trim();
       const email = document.getElementById('regEmail').value.trim();
@@ -356,7 +353,8 @@ textarea {
       if(!username || !email || !password) return alert("يرجى ملء جميع الخانات!");
       if(password.length < 6) return alert("كلمة المرور يجب ألا تقل عن 6 أحرف/أرقام!");
 
-      const isSuperAdmin = username.toLowerCase() === 'admin';
+      const lowerName = username.toLowerCase();
+      const isSuperAdmin = lowerName === 'super admin' || lowerName === 'admin' || lowerName === 'superadmin';
 
       try {
           if (!isSuperAdmin) {
@@ -377,13 +375,12 @@ textarea {
               avatar: '' 
           });
           
-          alert(isSuperAdmin ? "👑 مبروك! تم حفظ وإنشاء حساب الأدمن الأعلى بنجاح." : "✅ تم إنشاء الحساب بنجاح!");
+          alert(isSuperAdmin ? "👑 مبروك! تم إنشاء حساب الأدمن الأعلى بنجاح." : "✅ تم إنشاء الحساب بنجاح!");
       } catch(e) {
           alert("حدث خطأ أثناء التسجيل: " + e.message);
       }
   };
 
-  // تسجيل الدخول بالبريد الإلكتروني وكلمة المرور الثابتة فقط
   window.doLogin = async () => {
       const email = document.getElementById('loginEmail').value.trim();
       const password = document.getElementById('loginPass').value;
@@ -406,16 +403,20 @@ textarea {
               currentUserDocId = uDoc.id;
               const uData = uDoc.data();
               currentUsername = uData.username;
-              userFrameSetting = uData.frame || (currentUsername.toLowerCase() === 'admin' ? 'superadmin' : 'bronze');
+              userFrameSetting = uData.frame || 'bronze';
               userAvatarSetting = uData.avatar || '';
               
               document.getElementById('userFrameSelect').value = userFrameSetting;
               initCropCanvas(userAvatarSetting ? userAvatarSetting : DEFAULT_AVATAR);
 
-              if(currentUsername.toLowerCase() === 'admin' || userFrameSetting === 'superadmin') {
+              const lowerName = currentUsername.toLowerCase();
+              const isSuperAdmin = lowerName === 'super admin' || lowerName === 'admin' || lowerName === 'superadmin' || userFrameSetting === 'superadmin';
+
+              if(isSuperAdmin) {
                   document.getElementById('adminBadge').style.display = 'inline-block';
                   document.getElementById('adminBanPanel').classList.remove('hidden');
                   document.getElementById('adminSettingsPanel').classList.remove('hidden');
+                  renderAdminUsersList();
               }
 
               document.getElementById('authScreen').classList.add('hidden');
@@ -430,7 +431,13 @@ textarea {
   });
 
   function loadAllData() {
-      onSnapshot(collection(db, "users"), (snap) => { allUsersCache = snap.docs.map(d => d.data()); renderHeaderUser(); });
+      onSnapshot(collection(db, "users"), (snap) => { 
+          allUsersCache = snap.docs.map(d => ({id: d.id, ...d.data()})); 
+          renderHeaderUser(); 
+          const lowerName = currentUsername.toLowerCase();
+          const isSuperAdmin = lowerName === 'super admin' || lowerName === 'admin' || lowerName === 'superadmin' || userFrameSetting === 'superadmin';
+          if(isSuperAdmin) renderAdminUsersList();
+      });
       onSnapshot(collection(db, "scripts"), (snap) => { allScriptsCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderLists(); });
       onSnapshot(collection(db, "script_likes"), (snap) => { allLikesCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderLists(); });
       onSnapshot(collection(db, "script_comments"), (snap) => { allCommentsCache = snap.docs.map(d => ({id: d.id, ...d.data()})); renderLists(); });
@@ -439,9 +446,36 @@ textarea {
       onSnapshot(collection(db, "notifications"), (snap) => { notifsCache = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(n => n.recipient === currentUsername); renderNotifications(); });
   }
 
+  window.permanentlyDeleteUser = async (userDocId, usernameToDel) => {
+      if(confirm(`⚠️ هل أنت متأكد من حذف الحساب "${usernameToDel}" نهائياً كأنه لم يكن؟`)) {
+          try {
+              await deleteDoc(doc(db, "users", userDocId));
+              const userScripts = allScriptsCache.filter(s => s.author === usernameToDel);
+              for(let scr of userScripts) {
+                  await deleteDoc(doc(db, "scripts", scr.id));
+              }
+              alert(`✅ تم حذف الحساب "${usernameToDel}" نهائياً من الموقع بنجاح!`);
+          } catch(e) {
+              alert("حدث خطأ أثناء الحذف: " + e.message);
+          }
+      }
+  };
+
+  function renderAdminUsersList() {
+      const listDiv = document.getElementById('adminAllUsersList');
+      if(!listDiv) return;
+      const otherUsers = allUsersCache.filter(u => u.username !== currentUsername);
+      listDiv.innerHTML = otherUsers.length ? otherUsers.map(u => `
+          <div style="display:flex; justify-content:space-between; align-items:center; background:var(--card2); padding:8px 12px; border-radius:6px; margin-bottom:6px;">
+              <span>👤 ${u.username} (${u.email || 'بدون إيميل'})</span>
+              <button class="btn sm" style="background:var(--bad); color:#fff;" onclick="permanentlyDeleteUser('${u.id}', '${u.username}')">🗑️ حذف نهائي</button>
+          </div>
+      `).join('') : '<p style="color:var(--muted); font-size:12px;">لا توجد حسابات أخرى مسجلة.</p>';
+  }
+
   window.getUserDisplayHTML = (username) => {
       const uData = allUsersCache.find(u => u.username === username);
-      const frame = uData ? (uData.frame || (username === 'admin' ? 'superadmin' : 'bronze')) : (username === 'admin' ? 'superadmin' : 'bronze');
+      const frame = uData ? (uData.frame || 'bronze') : 'bronze';
       const avatar = uData && uData.avatar ? uData.avatar : DEFAULT_AVATAR;
       
       const userScripts = allScriptsCache.filter(s => s.author === username);
@@ -449,8 +483,9 @@ textarea {
 
       let levelTitle = "🥉 مبتدئ";
       let frameClass = "glow-bronze";
+      const lowerName = username.toLowerCase();
       
-      if (username === 'admin' || frame === 'superadmin') {
+      if (lowerName === 'super admin' || lowerName === 'admin' || lowerName === 'superadmin' || frame === 'superadmin') {
           levelTitle = "🔴 الأدمن الأعلى"; frameClass = "glow-superadmin";
       } else if (frame === 'admin') {
           levelTitle = "👑 أدمن عام"; frameClass = "glow-admin";
@@ -548,7 +583,8 @@ textarea {
       const scriptLikes = allLikesCache.filter(l => l.scriptId === s.id);
       const hasLiked = scriptLikes.some(l => l.user === currentUsername);
       const scriptComments = allCommentsCache.filter(c => c.scriptId === s.id && !c.replyTo);
-      const isSuperAdmin = currentUsername === 'admin' || userFrameSetting === 'superadmin';
+      const lowerName = currentUsername.toLowerCase();
+      const isSuperAdmin = lowerName === 'super admin' || lowerName === 'admin' || lowerName === 'superadmin' || userFrameSetting === 'superadmin';
 
       return `
       <div class="saved-item">
@@ -594,14 +630,15 @@ textarea {
                 </div>
             </div>
         </div>
-      `;
+      </div>`;
   }
 
   function renderCommentHTML(c) {
       const commentLikes = allCommentLikesCache.filter(l => l.commentId === c.id);
       const hasLiked = commentLikes.some(l => l.user === currentUsername);
       const replies = allCommentsCache.filter(r => r.replyTo === c.id);
-      const isSuperAdmin = currentUsername === 'admin' || userFrameSetting === 'superadmin';
+      const lowerName = currentUsername.toLowerCase();
+      const isSuperAdmin = lowerName === 'super admin' || lowerName === 'admin' || lowerName === 'superadmin' || userFrameSetting === 'superadmin';
       const isOwner = c.user === currentUsername || isSuperAdmin;
 
       return `
