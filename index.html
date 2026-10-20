@@ -34,9 +34,9 @@ textarea {
 .user-badge-box { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 8px; font-size: 13px; font-weight: bold; background: var(--card2); border: 1px solid var(--line); }
 
 .avatar-editor-box { display: flex; flex-direction: column; align-items: center; gap: 10px; background: var(--card2); padding: 15px; border-radius: 12px; border: 1px solid var(--line); margin-bottom: 15px; }
-.crop-container { width: 130px; height: 130px; border-radius: 50%; border: 3px solid var(--acc); overflow: hidden; position: relative; background: #000; cursor: grab; box-shadow: 0 0 20px rgba(76, 201, 240, 0.4); }
+.crop-container { width: 140px; height: 140px; border-radius: 50%; border: 3px solid var(--acc); overflow: hidden; position: relative; background: #000; cursor: grab; box-shadow: 0 0 20px rgba(76, 201, 240, 0.4); touch-action: none; }
 .crop-container:active { cursor: grabbing; }
-#cropCanvas { position: absolute; top: 0; left: 0; touch-action: none; }
+#cropCanvas { position: absolute; top: 0; left: 0; }
 .zoom-slider { width: 80%; margin-top: 5px; accent-color: var(--acc); }
 
 .glow-superadmin { font-family: 'Courier New', monospace; letter-spacing: 1px; color: #ff6b6b !important; border: 2px solid #ff6b6b; background: rgba(255, 107, 107, 0.15); box-shadow: 0 0 18px #ff6b6b; text-shadow: 0 0 8px #ff6b6b; }
@@ -97,7 +97,7 @@ textarea {
     
     <div id="loginForm">
         <label>البريد الإلكتروني</label>
-        <input type="email" id="loginEmail" placeholder="اكتب بريدك الإلكتروني المحفوظ...">
+        <input type="email" id="loginEmail" placeholder="اكتب بريدك الإلكتروني...">
         <label style="margin-top:8px;">كلمة المرور</label>
         <input type="password" id="loginPass" placeholder="••••••••">
         <button class="btn primary" style="width:100%; margin-top:10px;" onclick="doLogin()">تسجيل الدخول</button>
@@ -107,7 +107,7 @@ textarea {
     <div id="registerForm" class="hidden">
         <h3>إنشاء حساب جديد</h3>
         <label>اسم المستخدم (اكتب Super Admin للأدمن الأعلى)</label>
-        <input type="text" id="regUsername" placeholder="اكتب Super Admin أو أي اسم...">
+        <input type="text" id="regUsername" placeholder="اكتب Super Admin...">
         <label style="margin-top:8px;">البريد الإلكتروني</label>
         <input type="email" id="regEmail" placeholder="اكتب إيميلك...">
         <label style="margin-top:8px;">كلمة المرور (6 حروف/أرقام على الأقل)</label>
@@ -154,7 +154,7 @@ textarea {
             <input type="file" id="profileAvatarInput" accept="image/*,image/gif" style="display:none;" onchange="loadAvatarForCrop(event)">
             <div style="font-size:13px; color:var(--acc); font-weight:bold; text-align:center;">اسحب الصورة للتحريك، واستخدم شريط الزووم للتكبير والتصغير:</div>
             <div class="crop-container" id="cropArea">
-                <canvas id="cropCanvas" width="200" height="200"></canvas>
+                <canvas id="cropCanvas" width="140" height="140"></canvas>
             </div>
             <label style="margin:0; font-size:11px; color:var(--muted);">تكبير / تصغير الصورة:</label>
             <input type="range" id="zoomSlider" class="zoom-slider" min="0.2" max="3" step="0.05" value="1" oninput="changeZoom(this.value)">
@@ -266,6 +266,7 @@ textarea {
   </div>
 </div>
 
+<!-- Modal تعديل السكريبت -->
 <div id="editModal" class="modal-overlay hidden">
     <div class="modal-content">
         <h3>✏️ تعديل السكريبت</h3>
@@ -281,7 +282,7 @@ textarea {
         </label>
         <label>كود السكريبت (Lua)<textarea id="editScriptCode" spellcheck="false"></textarea></label>
         <div style="display:flex; gap:10px; margin-top:15px;">
-            <button class="btn primary" style="flex:1;" onclick="updateScript()">حفظ التعديلات</button>
+            <button class="btn primary" style="flex:1;" onclick="updateScriptFinal()">حفظ التعديلات</button>
             <button class="btn" style="background:var(--bad); color:white;" onclick="closeEditModal()">إلغاء</button>
         </div>
     </div>
@@ -473,6 +474,37 @@ textarea {
       `).join('') : '<p style="color:var(--muted); font-size:12px;">لا توجد حسابات أخرى مسجلة.</p>';
   }
 
+  // ميزة تعديل السكريبتات للأدمن الأعلى وصاحب السكريبت
+  window.openEditModal = (id) => {
+      const script = allScriptsCache.find(s => s.id === id);
+      if(!script) return;
+      document.getElementById('editScriptId').value = script.id;
+      document.getElementById('editScriptName').value = script.name;
+      document.getElementById('editScriptCategory').value = script.category || "عام";
+      document.getElementById('editScriptCode').value = script.code || "";
+      document.getElementById('editModal').classList.remove('hidden');
+  };
+
+  window.closeEditModal = () => {
+      document.getElementById('editModal').classList.add('hidden');
+  };
+
+  window.updateScriptFinal = async () => {
+      const id = document.getElementById('editScriptId').value;
+      const name = document.getElementById('editScriptName').value.trim();
+      const category = document.getElementById('editScriptCategory').value;
+      const code = document.getElementById('editScriptCode').value;
+      if(!name || !code) return alert("املأ الخانات!");
+
+      try {
+          await updateDoc(doc(db, "scripts", id), { name, category, code });
+          alert("✅ تم تعديل السكريبت وحفظه بنجاح!");
+          closeEditModal();
+      } catch(e) {
+          alert("خطأ أثناء التعديل: " + e.message);
+      }
+  };
+
   window.getUserDisplayHTML = (username) => {
       const uData = allUsersCache.find(u => u.username === username);
       const frame = uData ? (uData.frame || 'bronze') : 'bronze';
@@ -596,7 +628,7 @@ textarea {
                   <span class="badge ${s.disabled ? 'off' : ''}">${s.disabled ? '⛔ متوقف' : s.category}</span>
               </div>
               <div>
-                  ${isMine ? `<button class="btn sm primary" onclick="openEditModal('${s.id}')">✏️ تعديل</button>` : ''}
+                  ${isMine || isSuperAdmin ? `<button class="btn sm primary" onclick="openEditModal('${s.id}')">✏️ تعديل</button>` : ''}
                   ${isMine || isSuperAdmin ? `<button class="btn sm" style="background:var(--bad);color:white;" onclick="deleteDoc(doc(db,'scripts','${s.id}'))">🗑️ حذف</button>` : ''}
               </div>
             </div>
@@ -812,6 +844,7 @@ textarea {
       });
   }
 
+  // معاينة وضبط قص الصورة بالدايرة بشكل دقيق 100%
   function initCropCanvas(imgSrc) {
       cropImg.onload = () => {
           imgScale = Math.max(canvas.width / cropImg.width, canvas.height / cropImg.height);
@@ -828,7 +861,14 @@ textarea {
       ctx.drawImage(cropImg, imgX, imgY, cropImg.width * imgScale, cropImg.height * imgScale);
   }
 
-  window.changeZoom = (val) => { imgScale = parseFloat(val); drawCrop(); };
+  window.changeZoom = (val) => { 
+      const oldScale = imgScale;
+      imgScale = parseFloat(val);
+      // التكبير والتصغير من مركز الدائرة بالظبط
+      imgX = canvas.width / 2 - (canvas.width / 2 - imgX) * (imgScale / oldScale);
+      imgY = canvas.height / 2 - (canvas.height / 2 - imgY) * (imgScale / oldScale);
+      drawCrop(); 
+  };
 
   const cropArea = document.getElementById('cropArea');
   cropArea.addEventListener('mousedown', (e) => { isDragging = true; startX = e.clientX - imgX; startY = e.clientY - imgY; });
@@ -854,7 +894,7 @@ textarea {
       if (currentUserDocId) {
           await updateDoc(doc(db, "users", currentUserDocId), { avatar: dataUrl });
           renderHeaderUser();
-          alert("✅ تم حفظ الصورة بنجاح!");
+          alert("✅ تم حفظ وتأكيد الصورة في البروفايل بنجاح!");
       }
   };
 
