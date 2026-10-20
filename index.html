@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>دلتا - مجتمع السكريبتات والصور المتحركة GIF</title>
+<title>دلتا - مجتمع السكريبتات والصور الشخصية</title>
 <style>
 :root{--bg:#0b1220;--card:#111c33;--card2:#16233d;--text:#e8eefc;--muted:#9fb0cc;--line:#1f2d4a;--acc:#4cc9f0;--acc2:#b388ff;--ok:#3ddc97;--bad:#ff6b6b;--warn:#f59e0b;--r:14px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -30,9 +30,9 @@ textarea {
 .btn-nav button { flex: 1; padding: 10px; background: var(--card2); border: 1px solid var(--line); color: var(--text); border-radius: 8px; cursor: pointer; font-weight: bold; white-space:nowrap; }
 .btn-nav button.active { background: var(--acc); color: #071019; border-color: var(--acc); }
 
-/* دعم الصور المتحركة والعادية في البروفايل والصور */
-.user-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; object-position: center; border: 1px solid var(--acc); background: #000; flex-shrink: 0; }
-.user-avatar-lg { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; object-position: center; border: 2px solid var(--acc); background: #000; cursor: pointer; display: block; margin: 0 auto; box-shadow: 0 4px 15px rgba(76,201,240,0.3); }
+/* تصميم الصور الدائرية */
+.user-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; object-position: center; border: 1px solid var(--acc); background: var(--card2); flex-shrink: 0; }
+.user-avatar-lg { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; object-position: center; border: 2px solid var(--acc); background: var(--card2); cursor: pointer; display: block; margin: 0 auto; box-shadow: 0 4px 15px rgba(76,201,240,0.3); }
 .user-badge-box { display: inline-flex; align-items: center; gap: 8px; padding: 4px 10px; border-radius: 8px; font-size: 13px; font-weight: bold; background: var(--card2); border: 1px solid var(--line); }
 
 /* شاشات الدخول */
@@ -67,7 +67,7 @@ textarea {
 .notifications-dropdown { position: absolute; top: 50px; left: 14px; width: 300px; max-height: 350px; overflow-y: auto; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); z-index: 1000; padding: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: none; }
 .notif-item { font-size: 12px; padding: 8px; border-bottom: 1px solid var(--line); margin-bottom: 5px; background: var(--card2); border-radius: 6px; }
 
-/* الدردشة والصور المتحركة في الشات */
+/* الدردشة */
 .chat-container { display: flex; flex-direction: column; height: 350px; background: var(--card2); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin-top: 10px; }
 .chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
 .msg-bubble { max-width: 75%; padding: 10px 14px; border-radius: 12px; font-size: 14px; word-break: break-word; }
@@ -140,17 +140,16 @@ textarea {
   <!-- إضافة سكريبت وتعديل البروفايل -->
   <div id="tabAdd">
       <div class="card">
-        <h3>⚙️ إعدادات البروفايل الشخصي (يدعم صور GIF المتحركة والعادية)</h3>
+        <h3>⚙️ إعدادات البروفايل الشخصي والصورة</h3>
         <div style="background:var(--card2); padding:15px; border-radius:10px; margin-bottom:15px; border:1px solid var(--line); text-align:center;">
-            <!-- دعم ملفات الـ GIF والصور العادية -->
             <input type="file" id="profileAvatarInput" accept="image/*,image/gif" style="display:none;" onchange="processAvatarImage(event)">
             
             <div style="margin-bottom:10px; position:relative; display:inline-block;">
-                <img id="myAvatarPreview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" class="user-avatar-lg" onclick="document.getElementById('profileAvatarInput').click()" title="اضغط لتغيير الصورة الشخصية (عادية أو متحركة GIF)">
+                <img id="myAvatarPreview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239fb0cc'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>" class="user-avatar-lg" onclick="document.getElementById('profileAvatarInput').click()" title="اضغط لرفع صورتك الشخصية (عادية أو متحركة GIF)">
             </div>
 
-            <div style="font-size:14px; font-weight:bold; color:var(--acc); margin-top:5px;">صورتك الشخصية (تدعم GIF المتحركة)</div>
-            <div style="font-size:11px; color:var(--muted); margin-top:3px;">اضغط على الصورة لاختيار صورة عادية أو صورة متحركة GIF من جهازك.</div>
+            <div style="font-size:14px; font-weight:bold; color:var(--acc); margin-top:5px;">صورتك الشخصية (دائرية)</div>
+            <div style="font-size:11px; color:var(--muted); margin-top:3px;">اضغط على الأيقونة لرفع صورتك من جهازك (عادية أو GIF متحركة).</div>
         </div>
 
         <div style="background:var(--card2); padding:10px; border-radius:8px; margin-bottom:15px; border:1px solid var(--line);">
@@ -249,9 +248,8 @@ textarea {
                       <button class="sticker-btn" onclick="insertSticker('chatMsgInput', '💎')">💎</button>
                   </div>
                   <div class="chat-input-area">
-                      <input type="text" id="chatMsgInput" placeholder="اكتب رسالتك أو أرسل صورة/GIF...">
+                      <input type="text" id="chatMsgInput" placeholder="اكتب رسالتك...">
                       <button class="btn sm" id="recordVoiceBtn" onclick="toggleVoiceRecording()" style="background:var(--card2); color:var(--bad); border:1px solid var(--line);">🎤</button>
-                      <!-- دعم إرسال الصور العادية و GIF في الشات -->
                       <input type="file" id="chatImgInput" accept="image/*,image/gif" style="display:none;" onchange="sendChatImage(event)">
                       <button class="btn sm primary" onclick="document.getElementById('chatImgInput').click()">📷</button>
                       <button class="btn sm primary" onclick="sendChatMessage()">إرسال</button>
@@ -323,6 +321,7 @@ textarea {
   let isRecording = false;
 
   const DELTA_KEY = "DeltaHubSecureKey2026";
+  const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239fb0cc'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/></svg>";
 
   window.encodeCode = (str) => btoa(unescape(encodeURIComponent(str)));
   window.decodeCode = (str) => decodeURIComponent(escape(atob(str)));
@@ -342,14 +341,14 @@ textarea {
       alert("✅ تم الحفظ!");
   };
 
-  // عرض الصورة الشخصية (تدعم الصور المتحركة GIF والعادية)
+  // عرض الصورة الشخصية (صورة افتراضية محايدة أو صورتك الحقيقية)
   window.getUserDisplayHTML = (username) => {
       if (username === 'admin') {
-          return `<span class="user-badge-box frame-admin"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" class="user-avatar"> 👑 [أدمن] ${username}</span>`;
+          return `<span class="user-badge-box frame-admin"><img src="${DEFAULT_AVATAR}" class="user-avatar"> 👑 [أدمن] ${username}</span>`;
       }
       const uData = allUsersCache.find(u => u.username === username);
       const frame = uData ? (uData.frame || 'bronze') : 'bronze';
-      const avatar = uData && uData.avatar ? uData.avatar : "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80";
+      const avatar = uData && uData.avatar ? uData.avatar : DEFAULT_AVATAR;
       
       const userScripts = allScriptsCache.filter(s => s.author === username);
       const totalLikes = allLikesCache.filter(l => userScripts.map(s=>s.id).includes(l.scriptId)).length;
@@ -375,7 +374,6 @@ textarea {
       }
   };
 
-  // معالجة رفع صور البروفايل (عادية أو GIF متحركة بدون إتلاف الحركة)
   window.processAvatarImage = (event) => {
       const file = event.target.files[0];
       if (!file) return;
@@ -385,7 +383,7 @@ textarea {
           document.getElementById('myAvatarPreview').src = dataUrl;
           userAvatarSetting = dataUrl;
           updateUserSetting('avatar', dataUrl);
-          alert("✅ تم رفع صورتك الشخصية بنجاح (تدعم المتحركة GIF العادية والجديدة)!");
+          alert("✅ تم تحديث صورتك الشخصية بنجاح!");
       };
       reader.readAsDataURL(file);
   };
@@ -470,9 +468,7 @@ textarea {
               userAvatarSetting = uData.avatar || '';
               
               document.getElementById('userFrameSelect').value = userFrameSetting;
-              if (userAvatarSetting) {
-                  document.getElementById('myAvatarPreview').src = userAvatarSetting;
-              }
+              document.getElementById('myAvatarPreview').src = userAvatarSetting ? userAvatarSetting : DEFAULT_AVATAR;
 
               if(currentUsername === 'admin') {
                   document.getElementById('adminBadge').style.display = 'inline-block';
@@ -752,18 +748,6 @@ textarea {
       const txt = document.getElementById('chatMsgInput').value.trim(); if(!txt || !activeChatUser) return;
       document.getElementById('chatMsgInput').value = '';
       await addDoc(collection(db, "messages"), { sender: currentUsername, receiver: activeChatUser, text: txt, image: "", audio: "", createdAt: serverTimestamp() });
-  };
-
-  // إرسال الصور العادية أو GIF المتحركة في الشات
-  window.sendChatImage = (event) => {
-      const file = event.target.files[0];
-      if(!file || !activeChatUser) return;
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-          const base64Img = e.target.result;
-          await addDoc(collection(db, "messages"), { sender: currentUsername, receiver: activeChatUser, text: "", image: base64Img, audio: "", createdAt: serverTimestamp() });
-      };
-      reader.readAsDataURL(file);
   };
 
   window.toggleVoiceRecording = async () => {
