@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>دلتا - مجتمع السكريبتات والتسجيل الآمن</title>
+<title>دلتا - مجتمع السكريبتات</title>
 <style>
 :root{--bg:#0b1220;--card:#111c33;--card2:#16233d;--text:#e8eefc;--muted:#9fb0cc;--line:#1f2d4a;--acc:#4cc9f0;--acc2:#b388ff;--ok:#3ddc97;--bad:#ff6b6b;--warn:#f59e0b;--r:14px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -48,7 +48,7 @@ textarea {
 .glow-silver { font-family: monospace; color: #b388ff !important; border: 1px solid var(--line); }
 .glow-bronze { font-family: monospace; color: var(--muted); }
 
-/* شاشة الدخول والتسجيل المقسمة */
+/* شاشة الدخول والتسجيل */
 #authScreen { max-width: 400px; margin: 50px auto; background: var(--card); padding: 20px; border-radius: var(--r); border: 1px solid var(--line); text-align: center; }
 #authScreen input { margin-bottom: 10px; }
 #authScreen .toggle-btn { background: none; border: none; color: var(--acc); cursor: pointer; font-size: 13px; margin-top: 10px; text-decoration: underline; }
@@ -75,7 +75,7 @@ textarea {
 </head>
 <body>
 
-<!-- شاشة تسجيل الدخول والتسجيل المتقدمة -->
+<!-- شاشة تسجيل الدخول والتسجيل -->
 <div id="authScreen" class="hidden">
     <h2>مجتمع دلتا</h2>
     
@@ -90,7 +90,7 @@ textarea {
         <button class="toggle-btn" onclick="toggleAuth('registerStep1')">حساب جديد؟ اضغط هنا لإنشاء حساب</button>
     </div>
 
-    <!-- 2. الخطوة الأولى في إنشاء الحساب (البريد والباسورد) -->
+    <!-- 2. الخطوة الأولى في إنشاء الحساب -->
     <div id="registerStep1Form" class="hidden">
         <h3>الخطوة 1 من 2: بيانات الحساب</h3>
         <label>البريد الإلكتروني</label>
@@ -104,9 +104,9 @@ textarea {
     <!-- 3. الخطوة الثانية (كتابة الاسم الظاهر) -->
     <div id="registerStep2Form" class="hidden">
         <h3>الخطوة 2 من 2: الاسم الظاهر في البروفايل</h3>
-        <p style="font-size:12px; color:var(--muted);">الاسم ده هو اللي هيظهر لكل الناس في البروفايل والتعليقات (مثلاً اكتب admin للإنضمام كأدمن):</p>
+        <p style="font-size:12px; color:var(--muted);">اكتب الاسم اللي هيظهر لكل الناس في البروفايل والتعليقات (اكتب admin للإنضمام كأدمن):</p>
         <label>اسم المستخدم (اللقب)</label>
-        <input type="text" id="regUsername" placeholder="اكتب اسمك هنا...">
+        <input type="text" id="regUsername" placeholder="اكتب اسمك هنا (مثلاً admin)...">
         <button class="btn primary" style="width:100%; margin-top:10px;" onclick="doRegisterFinal()">تأكيد وفتح الحساب 🚀</button>
     </div>
 </div>
@@ -210,7 +210,7 @@ textarea {
   <div id="tabComm" class="hidden"><div id="communityList"></div></div>
 </div>
 
-<!-- البرمجة والمصادقة بالخطوات -->
+<!-- البرمجة السلسة وتخطي العوائق -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -252,7 +252,6 @@ textarea {
       document.getElementById('registerStep2Form').classList.toggle('hidden', type !== 'registerStep2');
   };
 
-  // 1. الانتقال للخطوة الثانية عند إنشاء الحساب
   window.goToStep2 = () => {
       tempEmail = document.getElementById('regEmail').value.trim();
       tempPass = document.getElementById('regPass').value;
@@ -263,7 +262,7 @@ textarea {
       toggleAuth('registerStep2');
   };
 
-  // 2. تأكيد الإنشاء وحفظ الاسم الظاهر
+  // تأكيد وإنشاء بدون منع أو قيود اسم مأخوذ
   window.doRegisterFinal = async () => {
       const username = document.getElementById('regUsername').value.trim();
       if(!username) return alert("اكتب اسمك الظاهر!");
@@ -283,7 +282,6 @@ textarea {
       }
   };
 
-  // 3. تسجيل الدخول العادي بالبريد والباسورد
   window.doLogin = async () => {
       const email = document.getElementById('loginEmail').value.trim();
       const password = document.getElementById('loginPass').value;
@@ -296,7 +294,6 @@ textarea {
       }
   };
 
-  // المتابعة الحية واسترجاع الحساب والاسم فقط بدون إظهار الإيميل للعامة
   onAuthStateChanged(auth, async (user) => {
       if (user) {
           currentUser = user;
@@ -328,7 +325,6 @@ textarea {
       }
   });
 
-  // عرض الاسم بالبروفايل المضيء مع حماية الإيميل
   function renderHeaderUser() {
       let frameClass = "glow-bronze";
       if (currentUsername.toLowerCase() === 'admin' || userFrameSetting === 'admin') frameClass = "glow-admin";
@@ -394,7 +390,7 @@ textarea {
       if (currentUserDocId) {
           await updateDoc(doc(db, "users", currentUserDocId), { avatar: dataUrl });
           renderHeaderUser();
-          alert("✅ تم حفظ الصورة الشخصية بنجاح!");
+          alert("✅ تم حفظ الصورة بنجاح!");
       }
   };
 
